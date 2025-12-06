@@ -133,6 +133,7 @@ TAITS_S1/
 
 用於實作每個模組的程式要求、資料格式、介面定義。
 例如：
+
 🔰 核心架構群
 | 編號   | 標題                                        |
 | ---- | ----------------------------------------- |
@@ -142,6 +143,7 @@ TAITS_S1/
 | C-04 | 指標管理器 × 策略管理器 × Agents × Orchestrator 關聯圖 |
 | C-05 | 資料流設計（Data Flow + Validator）              |
 | C-06 | 資料快取層 Cache System                        |
+
 📊 指標層（Indicators Layer）
 | 編號   | 標題                            |
 | ---- | ----------------------------- |
@@ -149,6 +151,7 @@ TAITS_S1/
 | C-08 | 技術指標核心規格（Indicator Core Spec） |
 | C-09 | 技術指標：數學接口標準（IIndicator）       |
 | C-10 | 技術指標：GMMA、MACD、RSI、ATR… 參數規格  |
+
 📈 策略層（Strategies Layer）
 | 編號   | 標題                                |
 | ---- | --------------------------------- |
@@ -157,6 +160,7 @@ TAITS_S1/
 | C-13 | 策略資料管線（Strategy Data Pipeline）    |
 | C-14 | TradingAgents × Strategies 完整互動規格 |
 | C-15 | 策略層 ULTRA FINAL（全部 285 策略分類）      |
+
 🤖 智能體層（Agents Layer）
 | 編號   | 標題                        |
 | ---- | ------------------------- |
@@ -164,6 +168,7 @@ TAITS_S1/
 | C-17 | Agents 全列表：10 大智能體規格完整定義  |
 | C-18 | Signal Aggregator（訊號整合引擎） |
 | C-19 | Decision Engine（決策處理管線）   |
+
 🏦 交易層（Execution, Portfolio, Risk）
 | 編號   | 標題                       |
 | ---- | ------------------------ |
@@ -174,6 +179,7 @@ TAITS_S1/
 | C-24 | Live Trading（富邦 API 全規格） |
 | C-25 | Risk Control（風險控制核心）     |
 | C-26 | Position Sizing（部位管理）    |
+
 📝 系統工具（System Utility & Logging）
 | 編號   | 標題                                   |
 | ---- | ------------------------------------ |
@@ -181,6 +187,7 @@ TAITS_S1/
 | C-28 | Config & Settings（模式管理與環境參數）         |
 | C-29 | Monitoring（監控 / 警報 / 健康檢測）           |
 | C-30 | 測試與驗證框架（Unit Test & Regression Test） |
+
 🧬 其他進階章節
 | 編號   | 標題                                          |
 | ---- | ------------------------------------------- |
