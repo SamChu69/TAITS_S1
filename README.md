@@ -27,7 +27,7 @@
 
 | 模組                              | 說明                                  |
 | ------------------------------- | ----------------------------------- |
-| **多資料源（3 層 Fallback）**          | Yahoo → TWSE → FinMind 自動切換         |
+| **多資料源（多層 Fallback）**          | Yahoo → TWSE → FinMind 自動切換         |
 | **285 策略引擎**                    | 趨勢 / 反轉 / 籌碼 / AI / 動能 / 均值 / 缠论    |
 | **TradingAgents 多智能體架構**        | 10 種 Agent 產生多視角判斷                  |
 | **AI 引擎**                       | LSTM / Transformer / Kronos         |
