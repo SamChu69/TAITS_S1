@@ -1,6 +1,6 @@
 # # 🌐 **TAITS — Taiwan Alpha Intelligence Trading System**
 
-### **台灣阿爾法智能交易系統（TAITSS1 Edition）**
+### **台灣阿爾法智能交易系統（TAITS_S1 Edition）**
 
 ![TAITS Banner](https://img.shields.io/badge/TAITS-S1%20Edition-blueviolet?style=for-the-badge\&logo=python\&logoColor=white)
 
