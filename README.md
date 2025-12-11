@@ -195,18 +195,16 @@ TAITS/
 
 ## 🔄 系統流程（System Flow）
 
-```mermaid
 flowchart TD
 
     A[Data Sources] --> B[Indicators + ChanLun]
-    B --> C[Strategies (355)]
-    C --> D[Multi-Agent System (12+1)]
+    B --> C[Strategies: 355+]
+    C --> D[Multi-Agent System: 12+1]
     D --> E[Market Regime Engine]
     E --> F[Fusion Engine]
     F --> G[Risk Engine]
     G --> H{Backtest / Paper / Live}
     H --> I[Reports / UI / Alerts]
-```
 
 ---
 
