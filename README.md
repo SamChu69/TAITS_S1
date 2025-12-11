@@ -1,274 +1,341 @@
-# TAITS — Taiwan Alpha Intelligence Trading System  
+# 📘 TAITS — Taiwan Alpha Intelligence Trading System  
 ### 世界級智能量化交易系統（Final Full Version）
 
-TAITS（Taiwan Alpha Intelligence Trading System）是一套 **完整的 AI 驅動多因子量化交易平台**，專為 **台灣證券市場（TWSE）與台指期 / 選擇權（TAIFEX）** 所打造。
+TAITS（Taiwan Alpha Intelligence Trading System）是一套 **完整的、模組化的、AI 驅動的、專為台股設計的智能量化交易系統**，  
+支援：
 
-系統涵蓋：
+- 台股現股 / 零股  
+- 台指期 / 選擇權  
+- 355+ 策略  
+- 12+1 Agents  
+- 纏論（ChanLun）完整解析  
+- 多資料來源（Yahoo / TWSE / FinMind / TAIFEX / News / Sentiment / Macro）  
+- GPT / DeepSeek / Qwen / Gemini 等多 AI 模型  
+- 回測（Backtest）/ 模擬（Paper）/ 實盤交易（Live）
 
-- 28+ 種資料來源（Yahoo / TWSE / FinMind / TAIFEX / News / Macro / Sentiment…）  
-- 355+ 策略（包含完整 V3.1 285 策略 + 纏論 ChanLun 全集）  
-- 多智能體決策系統（12+1 Multi-Agent）  
-- AI Router（支援 GPT / DeepSeek / Qwen / Gemini）  
-- 纏論引擎（分型 / 筆 / 線段 / 中樞 / 背馳）  
-- Backtest / Paper Trading / Live Trading（TWSE 合規）  
-- 全自動文字報告（TXT / JSON / Markdown）  
-- Streamlit 互動式儀表板 UI
-
----
-
-# 📘 1. 系統定位（What is TAITS?）
-
-TAITS 不只是技術指標堆疊，而是一套 **結合 AI + 量化 + 纏論 + 法規合規** 的完整交易系統。
-
-核心目標：
-
-1. **在台股市場提供可解釋的 AI 交易決策**。  
-2. **永不依賴單一資料來源（具備 Fallback + Cache）**。  
-3. **通過多智能體（Multi-Agent）融合訊號並量化信心**。  
-4. **以 Fusion Engine 輸出可落地的 BUY / SELL / HOLD 決策**。  
-5. **遵守台灣市場法規（TWSE & TAIFEX）並提供完整風控。**
+**這是一套真正可落地的量化交易系統。**
 
 ---
 
-# 📂 2. 專案結構（Project Directory）
+## 🚀 功能特色（Features）
 
-```
-TAITS/
-│── README.md                 # 專案總介紹（本檔案）
-│── requirements.txt          # Python 套件需求
-│── LICENSE                   # MIT 授權
-│── CONTRIBUTING.md           # 開發者指南
-│── CHANGELOG.md              # 更新紀錄
-│── .gitignore                # Git 排除設定
-│
-├── config/
-├── data_sources/             # Yahoo/TWSE/FinMind/TAIFEX/Macro/Sentiment
-├── indicators/               # 技術指標 + 籌碼 + 纏論（ChanLun）
-├── strategies/               # 355 策略全集
-├── agents/                   # 12+1 Multi-Agent 系統
-├── models/                   # FastBrain/SlowBrain/AI Router
-├── engine/                   # Fusion / Regime / Risk / Report / Orchestrator
-├── backtest/                 # 回測系統
-├── trading/                  # 實盤交易（TWSE 合規）
-├── monitoring/               # Log / Metrics / Alerts
-└── ui/                       # Streamlit Dashboard
-```
+### 🧠 1. Multi-Agent Decision System（12+1 Agents）
+
+TAITS 的 AI 決策大腦由多個 Agents 組成：
+
+- TechnicalAgent（技術面）  
+- ChipAgent（籌碼：三大法人）  
+- FundamentalAgent（基本面）  
+- DerivativesAgent（期貨 / 選擇權）  
+- NewsAgent（新聞語意分析）  
+- SentimentAgent（市場情緒：PTT / Dcard / Google Trend）  
+- MacroAgent（宏觀：SOX / VIX / 匯率）  
+- EventAgent（財報 / 法說 / 停牌 / 重大事件）  
+- RiskAgent（風控 / 法規 / 曝險控制）  
+- AIModelAgent（FastBrain / SlowBrain 輸出整合）  
+- ChanAgent（纏論結構判斷）  
+- SummaryAgent（產生人類可讀的中文解釋）  
+- MetaAgent（多 Agent 矛盾調節、權重調整）
 
 ---
 
-# 🧠 3. 多智能體決策系統（Multi-Agent System）
+### 📊 2. 355+ 策略（Strategy Universe）
 
-TAITS 由 **12+1 個 Agents** 組成，每個負責不同面向：
+策略涵蓋 12 大類：
 
-- 技術面 Agent  
-- 籌碼 Agent  
-- 基本面 Agent  
-- 新聞 Agent（AI 分析）  
-- Sentiment Agent（PTT/Dcard/Google）  
-- 宏觀 Agent  
-- 衍生品 Agent（期權/期貨）  
-- 事件 Agent（財報/法說/停牌）  
-- 風控 Agent  
-- AI Model Agent（GPT/DeepSeek）  
-- ChanLun Agent（纏論）  
-- Meta Agent（矛盾調節）  
-- Summary Agent（自然語言解釋）
+- 趨勢（MA / EMA / GMMA / ADX…）  
+- 動能（RSI / MACD / ROC…）  
+- 反轉（K 線、背馳）  
+- 波動（ATR / 布林帶）  
+- 成交量（OBV、量縮/量增）  
+- 籌碼（三大法人、集中度）  
+- 基本面（EPS、營收 YoY/MoM、毛利率、ROE）  
+- 新聞 / Sentiment（AI 語意分類）  
+- 宏觀（VIX / SOX / 匯率 / 利率）  
+- 衍生品（期貨多空強度、OI、PCR、IV、MaxPain）  
+- AI 推理策略（由 LLM 輸出）  
+- ⭐ 纏論策略（分型 / 筆 / 線段 / 中樞 / 背馳 / 趨勢段等 ~35 策略）
 
-所有 Agents 結果將被送入 Fusion Engine。
-
----
-
-# 🧩 4. 策略宇宙（Strategy Universe）
-
-TAITS 共包含：
-
-### **📌 355 策略**
-- 285 策略（TAITS V3.1 原始全集）  
-- 102 擴增策略（Trend/Momentum/Chip/Macro/Derivatives…）  
-- 35 纏論策略（分型/筆/線段/中樞/背馳）
-
-策略層的輸出標準格式：
-
-```json
-{
-  "name": "MACD Momentum",
-  "signal": "BUY",
-  "confidence": 0.72,
-  "reason": "MACD 金叉 + 上升動能擴張"
-}
-```
-
-完整內容請參考：
-
-```
-/docs/strategies/TAITS_Strategy_Universe_Complete.md
-```
+詳細列表請見：  
+`docs/strategies/TAITS_Strategy_Universe_Complete.md`
 
 ---
 
-# 🔮 5. AI 系統（AI Router / FastBrain / SlowBrain）
+### 🔍 3. 指標層（Indicators + ChanLun）
 
-TAITS 內建 AI Router，負責：
+系統內建多層指標：
 
-- 根據任務自動選模型  
-- 控制 Token 成本  
-- 整合多模型（GPT、DeepSeek、Qwen、Gemini）
+- 技術指標：MA、EMA、RSI、MACD、ATR、BBands、OBV…  
+- 籌碼指標：外資 / 投信 / 自營商買賣超、集中度等  
+- K 線形態：Hammer、Engulfing、Doji 等  
+- 成交量與波動性指標  
 
-用途包含：
+以及完整 **纏論解析系統（ChanLun Module）**：
 
-- 新聞判斷  
-- 法說會摘要  
-- 宏觀語意分析  
-- 策略理由生成  
-- Report Summary（自然語言報告）
+- 分型偵測（頂分型 / 底分型）  
+- 筆（Bi）生成  
+- 線段（Segment）生成  
+- 中樞（Zhongshu）偵測  
+- 背馳（Divergence）判斷  
+- 趨勢段（Trend Segment）分析  
 
-詳細規格請見：
+這些結構信號提供給：
 
-```
-docs/architecture/TAITS_AI_Design_and_Router.md
-```
+- ChanLun Strategies  
+- ChanAgent  
+- Fusion Engine 進行「結構優先」決策調整。
 
 ---
 
-# ⚙️ 6. Fusion Engine（最終決策大腦）
+### 🎯 4. Fusion Engine（最終決策大腦）
 
-Fusion Engine 接收：
+Fusion Engine 負責整合：
 
-- 所有策略（355）  
-- 所有 Agents（12+1）  
-- 市場 Regime（12 種）  
-- AI Reasoning（SlowBrain 推理）  
-- Override（事件、風控、衍生品、纏論）
+- 所有策略的訊號與信心  
+- 所有 Agents 的多空判斷  
+- 市場 Regime（市場狀態）  
+- AI 推理（AIModelAgent）  
+- Override（Event / Risk / Derivatives / ChanLun 結構）  
 
-並輸出：
+輸出統一格式：
 
 ```json
 {
   "final_bias": "BUY",
-  "confidence": 0.81,
-  "reason": "技術面多頭，籌碼轉強，纏論維持多頭趨勢段"
+  "confidence": 0.82,
+  "reason": "綜合策略、Agents 與市場結構，目前仍為多頭趨勢，但需留意衍生品與宏觀風險。"
 }
+````
+
+---
+
+### 📈 5. Backtest & Paper Trading
+
+* 價格事件驅動回測
+* 手續費 / 交易稅 模型
+* 滑價模型（Slippage）
+* 部分成交、撮合模擬
+* 存活者偏差修正（Survivorship Bias Filter）
+* 多標的 Portfolio 回測
+
+Backtest 結果可產出：
+
+* CAGR / Max Drawdown / Sharpe / Win Rate
+* 持股分佈 / 回撤曲線
+* 每策略貢獻度
+
+---
+
+### 💰 6. Live Trading（TWSE 合規）
+
+Trading Layer 支援：
+
+* 富邦證券 API（Fubon Neo / OpenAPI）
+* 台股價格跳動（Tick Size）
+* 盤中 / 盤後 / 零股 / 整股制度
+* TAIFEX 台指期 / 選擇權 資料
+* 下單管理（order manager）：
+
+  * 新單 / 改單 / 刪單
+  * 重試與補單
+  * 委託狀態追蹤
+* 風控（risk manager）：
+
+  * 單股曝險上限
+  * 單日最大虧損
+  * 整體 Portfolio 熱度控管
+  * 觸發熔斷 / 緊急平倉機制
+
+---
+
+### 🧾 7. 自動報告（TXT / JSON / Markdown）
+
+每次執行 TAITS，可自動產出報告（位於 `/output/`）：
+
+* `*.txt`：人類可讀簡單摘要
+* `*.json`：完整結構化結果（便於整合到其他系統）
+* `*.md`：Markdown 報告（含表格、五根 K 線摘要、JSON 段落）
+
+報告內容包括：
+
+* 最終決策（Bias / Confidence）
+* 市場狀態（Regime）
+* 各策略輸出明細
+* 各 Agent 意見
+* 近期價格摘要（最後 5 根 K 線）
+* 完整 JSON Debug 區塊
+
+---
+
+## 📁 專案結構（Project Structure）
+
+```text
+TAITS/
+│── main.py                    # 系統入口：Backtest / Paper / Live
+│── config.yaml                # 全域設定
+│
+├── config/                    # 設定模組（API Key、AI 模型配置...）
+├── data_sources/              # 資料來源（Yahoo/TWSE/FinMind/TAIFEX/News...）
+├── indicators/                # 技術指標 + 籌碼 + 纏論
+├── strategies/                # 355+ 策略（含纏論策略）
+├── agents/                    # 12+1 多智能體
+├── models/                    # FastBrain / SlowBrain / AI Router
+├── engine/                    # Orchestrator / Managers / Fusion / Regime
+├── backtest/                  # 回測系統
+├── trading/                   # 下單系統（Broker / Risk / Sandbox）
+├── monitoring/                # log / metrics / alerts
+├── ui/                        # Streamlit Dashboard 與視覺化
+└── docs/                      # 所有架構與規格文件
 ```
 
-是 TAITS 的核心大腦。
+詳細架構說明請見：
+`docs/architecture/TAITS_Full_System_Architecture.md`
 
 ---
 
-# 📈 7. 回測（Backtesting）
+## 🔄 系統流程（System Flow）
 
-功能包含：
+```mermaid
+flowchart TD
 
-- 日 / 5 分Ｋ 回測  
-- 手續費 / 滑價 / 交易稅  
-- 部分成交  
-- 多標的 portfolio 回測  
-- 存活者偏差修正  
-- Streamlit 視覺化績效報告  
-
----
-
-# 💹 8. 實盤交易（Live Trading）
-
-- 富邦證券 API（Fubon API）  
-- TWSE tick size 自動計算  
-- 零股制度  
-- 下單風控（部位上限、停損、熔斷）  
-
----
-
-# 📜 9. 自動報告（Report System）
-
-系統可自動輸出：
-
-```
-output/
-    ├── 2330_20251211_final.json
-    ├── 2330_20251211_report.txt
-    └── 2330_20251211_TAITS_Report.md
+    A[Data Sources] --> B[Indicators + ChanLun]
+    B --> C[Strategies (355)]
+    C --> D[Multi-Agent System (12+1)]
+    D --> E[Market Regime Engine]
+    E --> F[Fusion Engine]
+    F --> G[Risk Engine]
+    G --> H{Backtest / Paper / Live}
+    H --> I[Reports / UI / Alerts]
 ```
 
-Markdown 報告包含：
-
-- 市場狀態  
-- 策略信號  
-- Agents 意見  
-- 五根 K 線摘要  
-- JSON 結構  
-
 ---
 
-# 🖥 10. UI（Streamlit Dashboard）
+## ▶️ 如何執行（Quick Start）
 
-包含：
+### 1. 安裝依賴套件
 
-- K 線（含技術指標 + 纏論結構）  
-- Agents 面板  
-- 策略信號面板  
-- 最終交易建議  
-- 回測績效圖表  
-
----
-
-# ▶️ 11. 如何執行（Run TAITS）
-
-安裝套件：
-
-```
+```bash
 pip install -r requirements.txt
 ```
 
-執行：
+### 2. 設定環境
 
-```
+編輯 `config.yaml`，至少確認：
+
+* 預設模式（backtest / paper / live）
+* 預設標的（例如 2330）
+* 資料期間（start / end）
+* 若使用 API：填入富邦 API、OpenAI / DeepSeek API Key 等（不要 commit 到 public repo）
+
+### 3. 執行主程式
+
+```bash
 python main.py
 ```
 
----
+執行完成後，可在 `output/` 看到：
 
-# 📚 12. 文件（Docs）
-
-所有文件在 `/docs/`：
-
-- architecture/  
-- strategies/  
-- diagrams/  
-- spec_original/（歷史規格）  
+* `*_TAITS_S1_Report.txt`
+* `*_TAITS_S1_Report.json`
+* `*_TAITS_S1_Report.md`
 
 ---
 
-# 🤝 13. 開發指南
+## 📡 資料來源（Data Sources）
 
-請見：
+TAITS 使用多重資料來源與 fallback 機制，包含（但不限於）：
 
-```
-CONTRIBUTING.md
-```
+* Yahoo Finance（股價歷史資料）
+* TWSE / TPEX（官方股價 / 三大法人）
+* FinMind（延伸財金資料）
+* TAIFEX（期貨 / 選擇權）
+* 新聞：Cnyes, Yahoo News, MOPS 公開資訊觀測站
+* Sentiment：PTT / Dcard / Google Trend
+* Macro：SOX / Nasdaq / S&P500 / VIX / USD/TWD 等
 
----
-
-# 📄 14. 授權（License）
-
-本專案採用 MIT 授權：
-
-```
-LICENSE
-```
+詳細列表與用途請見：
+`docs/architecture/TAITS_DataSource_and_Reasoning_Map.md`
 
 ---
 
-# 🎉 結語
+## 🤖 AI 模型（AI Models）
 
-TAITS 是一套真正為 **台灣市場量身打造的 AI 量化交易系統**，  
-融合：
+TAITS 支援多種 LLM 與本地模型：
 
-- AI 推理  
-- 多智能體  
-- 量價結構  
-- 纏論  
-- 籌碼  
-- 宏觀  
-- 衍生品  
-- TWSE 法規合規  
+| 類型        | 範例模型                    | 用途                 |
+| --------- | ----------------------- | ------------------ |
+| FastBrain | DeepSeek, Qwen 系列       | 新聞分類、情緒分析、大量短文本處理  |
+| SlowBrain | GPT-4.1 / GPT-5, Gemini | 財報解讀、法說會摘要、宏觀風險評估  |
+| Local     | Llama / Qwen 本地模型       | 隱私任務、內部 log 分析（可選） |
 
-未來將持續擴展更多模型、更多策略、更多智能。
+AI 相關設定集中於：
+`config/ai_models.yaml`
+詳細設計請見：
+`docs/architecture/TAITS_AI_Design_and_Router.md`
 
+---
+
+## 📚 文件（Documentation）
+
+主要文件入口：
+
+* 系統總體架構：
+  `docs/architecture/TAITS_Full_System_Architecture.md`
+
+* 資料來源與推理地圖：
+  `docs/architecture/TAITS_DataSource_and_Reasoning_Map.md`
+
+* Multi-Agent 深度規格：
+  `docs/architecture/TAITS_Agent_System_DeepSpec.md`
+
+* Fusion & Regime 設計：
+  `docs/architecture/TAITS_Fusion_Engine_and_Regime_Spec.md`
+
+* AI 設計 & Router：
+  `docs/architecture/TAITS_AI_Design_and_Router.md`
+
+* 策略全集（355+）：
+  `docs/strategies/TAITS_Strategy_Universe_Complete.md`
+
+---
+
+## 🤝 貢獻（Contributing）
+
+若要參與 TAITS 的開發，請先閱讀：
+
+* `CONTRIBUTING.md`
+* `CHANGELOG.md`
+
+規範包含：
+
+* 程式風格（Python + 中文註解）
+* 檔案與模組放置位置
+* 策略 / Agent / Indicator 的插件化標準
+* 單元測試需求
+
+---
+
+## 📄 授權（License）
+
+本專案採用 MIT License。
+詳見：`LICENSE`
+
+---
+
+## 🎉 結語
+
+TAITS 是一套為 **台灣市場** 量身打造的智能交易系統，
+結合：
+
+* 嚴謹架構設計
+* 多資料來源
+* 多策略、多智能體
+* 纏論結構分析
+* AI 語意推理
+
+目標不是短線賭博，而是建立一套 **長期可維護、可擴展、可解釋** 的專業級交易基礎建設。
+
+若你正在尋找一套可以從「個人專案」成長到「專業資產管理系統」的架構，
+TAITS 正是為此而設計。
+
+```
