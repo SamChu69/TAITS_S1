@@ -1,0 +1,136 @@
+# ============================================================
+# TAITS - Taiwan Alpha Intelligent Trading System
+# 全域設定檔（世界級正式版）
+# ============================================================
+
+# ------------------------------------------------------------
+# 1. 基本運行參數
+# ------------------------------------------------------------
+ticker: "2330"                # 預設標的
+start_date: "2024-01-01"      # 回測 / 分析起始日
+end_date: "2024-12-31"        # 回測 / 分析結束日
+
+# ------------------------------------------------------------
+# 2. 資料來源設定（多層 fallback）
+# ------------------------------------------------------------
+data_sources:
+  priority: ["yahoo", "twse", "finmind", "cache"]   # 依序嘗試
+  cache_expire_days: 3
+
+  yahoo:
+    enable: true
+    interval: "1d"
+    auto_adjust: true
+
+  twse:
+    enable: true
+
+  finmind:
+    enable: true
+    token: ""        # 若你未設定，保持空字串即可
+
+  cache:
+    enable: true
+    path: "./cache"
+
+# ------------------------------------------------------------
+# 3. 技術指標（Indicators）設定
+# ------------------------------------------------------------
+indicators:
+  MA:
+    enable: true
+    windows: [5, 10, 20, 60, 120]
+
+  RSI:
+    enable: true
+    period: 14
+
+  MACD:
+    enable: true
+    fast: 12
+    slow: 26
+    signal: 9
+
+  GMMA:
+    enable: true
+    short: [3, 5, 8, 10, 12, 15]
+    long: [30, 35, 40, 45, 50, 60]
+
+# ------------------------------------------------------------
+# 4. 策略層（Strategies）
+# ------------------------------------------------------------
+strategies:
+  GMMA_Trend:
+    enable: true
+  MA_Trend:
+    enable: true
+  MACD_Momentum:
+    enable: true
+  RSI_Reversal:
+    enable: true
+  ChanLun:
+    enable: true
+
+# ------------------------------------------------------------
+# 5. Agents（智能代理）
+# ------------------------------------------------------------
+agents:
+  TechnicalAgent:
+    enable: true
+
+  FundamentalAgent:
+    enable: true
+    llm_provider: "gpt"
+    temperature: 0.2
+    max_tokens: 1500
+
+  SentimentAgent:
+    enable: true
+    llm_provider: "deepseek"
+
+  NewsAgent:
+    enable: true
+    llm_provider: "deepseek"
+
+  MacroAgent:
+    enable: true
+    llm_provider: "gpt"
+
+  EventAgent:
+    enable: true
+    llm_provider: "gpt"
+
+  DerivativesAgent:
+    enable: true
+
+  RiskAgent:
+    enable: true
+
+  AIModeAgent:
+    enable: true
+    llm_provider: "gpt"
+
+# ------------------------------------------------------------
+# 6. Regime（市場狀態分類）
+# ------------------------------------------------------------
+regime:
+  use_regime_filter: true
+  thresholds:
+    bull: 0.03     # 趨勢 > 3%
+    bear: -0.03    # 趨勢 < -3%
+
+# ------------------------------------------------------------
+# 7. 報告輸出設定
+# ------------------------------------------------------------
+report:
+  save_txt: true
+  save_json: true
+  save_markdown: true
+  output_dir: "./output"
+
+# ------------------------------------------------------------
+# 8. 日誌輸出
+# ------------------------------------------------------------
+logging:
+  level: "INFO"
+  save_log: false
