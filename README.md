@@ -154,3 +154,64 @@ TAITS 適合：
 > 而是為了「在市場裡活得久」。**
 
 ---
+
+## 📊 Project Status
+
+![Status](https://img.shields.io/badge/status-active_development-blue)
+![Docs](https://img.shields.io/badge/docs-100%25_complete-brightgreen)
+![Architecture](https://img.shields.io/badge/architecture-master_ready-green)
+![Risk](https://img.shields.io/badge/risk-hard_gate-red)
+![Market](https://img.shields.io/badge/market-TWSE%20%7C%20TAIFEX-orange)
+![AI](https://img.shields.io/badge/AI-assisted_not_autonomous-yellow)
+
+---
+
+## 🗺 Roadmap
+
+### ✅ Phase 0 — Governance & Architecture（已完成）
+- [x] 文件治理層（docs）完整建立
+- [x] Master Architecture / Flow / Risk / UI
+- [x] Data & Strategy Single Source of Truth
+- [x] README 專案門面完成
+
+---
+
+### 🚧 Phase 1 — Core System Skeleton（S1，進行中）
+- [ ] main.py（系統啟動入口）
+- [ ] Orchestrator（流程調度核心）
+- [ ] Mode 切換（Research / Backtest / Paper）
+- [ ] 基礎 Logger / Audit Trail
+- [ ] Dummy Pipeline（不下單，只走流程）
+
+---
+
+### ⏳ Phase 2 — Strategy & Agent Wiring
+- [ ] 策略註冊機制（355+ 掛接）
+- [ ] Agent Manager
+- [ ] Regime Engine v1
+- [ ] Fusion Engine v1
+
+---
+
+### ⏳ Phase 3 — Risk / Backtest / Paper Trading
+- [ ] Risk Engine（Hard Gate）
+- [ ] 事件驅動回測
+- [ ] Paper Trading 撮合
+- [ ] 績效 / 回撤報告
+
+---
+
+### 🔒 Phase 4 — Live Execution（嚴格受限）
+- [ ] 券商 API（富邦）
+- [ ] Live 模式雙重確認
+- [ ] 即時熔斷
+- [ ] 審計回放
+
+---
+
+> **Roadmap 原則**  
+> - 文件先於程式  
+> - Risk 先於 Execution  
+> - 可跑 ≠ 可下單  
+
+---
