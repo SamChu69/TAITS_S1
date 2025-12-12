@@ -406,4 +406,4 @@ TAITS 正是為此而設計。
 
 > 「README 貼好了」
 
-我就帶你進入下一個檔案：`requirements.txt`。0
+我就帶你進入下一個檔案：`requirements.txt`。0
