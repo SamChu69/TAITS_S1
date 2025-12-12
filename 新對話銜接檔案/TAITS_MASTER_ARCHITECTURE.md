@@ -1,4 +1,4 @@
-# TAITS_MASTER_ARCHITECTURE.md
+# TAITS_MASTER_ARCHITECTURE
 # TAITS — Taiwan Alpha Intelligence Trading System（台灣阿爾法智能交易系統）
 版本：Master Architecture（Full, Unified, Non-Phase-Limited）
 用途：GitHub 主體規格（所有後續 S1/S2/S3 只能裁剪，不得違背）
