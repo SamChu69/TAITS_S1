@@ -139,3 +139,152 @@ DataBundle 是 Orchestrator/Research/Agents 的標準輸入，不直接暴露各
   },
   "notes": []
 }
+````
+
+### 4.2 DataBundle 必填欄位
+
+* `bundle_version`
+* `bundle_id`
+* `mode`（S2 只能 `RESEARCH`）
+* `asof_ts`
+* `universe[]`
+* `datasets{...}`（至少包含一個 dataset，例如 bars）
+* `validation.status`
+* `audit.records[]`
+
+---
+
+## 5. ValidationReport 規格（品質治理）
+
+### 5.1 狀態枚舉
+
+* `OK`：可用
+* `WARN`：可用但需警示（下游可選擇降權/跳過）
+* `BLOCK`：不可用（必須中止該 dataset 或該 symbol 的使用）
+
+> 原則：Risk/Compliance 擁有最高否決權。
+> 若 validator 或 compliance 決定 `BLOCK`，則 DataBundle 必須標記並向上回報。
+
+### 5.2 Report Schema
+
+| 欄位      | 型別     | 必填 | 說明                       |
+| ------- | ------ | -: | ------------------------ |
+| dataset | string |  是 | 如 `bars`                 |
+| symbol  | string |  是 | 如 `TW:2330`              |
+| status  | string |  是 | OK/WARN/BLOCK            |
+| issues  | list   |  是 | 規則命中清單                   |
+| summary | object |  是 | 統計摘要（rows、missing_rate…） |
+
+### 5.3 Issue Schema
+
+| 欄位       | 型別     | 必填 | 說明                    |
+| -------- | ------ | -: | --------------------- |
+| rule_id  | string |  是 | 例如 `BAR_MISSING_RATE` |
+| severity | string |  是 | INFO/WARN/ERROR       |
+| message  | string |  是 | 人類可讀訊息                |
+| evidence | object |  否 | 例如異常點位、門檻值、樣本         |
+
+---
+
+## 6. AuditRecord 規格（稽核追溯）
+
+AuditRecord 用於回答三個問題：
+
+1. 資料從哪裡來？
+2. 何時抓的？用什麼參數？
+3. 是否落盤？是否通過品質檢核？
+
+### 6.1 Record Schema（最小）
+
+| 欄位               | 型別              | 必填 |
+| ---------------- | --------------- | -: |
+| source           | string          |  是 |
+| request_ts       | string(ISO8601) |  是 |
+| response_ts      | string(ISO8601) |  是 |
+| params           | object          |  是 |
+| status_code      | int             |  是 |
+| rows             | int             |  是 |
+| content_hash     | string          |  是 |
+| cache_path       | string          |  否 |
+| validator_status | string          |  是 |
+
+---
+
+## 7. Dataset 類型（S2 僅要求 bars，其他可擴充）
+
+S2 最小必備：`bars`（OHLCV）。
+
+後續可擴展（S3+）但不得破壞既有 schema：
+
+* `fundamentals`（財務）
+* `corporate_actions`（除權息/分割）
+* `mops_events`（重大訊息）
+* `news_sentiment`（新聞情緒）
+* `macro`（宏觀）
+
+擴展規則：
+
+* 新 dataset 必須定義 `schema_version`
+* 不得直接修改既有欄位語意（只能新增）
+* 重大變更需提升 major version（見 8）
+
+---
+
+## 8. 版本治理（Schema Versioning）
+
+使用語意化版本（SemVer）：`MAJOR.MINOR.PATCH`
+
+* **PATCH**：修正文件文字、非破壞性修補
+* **MINOR**：新增欄位（向後相容）
+* **MAJOR**：破壞性更改（不相容），必須提供 Migration 說明
+
+最低要求：
+
+* 所有 NormalizedFrame 必須帶 `schema_version`
+* DataBundle 必須帶 `bundle_version`
+
+---
+
+## 9. 落盤與重現性（Reproducibility）
+
+S2 的核心價值是「可重現」：
+
+* 同一組 `(source, symbol, freq, start, end)` 若來源不變，應盡可能命中 cache
+* 每次抓取必須產生 `content_hash`（推薦 sha256）
+* 任何下游分析若要可重現，必須能回溯：
+
+  * 使用哪個 `cache_path`
+  * 對應的 `content_hash`
+  * 對應的 `validator_status`
+
+---
+
+## 10. S2 最小演示標準（Acceptance Test）
+
+當執行：
+
+* `python main.py research`
+
+必須在 log / report 呈現：
+
+* 至少 1 個 symbol（建議 `TW:2330`）
+* 至少 1 個 dataset（`bars`）
+* `validation.status` = OK/WARN（BLOCK 則需清楚原因）
+* `audit.records` 至少 1 條，且包含 cache_path 或明確指出未落盤原因
+
+---
+
+## 11. 安全與合規提示（S2 仍必須遵守）
+
+* S2 僅研究資料，不得觸發任何下單路徑。
+* 若出現任何「可能接近交易執行」的功能需求，必須先由 Risk/Compliance 審核並具備硬閘門（hard gate）。
+* 任何資料來源的使用需遵循來源之條款與限制；TAITS 優先官方，聚合/第三方僅作 fallback。
+
+---
+
+## 12. 變更紀錄
+
+* 1.0.0：建立 TAITS S2 DataBundle 與 OHLCV Schema 最小規格，含 Validation/Audit/Versioning/Conventions。
+
+```
+
