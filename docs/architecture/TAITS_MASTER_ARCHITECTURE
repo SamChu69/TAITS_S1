@@ -1,0 +1,220 @@
+# TAITS_MASTER_ARCHITECTURE.md
+# TAITS — Taiwan Alpha Intelligence Trading System
+版本：Master Architecture（Full / Unified / Non-Phase-Limited）
+文件地位：**最高母體架構（Constitution）**
+
+---
+
+## 0. 母體定義（非常重要）
+
+TAITS Master Architecture 是一套 **完整交易決策作業系統的母體**，包含但不限於：
+
+- 台股現貨（TWSE / TPEX / MOPS / 集保）
+- 台灣期貨與選擇權（TAIFEX：台指期、選擇權、OI、P/C、IV、SKEW）
+- 多資料源 + Fallback（可靠性）
+- 指標 / 因子（技術、籌碼、基本面、宏觀、衍生品、纏論）
+- **355+ 策略宇宙**
+- 多智能體（Agents）
+- Market Regime Engine
+- Fusion Engine
+- Portfolio / Risk / Capital
+- Backtest / Paper / Live（券商）
+- UI / Reporting / Audit
+
+⚠️ **S1 / S2 / S3 僅是交付順序，不是系統邊界**
+
+---
+
+## 1. 全域分層架構（Master Layers）
+
+TAITS 採用「分層 + Orchestrator 統一調度」：
+
+```text
+Layer 0 ─ Infrastructure / Runtime
+Layer 1 ─ Data Layer
+Layer 2 ─ Feature / Indicator / Factor Layer
+Layer 3 ─ Strategy Layer（355+）
+Layer 4 ─ Agents Layer（多智能體）
+Layer 5 ─ Regime + Fusion + Decision
+Layer 6 ─ Portfolio + Risk
+Layer 7 ─ Execution（Backtest / Paper / Live）
+Layer 8 ─ UI + Reporting + Monitoring + Audit
+
+              ↑
+     Orchestrator / Scheduler
+````
+
+---
+
+## 2. 核心設計原則（不可違反）
+
+1. **策略 ≠ 下單**
+2. **Agent ≠ 策略**
+3. **AI ≠ 唯一真理**
+4. **Regime 高於單一訊號**
+5. **Risk / Compliance 可否決一切**
+6. 官方資料優先，多層 fallback
+7. 架構必須可長期演進、可擴充
+
+---
+
+## 3. Layer 0 — Infrastructure（基礎設施）
+
+目標：讓系統 **長期運行、不崩潰、可審計**。
+
+* Python 3.10+
+* GitHub（版本權威）
+* Docker（環境一致）
+* Redis（盤中狀態 / 快取）
+* TimescaleDB / Parquet（歷史資料）
+* EventBus（事件驅動）
+* Logger + Audit Trail
+
+---
+
+## 4. Layer 1 — Data Layer（全資料宇宙）
+
+原則：**合法 / 官方 / 可追溯 / 可替代**
+
+資料流：
+
+```text
+外部資料源
+ → 清洗 / 對齊 / 缺值處理
+ → 歷史 DB + 盤中 Cache
+ → Indicators / Strategies / Agents / Regime / Risk / UI
+```
+
+資料來源定義 **不得超出**：
+
+* `TAITS_DataSources_Universe.md`
+
+---
+
+## 5. Layer 2 — Feature / Indicator / Factor
+
+分類（不縮水）：
+
+* Trend / Momentum / Volatility / Volume
+* Candle / Pattern
+* Chip（法人、融資券、集保）
+* Fundamental
+* Derivatives（期貨 / 選擇權）
+* Macro
+* **ChanLun（纏論：分型 / 筆 / 中樞 / 背馳）**
+* AI（Fast / Slow Brain 輸出轉換）
+
+纏論定位：
+
+> **結構因子，不是單一策略**
+
+---
+
+## 6. Layer 3 — Strategy Layer（355+）
+
+策略規範：
+
+* Plugin 化
+* 只輸出：Signal / Confidence / Reason
+* 不得直接下單
+* 必須可回測、可審計
+
+唯一權威清冊：
+
+* `TAITS_Strategy_Universe_Complete.md`
+
+---
+
+## 7. Layer 4 — Agents Layer（多智能體）
+
+Agents 定位：**觀點提供者**
+
+包含但不限於：
+
+* Technical / Chip / Fundamental
+* News / Sentiment / Macro
+* Derivatives / Event
+* AIModel
+* Risk
+* Summary
+
+Agent 輸出必須可解釋、可追溯。
+
+---
+
+## 8. Layer 5 — Market Regime & Fusion
+
+### 8.1 Market Regime
+
+* TREND / RANGE / VOLATILE / PANIC
+* DERIVATIVES_DOMINATED
+* CHIP_DOMINATED
+
+Regime 影響：
+
+* 策略權重
+* 倉位上限
+* 是否允許交易
+
+### 8.2 Fusion Engine
+
+輸入：
+
+* 策略
+* Agents
+* Regime
+
+輸出（範式）：
+
+```json
+{
+  "final_bias": "BULL | BEAR | NEUTRAL",
+  "confidence": 0.0,
+  "reason": "可解釋文字"
+}
+```
+
+---
+
+## 9. Layer 6 — Portfolio + Risk（硬閘門）
+
+* 單檔 / 總體曝險限制
+* 流動性門檻
+* 停損 / 停利
+* 事件風險
+* 系統級熔斷
+
+⚠️ **Risk 具備最終否決權**
+
+---
+
+## 10. Layer 7 — Execution
+
+模式：
+
+* Backtest（事件驅動）
+* Paper（模擬撮合）
+* Live（券商 API）
+
+Execution 只接受：
+
+> Fusion + Risk **皆通過** 的指令
+
+---
+
+## 11. Layer 8 — UI / Reporting / Audit
+
+* JSON（系統）
+* TXT（快速）
+* Markdown（正式）
+* Audit Trail（可重建每次決策）
+
+---
+
+## 12. 一句話總結
+
+> **TAITS 是一套
+> 可以被交接、被審計、被長期演進的
+> 交易決策作業系統。**
+
+---
