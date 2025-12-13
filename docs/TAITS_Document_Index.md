@@ -1,153 +1,158 @@
 # 📘 TAITS_Document_Index.md
-## TAITS 官方文件索引（Single Source of Truth）
+## TAITS 官方文件導覽索引（MASTER INDEX）
 
 ---
 
-## 0. 必讀說明（First Read）
+## 0. 本文件的地位（必讀）
 
-本索引為 **TAITS 唯一官方文件入口**。  
-任何新 AI / 新研究員 / 新對話，**必須先從本文件開始**。
+本文件是 **TAITS（Taiwan Alpha Intelligence Trading System）唯一官方文件索引入口**。
 
-### 文件分級標籤說明
-- **[ARCH]** Architecture：架構骨幹（不可動）
-- **[SPEC]** Specification：權威定義（不可隨意改寫）
-- **[GOV]** Governance：治理規範（少動，需審核）
-- **[OPS]** Operations：日常操作流程（可調整）
-- **[REF]** Reference：資料清單 / 索引 / 宇宙
+📌 規則說明：
+
+- 任何人（或 AI）**閱讀 TAITS 專案，必須從本文件開始**
+- 任何新文件，**必須被掛載到本索引**
+- 若文件未列於此索引，**視為非正式、不具權威性**
 
 ---
 
-## 1. 憲章與最高原則（L0）
+## 1. TAITS 核心總覽文件（最高層級）
 
-- **[ARCH] TAITS_MASTER_ARCHITECTURE.md**  
-  → TAITS 憲章、最高設計原則（Regime > Risk > Strategy）
+### 🔴 必讀（不讀不准動系統）
 
-- **[SPEC] TAITS_Risk_and_Compliance.md**  
-  → 最高否決權、風險與合規（任何模組不可越權）
-
----
-
-## 2. 架構骨幹（L1 Architecture）
-
-- **[ARCH] TAITS_Full_System_Architecture.md**  
-  → 全系統模組總覽（宏觀結構）
-
-- **[ARCH] TAITS_Architecture_and_Flow.md**  
-  → 資料流 / 事件流 / 決策流
-
-- **[ARCH] TAITS_Architecture_Layer_Map.md**  
-  → ⭐ 一頁看懂 TAITS 層級、責任邊界、可改/不可改
+| 文件 | 說明 |
+|---|---|
+| `TAITS_System_Master_Overview.md` | TAITS 憲法級總覽文件，定義系統是什麼、不是什么 |
+| `TAITS_MASTER_ARCHITECTURE.md` | TAITS 主架構定義（模組、責任、邊界） |
+| `TAITS完整總架構 × 總流程 × 全資訊體系（MASTER VERSION）.md` | 全流程與資訊流最高權威文件 |
 
 ---
 
-## 3. 環境基線（Execution Environment）
+## 2. S0｜Reality & Constraints（現實層）
 
-- **[SPEC] environment/TAITS_Local_Execution_Environment.md**  
-  → ⭐ 本機硬體與可執行邊界（所有設計與回測規模的最高約束）
+> 定義市場、資金、人性、法規的不可違反限制
 
----
-
-## 4. 資料與校驗（L2 Data & Validation）
-
-- **[REF] TAITS_DataSources_Universe.md**  
-  → 資料來源全集與優先序
-
-- **[SPEC] Data Validator Specifications（未來擴充）**  
-  → 欄位一致性、延遲、缺漏、fallback 規範
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Local_Execution_Environment.md` | 使用者本地硬體與執行限制（筆電、資源、效能） |
+| `TAITS_Risk_and_Compliance.md` | 風險與合規最高否決權文件 |
 
 ---
 
-## 5. 證據與市場解讀（L3 Evidence）
+## 3. S1｜Governance & Principles（治理層）
 
-- **[SPEC] TAITS_Wyckoff_Market_Structure_Framework.md**  
-  → 威科夫作為市場結構證據（非交易策略）
+> 系統憲法層，所有設計不可違反
 
-- **[OPS] TAITS_Wyckoff_Explore_Exploit_Rule_Matrix.md**  
-  → 威科夫行為 × Explore / Exploit 對照表
-
----
-
-## 6. 市場狀態與風險門控（L4 Regime & Risk）
-
-- **[SPEC] TAITS_Time_Advantage_Framework.md**  
-  → 時間優勢：早理解、晚下注
-
-- **[SPEC] TAITS_Market_Manipulation_Risk_Framework.md**  
-  → 主力操盤風險（MR-0 ～ MR-3）權威定義
-
-- **[OPS] TAITS_Market_Manipulation_Risk_Checklist.md**  
-  → 可觀察操盤風險檢查清單（人 / AI 共用）
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Architecture_and_Flow.md` | TAITS 架構與流程定義 |
+| `TAITS_System_Design_Principles.md` | 不可違反的設計原則 |
+| `TAITS_Modules_Overview.md` | 系統模組責任與邊界 |
+| `TAITS_GitHub_Save_Rules.md` | GitHub 儲存與版本治理規則 |
+| `TAITS_Beginner_Teaching_Rules.md` | 新手教學與操作限制規範 |
 
 ---
 
-## 7. 策略治理與決策線（L5 Governance）
+## 4. S2｜Data & Agent Layer（資料與代理）
 
-- **[GOV] TAITS_Strategy_Universe_Mapping_to_Dual_Track.md**  
-  → 285+ 策略在雙軌中的角色定位
+> 資料來源與 Agent 解讀層（不直接決策）
 
-- **[GOV] TAITS_Dual_Track_Strategy_Governance.md**  
-  → 策略啟用 / 禁用 / 群組治理
-
-- **[ARCH/GOV] TAITS_Multi-Lane_Decision_Architecture.md**  
-  → 多決策風格線（非固定比例）
-
----
-
-## 8. 決策核心（L6 Decision Core）
-
-- **[SPEC] TAITS_Dual_Track_Decision_Architecture.md**  
-  → Explore → Exploit → 單一決策輸出
-
-- **[SPEC] architecture/TAITS_Decision_Core_Inputs_Index.md**  
-  → ⭐ Decision Core 唯一允許輸入清單（防決策漂移、禁預測越權）
-
-- **[OPS] TAITS_Single_Page_Playbook.md**  
-  → ⭐ 實戰唯一入口頁（Trade / Wait / No Trade）
+| 文件 | 說明 |
+|---|---|
+| `TAITS_DataSources_Universe.md` | 資料來源總表與優先順序 |
+| `TAITS_DataSources_FullSpec.md` | 完整資料來源技術規格 |
+| `TAITS_Strategy_Universe_Complete.md` | 全策略宇宙定義（不等於啟用） |
 
 ---
 
-## 9. 操作流程（L8 Operations）
+## 5. S3｜Decision Layer（決策層）
 
-- **[OPS] TAITS_Daily_Weekly_Risk_Check_Procedure.md**  
-  → 每日 / 每週固定節奏檢查流程
+> TAITS 的「大腦」
 
----
+### 📂 目錄
+```
 
-## 10. 全局風險治理索引（Cross-Layer）
+docs/decision/
 
-- **[GOV] TAITS_Risk_Blind_Spot_Coverage_Map.md**  
-  → 風險盲點 × 模組覆蓋地圖（為什麼需要這麼多策略）
+```
 
-- **[GOV] TAITS_Architecture_Slimming_Audit.md**  
-  → 架構瘦身檢查（避免重複、避免誤刪安全機制）
-
----
-
-## 11. 建議閱讀順序（新 AI / 新接手者）
-
-1) TAITS_MASTER_ARCHITECTURE.md  
-2) TAITS_Architecture_Layer_Map.md  
-3) environment/TAITS_Local_Execution_Environment.md  
-4) TAITS_Dual_Track_Decision_Architecture.md  
-5) architecture/TAITS_Decision_Core_Inputs_Index.md  
-6) TAITS_Single_Page_Playbook.md  
-7) TAITS_Market_Manipulation_Risk_Framework.md  
-8) TAITS_Risk_Blind_Spot_Coverage_Map.md  
-9) 依角色深入其他文件
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Decision_Core_Definition.md` | 決策核心定義 |
+| `TAITS_Evidence_Model_and_Weighting.md` | Evidence 分級與權重 |
+| `TAITS_Decision_Lanes_and_Time_Horizon.md` | A/B/C 決策通道與時間尺度 |
+| `TAITS_NoTrade_and_Wait_Policy.md` | NO_TRADE / WAIT 制度 |
+| `TAITS_Human_and_AI_Interaction_Rules.md` | 人類與 AI 互動邊界 |
 
 ---
 
-## 12. 索引維護原則（必遵守）
+## 6. S4｜Execution & Risk Layer（執行與風控）
 
-- 任何新增文件，**必須先標示層級標籤**
-- 若概念已存在權威定義文件，**只允許引用，不允許重寫**
-- 操作文件（OPS）不得改寫 SPEC 定義
-- 本索引更新後，視為「官方閱讀地圖」
+> 把「能不能做」安全地變成「有沒有做」
+
+### 📂 目錄
+```
+
+docs/execution/
+
+```
+
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Execution_and_Risk_Framework.md` | 執行與風控總框架 |
+| `TAITS_Position_Sizing_and_Risk_Unit.md` | 倉位與風險單位（R） |
+| `TAITS_Exit_and_Risk_Event_Rules.md` | 出場、停損、風險事件 |
+| `TAITS_Execution_Modes_and_Promotion_Gates.md` | 模擬 / 實盤升級關卡 |
 
 ---
 
-## 13. TAITS 文件治理一句話憲章
+## 7. S5｜Evaluation & Evolution（評估與演進）
 
-> **文件不是越多越好，  
-> 而是每一份都各就其位、彼此引用、否決權清楚。  
-> 能讓系統不被玩壞，比任何績效都重要。**
+> TAITS 的免疫系統
+
+### 📂 目錄
+```
+
+docs/evaluation/
+
+```
+
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Evaluation_and_Review_Framework.md` | 檢討與歸因框架 |
+| `TAITS_Strategy_Lifecycle_and_Retirement.md` | 策略生命週期與淘汰 |
+| `TAITS_System_Master_Overview.md` | 系統封版與總覽（亦列於核心） |
+
+---
+
+## 8. 文件閱讀建議順序（給新 AI / 新對話）
+
+1. `TAITS_System_Master_Overview.md`
+2. `TAITS_Document_Index.md`
+3. S1 → S3 → S4 → S5
+4. 最後才看策略與資料細節
+
+📌 **不照順序讀，容易誤用系統。**
+
+---
+
+## 9. 新文件納管規則（強制）
+
+任何新文件：
+
+- 必須標註所屬 Phase（S0–S5）
+- 必須更新本 Index
+- 不得推翻既有高階文件
+- 不得隱性修改治理或風控邏輯
+
+---
+
+## 10. 最終聲明（不可刪）
+
+> **TAITS 的強大，  
+> 不來自文件很多，  
+> 而來自每一份文件都知道自己該站在哪一層。**
+
+---
+
+**TAITS_Document_Index.md — OFFICIAL & ACTIVE**
+```
