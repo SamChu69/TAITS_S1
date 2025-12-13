@@ -145,8 +145,28 @@ docs/evaluation/
 - 不得隱性修改治理或風控邏輯
 
 ---
+---
 
-## 10. 最終聲明（不可刪）
+## 10. 結構與行為治理模組（Structure & Behavior Governance）
+
+> 非策略、非買賣點，具 Tier-1 否決權
+
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Structure_and_ChanLun_Module.md` | 鮑迪克纏論結構模組（唯一合法版本） |
+| `TAITS_Tier-1_Structure_Veto_Rules.md` | 結構性否決清單（最高風險層） |
+
+---
+
+## 11. 行為理論交叉對照（非交易用途）
+
+| 文件 | 說明 |
+|---|---|
+| `TAITS_Structure_Theory_Crossmap.md` | 纏論 × 威科夫 × 主力操盤對照表 |
+
+---
+
+## 12. 最終聲明（不可刪）
 
 > **TAITS 的強大，  
 > 不來自文件很多，  
