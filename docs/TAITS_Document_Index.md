@@ -40,7 +40,14 @@
 
 ---
 
-## 3. 資料與校驗（L2 Data & Validation）
+## 3. 環境基線（Execution Environment）
+
+- **[SPEC] environment/TAITS_Local_Execution_Environment.md**  
+  → ⭐ 本機硬體與可執行邊界（所有設計與回測規模的最高約束）
+
+---
+
+## 4. 資料與校驗（L2 Data & Validation）
 
 - **[REF] TAITS_DataSources_Universe.md**  
   → 資料來源全集與優先序
@@ -50,7 +57,7 @@
 
 ---
 
-## 4. 證據與市場解讀（L3 Evidence）
+## 5. 證據與市場解讀（L3 Evidence）
 
 - **[SPEC] TAITS_Wyckoff_Market_Structure_Framework.md**  
   → 威科夫作為市場結構證據（非交易策略）
@@ -60,7 +67,7 @@
 
 ---
 
-## 5. 市場狀態與風險門控（L4 Regime & Risk）
+## 6. 市場狀態與風險門控（L4 Regime & Risk）
 
 - **[SPEC] TAITS_Time_Advantage_Framework.md**  
   → 時間優勢：早理解、晚下注
@@ -73,7 +80,7 @@
 
 ---
 
-## 6. 策略治理與決策線（L5 Governance）
+## 7. 策略治理與決策線（L5 Governance）
 
 - **[GOV] TAITS_Strategy_Universe_Mapping_to_Dual_Track.md**  
   → 285+ 策略在雙軌中的角色定位
@@ -86,24 +93,27 @@
 
 ---
 
-## 7. 決策核心（L6 Decision Core）
+## 8. 決策核心（L6 Decision Core）
 
 - **[SPEC] TAITS_Dual_Track_Decision_Architecture.md**  
   → Explore → Exploit → 單一決策輸出
+
+- **[SPEC] architecture/TAITS_Decision_Core_Inputs_Index.md**  
+  → ⭐ Decision Core 唯一允許輸入清單（防決策漂移、禁預測越權）
 
 - **[OPS] TAITS_Single_Page_Playbook.md**  
   → ⭐ 實戰唯一入口頁（Trade / Wait / No Trade）
 
 ---
 
-## 8. 操作流程（L8 Operations）
+## 9. 操作流程（L8 Operations）
 
 - **[OPS] TAITS_Daily_Weekly_Risk_Check_Procedure.md**  
   → 每日 / 每週固定節奏檢查流程
 
 ---
 
-## 9. 全局風險治理索引（Cross-Layer）
+## 10. 全局風險治理索引（Cross-Layer）
 
 - **[GOV] TAITS_Risk_Blind_Spot_Coverage_Map.md**  
   → 風險盲點 × 模組覆蓋地圖（為什麼需要這麼多策略）
@@ -113,28 +123,30 @@
 
 ---
 
-## 10. 建議閱讀順序（新 AI / 新接手者）
+## 11. 建議閱讀順序（新 AI / 新接手者）
 
 1) TAITS_MASTER_ARCHITECTURE.md  
 2) TAITS_Architecture_Layer_Map.md  
-3) TAITS_Dual_Track_Decision_Architecture.md  
-4) TAITS_Single_Page_Playbook.md  
-5) TAITS_Market_Manipulation_Risk_Framework.md  
-6) TAITS_Risk_Blind_Spot_Coverage_Map.md  
-7) 依角色深入其他文件
+3) environment/TAITS_Local_Execution_Environment.md  
+4) TAITS_Dual_Track_Decision_Architecture.md  
+5) architecture/TAITS_Decision_Core_Inputs_Index.md  
+6) TAITS_Single_Page_Playbook.md  
+7) TAITS_Market_Manipulation_Risk_Framework.md  
+8) TAITS_Risk_Blind_Spot_Coverage_Map.md  
+9) 依角色深入其他文件
 
 ---
 
-## 11. 索引維護原則（必遵守）
+## 12. 索引維護原則（必遵守）
 
 - 任何新增文件，**必須先標示層級標籤**
 - 若概念已存在權威定義文件，**只允許引用，不允許重寫**
 - 操作文件（OPS）不得改寫 SPEC 定義
-- 本索引更新後，應視為「官方閱讀地圖」
+- 本索引更新後，視為「官方閱讀地圖」
 
 ---
 
-## 12. TAITS 文件治理一句話憲章
+## 13. TAITS 文件治理一句話憲章
 
 > **文件不是越多越好，  
 > 而是每一份都各就其位、彼此引用、否決權清楚。  
