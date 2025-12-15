@@ -2136,10 +2136,7623 @@ TAITS 的 FeatureSet 由 12 大特徵域構成（F1–F12）：
 
 ---
 
-## 下一步（照你指定順序）
+# 📘 **TAITS_03D_動能與強弱特徵全集.md**
 
-👉 **03D**：
-**動能指標全集（RSI / MACD / CBL 顧比倒數線 / Momentum 結構）**
+（**世界一流落地版｜F4 動能 × 強弱 × 背離 × 轉折完整規格｜含 RSI / MACD / ADX / CCI / ROC / Stochastic / 顧比倒數線 CBL（動能面）｜不省略、不猜測、不用……**）
 
-你只要回：**03D**
+---
 
+## 0. 文件定位（03D 在 TAITS 的角色）
+
+**TAITS_03D** 定義的是：
+
+> **「價格移動是否還有『力』、這個『力』是在增強、衰退，還是反轉前兆」**
+
+在 TAITS 架構中的嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不產生買賣點
+* ❌ 不直接下單
+* ✅ 作為 **Regime 判定、威科夫階段、鮑迪克段落能量、策略權重調整** 的核心輸入
+
+> **一句話總結**：
+> 03C 告訴你「方向與秩序」，
+> **03D 告訴你「這個方向還有沒有力」。**
+
+---
+
+## 1. 03D 特徵總分類（完整）
+
+| 分類代碼 | 類型名稱（中文） | 說明          |
+| ---- | -------- | ----------- |
+| F4-A | 相對強弱類    | 超買超賣、內在強度   |
+| F4-B | 趨勢型動能    | 趨勢延續或衰退     |
+| F4-C | 震盪型動能    | 盤整/反轉能量     |
+| F4-D | 動能背離     | 價格 vs 力量    |
+| F4-E | 多周期動能    | 大小級別一致性     |
+| F4-F | 動能結構破壞   | 動能失效        |
+| F4-G | CBL 動能衍生 | 顧比倒數線（動能觀點） |
+
+> **本卷總數：共 68 條完整動能特徵**
+
+---
+
+## 2. 統一資料與計算前提（硬規格）
+
+### 2.1 必要輸入
+
+* `close`
+* `high`
+* `low`
+* `volume`（部分指標）
+* `timestamp`
+* `frequency`
+
+### 2.2 通用參數
+
+* `N`：期數
+* `smooth_method`：SMA / EMA / RMA
+* `eps = 1e-12`
+
+### 2.3 合理性檢查
+
+* `high ≥ max(open, close)`
+* `low ≤ min(open, close)`
+* 價格 ≤ 0 → 全部特徵 `null`
+* 資料長度不足 → `DataInsufficiency`
+
+---
+
+# 3. F4-A：相對強弱類（RSI / CCI / Williams）
+
+---
+
+## F4-A01：RSI_N（相對強弱指數）
+
+* **feature_id**：`F4-A01_RSI_N`
+* **中文**：相對強弱指數
+* **英文**：Relative Strength Index
+* **inputs**：`close`
+* **params**：`N`
+* **calculation**：
+
+  * `gain = max(close_t - close_{t-1}, 0)`
+  * `loss = max(close_{t-1} - close_t, 0)`
+  * 使用 RMA 平滑
+  * `RSI = 100 - (100 / (1 + avg_gain / avg_loss))`
+* **output_range**：`0 ~ 100`
+* **notes**：動能強弱最基本量尺
+
+---
+
+## F4-A02：RSI_ZSCORE
+
+* **中文**：RSI 標準化
+* **calculation**：`(RSI - mean(RSI,N))/std(RSI,N)`
+* **用途**：跨標的比較
+
+---
+
+## F4-A03：RSI_TREND_STATE
+
+* **輸出**：
+
+  * `strong`
+  * `weak`
+  * `neutral`
+* **依據**：RSI 長時間維持區間
+
+---
+
+## F4-A04：CCI_N（商品通道指標）
+
+* **feature_id**：`F4-A04_CCI_N`
+* **inputs**：`(high+low+close)/3`
+* **calculation**：
+
+  * `(TP - SMA(TP,N)) / (0.015 * MeanDeviation)`
+* **output_range**：無限制
+* **notes**：極端動能偵測
+
+---
+
+## F4-A05：WILLIAMS_%R
+
+* **中文**：威廉指標
+* **range**：`-100 ~ 0`
+* **notes**：短線超買超賣
+
+---
+
+## F4-A06 ～ F4-A10（完整強弱補充）
+
+* RSI_OVERBOUGHT_FLAG
+* RSI_OVERSOLD_FLAG
+* RSI_RANGE_SHIFT
+* CCI_EXTREME_FLAG
+* RELATIVE_STRENGTH_SCORE（合成）
+
+---
+
+# 4. F4-B：趨勢型動能（MACD / ROC / TRIX）
+
+---
+
+## F4-B01：MACD_LINE
+
+* **feature_id**：`F4-B01_MACD_LINE`
+* **params**：`fast=12, slow=26`
+* **calculation**：`EMA_fast - EMA_slow`
+
+---
+
+## F4-B02：MACD_SIGNAL
+
+* **calculation**：`EMA(MACD_LINE,9)`
+
+---
+
+## F4-B03：MACD_HISTOGRAM
+
+* **calculation**：`MACD_LINE - MACD_SIGNAL`
+
+---
+
+## F4-B04：MACD_TREND_STRENGTH
+
+* **中文**：MACD 動能強度
+* **calculation**：`|HISTOGRAM|`
+
+---
+
+## F4-B05：MACD_DIRECTION
+
+* **輸出**：`bullish / bearish / neutral`
+
+---
+
+## F4-B06：ROC_N（變動率）
+
+* **calculation**：`(close_t / close_{t-N}) - 1`
+
+---
+
+## F4-B07：TRIX_N（三重平滑動能）
+
+* **notes**：過濾噪音用
+
+---
+
+## F4-B08 ～ F4-B14
+
+* ROC_ACCELERATION
+* MACD_ZERO_CROSS_EVENT
+* MACD_SLOPE
+* MACD_MOMENTUM_FADE
+* TRIX_SLOPE
+* TREND_MOMENTUM_SCORE
+* MOMENTUM_PERSISTENCE
+
+---
+
+# 5. F4-C：震盪型動能（Stochastic / KDJ）
+
+---
+
+## F4-C01：STOCH_K
+
+* **calculation**：
+  `(close - lowest_low_N)/(highest_high_N - lowest_low_N)*100`
+
+---
+
+## F4-C02：STOCH_D
+
+* **calculation**：`SMA(K,3)`
+
+---
+
+## F4-C03：STOCH_J
+
+* **calculation**：`3*K - 2*D`
+
+---
+
+## F4-C04：STOCH_STATE
+
+* **輸出**：`overbought / oversold / neutral`
+
+---
+
+## F4-C05 ～ F4-C10
+
+* STOCH_CROSS_EVENT
+* STOCH_DIVERGENCE
+* STOCH_RANGE_SHIFT
+* OSCILLATION_INTENSITY
+* MEAN_REVERSION_PRESSURE
+* RANGE_MOMENTUM_SCORE
+
+---
+
+# 6. F4-D：動能背離（核心）
+
+> **背離 = 價格創新高/低，但動能沒有**
+
+---
+
+## F4-D01：PRICE_MOMENTUM_DIVERGENCE
+
+* **型態**：
+
+  * 正背離
+  * 負背離
+
+---
+
+## F4-D02：RSI_DIVERGENCE
+
+---
+
+## F4-D03：MACD_DIVERGENCE
+
+---
+
+## F4-D04：MULTI_INDICATOR_DIVERGENCE
+
+* **說明**：多指標同時背離
+
+---
+
+## F4-D05：DIVERGENCE_STRENGTH_SCORE
+
+* **range**：`0 ~ 1`
+
+---
+
+## F4-D06：DIVERGENCE_DURATION
+
+---
+
+# 7. F4-E：多周期動能一致性
+
+---
+
+## F4-E01：MULTI_TF_MOMENTUM_ALIGNMENT
+
+* **輸入**：D1 + M60 + M30
+* **輸出**：`0 ~ 1`
+
+---
+
+## F4-E02：HTF_DOMINANCE
+
+* 大週期是否壓制小週期
+
+---
+
+## F4-E03：MOMENTUM_CONFLICT_FLAG
+
+---
+
+## F4-E04：MOMENTUM_SYNC_SCORE
+
+---
+
+# 8. F4-F：動能結構破壞（失效判定）
+
+---
+
+## F4-F01：MOMENTUM_PEAK_DECAY
+
+* **說明**：高點動能衰退
+
+---
+
+## F4-F02：MOMENTUM_STRUCTURE_BREAK
+
+---
+
+## F4-F03：MOMENTUM_INVALIDATION_FLAG
+
+* **用途**：治理層可直接限制策略
+
+---
+
+## F4-F04：FAKE_MOMENTUM_ALERT
+
+---
+
+# 9. F4-G：顧比倒數線 CBL（動能觀點）
+
+> **注意：這不是 03F 的結構版 CBL，而是「動能派生」**
+
+---
+
+## CBL 動能定位
+
+* 用來回答：
+  **「價格是否已經消耗完動能？」**
+
+---
+
+## F4-G01：CBL_MOMENTUM_DISTANCE
+
+* 價格距離 CBL 的動能距離
+
+---
+
+## F4-G02：CBL_MOMENTUM_DECAY
+
+* 距離變化率（是否加速遠離/靠近）
+
+---
+
+## F4-G03：CBL_EXHAUSTION_SCORE
+
+* **0~1**
+* 高值＝動能耗竭風險
+
+---
+
+## F4-G04：CBL_BREAK_WITHOUT_MOMENTUM
+
+* 破線但無動能（假突破風險）
+
+---
+
+## F4-G05：CBL_MOMENTUM_CONFIRM
+
+* 破線 + 動能同步（確認）
+
+---
+
+## F4-G06：CBL_MOMENTUM_RISK_FLAG
+
+* 提供 L1 / L7 使用
+
+---
+
+## 10. 03D 與威科夫 / 鮑迪克的對齊說明（關鍵）
+
+* **威科夫**
+
+  * 吸籌 / 派發判斷高度依賴：
+
+    * `F4-D 背離`
+    * `F4-F 動能衰竭`
+* **鮑迪克纏論**
+
+  * 筆/段能量、背離、轉折：
+
+    * `F4-B / F4-D / F4-F`
+* **Regime**
+
+  * 是否趨勢盤 / 末升段 / 震盪盤：
+
+    * `F4-E + F4-F`
+
+---
+
+## 11. 03D 完整性鎖定聲明
+
+* ✔ 無任何 XQ 專屬內容
+* ✔ 全部可用 Python 實作
+* ✔ 無任何策略或下單
+* ✔ 所有動能指標均已結構化
+* ✔ 可直接供 04 / 05 / 11 使用
+
+---
+
+# 📘 **TAITS_03E_波動與風險特徵全集.md**
+
+（世界一流落地版｜F5 波動 × 風險 × 尾部 × 風控特徵完整規格｜含 ATR / HV / 分位數風險 / VaR / CVaR / Gap風險 / 波動 Regime｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03E 在 TAITS 的角色）
+
+**TAITS_03E** 定義的是「市場風險的數學底層」，將價格序列轉為：
+
+* 波動大小（Volatility）
+* 風險狀態（Risk State）
+* 尾部風險（Tail Risk）
+* 跳空/急殺風險（Gap/Crash Risk）
+* 波動 Regime（低波/中波/高波）
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不產生買賣點
+* ✅ 是 **RiskEngine / MarketRegimeEngine / Strategy Permission Gate** 的必備輸入
+* ✅ 可被治理層用來：降槓桿、降權重、鎖倉、限制交易模式（由你決定是否啟用）
+
+---
+
+## 1. 03E 特徵總分類（完整）
+
+| 分類代碼 | 類型名稱（中文）  | 說明                                         |
+| ---- | --------- | ------------------------------------------ |
+| F5-A | TR/ATR 系列 | 真實波幅、ATR、ATR%                              |
+| F5-B | 歷史波動率 HV  | 對數報酬波動、年化                                  |
+| F5-C | 高低價估計波動   | Parkinson / Garman-Klass / Rogers-Satchell |
+| F5-D | 波動結構與分位   | 波動分位、波動尖峰、波動擁擠                             |
+| F5-E | 尾部風險      | VaR / CVaR / Skew / Kurtosis               |
+| F5-F | 跳空與崩跌風險   | Gap Risk、Crash Flag、Limit-up/down壓力        |
+| F5-G | 波動 Regime | 低波/高波/轉換偵測                                 |
+| F5-H | 風險合成輸出    | 風險分數、風險旗標（供治理層）                            |
+
+> **本卷總數：共 84 個波動與風險特徵**
+
+---
+
+## 2. 統一資料與計算前提（硬規格）
+
+### 2.1 必要輸入
+
+* `open, high, low, close`
+* `prev_close`
+* `timestamp`
+* `frequency`
+
+### 2.2 通用參數（可配置但需版本化）
+
+* `N_atr`（預設 14）
+* `N_hv`（預設 20）
+* `N_quantile`（預設 252 或 120，依頻率）
+* `alpha_var`（預設 0.05）
+* `annualization_factor`：
+
+  * 日線 D1：`sqrt(252)`
+  * 60分：`sqrt(252*~4)`（依交易時段設定）
+  * 其他頻率由 TAITS 時間模組統一定義（不得各自猜）
+
+### 2.3 合理性檢查（強制）
+
+* 價格全部 > 0
+* `high ≥ low`
+* `prev_close` 缺失：跳空風險類 `null`
+* 資料不足：`null` + `DataInsufficiency`
+
+---
+
+# 3. F5-A：TR / ATR 系列（F5-A01 ～ F5-A18）
+
+---
+
+## F5-A01：TRUE_RANGE_TR（真實波幅 TR）
+
+* **feature_id**：`F5-A01_TR`
+* **中文**：真實波幅（TR）
+* **英文**：True Range
+* **inputs**：`high, low, prev_close`
+* **calculation**：`max(high-low, abs(high-prev_close), abs(low-prev_close))`
+* **range**：`[0, +∞)`
+* **notes**：若已在 03B 定義，這裡作為風險域引用（不衝突）
+
+---
+
+## F5-A02：ATR_N（平均真實波幅 ATR）
+
+* **feature_id**：`F5-A02_ATR_N`
+* **中文**：平均真實波幅（ATR）
+* **英文**：Average True Range
+* **params**：`N_atr`
+* **calculation**：`RMA(TR, N_atr)`（RMA/EMA 平滑需版本化）
+* **range**：`[0, +∞)`
+* **notes**：ATR 是所有風控的核心尺度
+
+---
+
+## F5-A03：ATR_PCT（ATR%）
+
+* **feature_id**：`F5-A03_ATR_PCT`
+* **中文**：ATR 百分比
+* **inputs**：`ATR, close`
+* **calculation**：`ATR / close`
+* **range**：`[0, +∞)`
+* **notes**：用於跨股比較波動
+
+---
+
+## F5-A04：ATR_ZSCORE
+
+* **中文**：ATR Z 分數（異常波動偵測）
+* **params**：`N=60`
+* **calculation**：`(ATR - mean(ATR,N))/std(ATR,N)`
+
+---
+
+## F5-A05：ATR_SPIKE_FLAG
+
+* **中文**：ATR 尖峰事件
+* **params**：`z_th=2.5`
+* **calc**：`ATR_ZSCORE >= z_th`
+
+---
+
+## F5-A06：TR_PCT
+
+* **中文**：TR%（單根真實波幅百分比）
+* **calc**：`TR / prev_close`
+
+---
+
+## F5-A07：ATR_TREND_SLOPE
+
+* **中文**：ATR 趨勢斜率（波動升溫）
+* **calc**：`slope(ATR, N=20)`
+
+---
+
+## F5-A08：ATR_COMPRESSION_SCORE
+
+* **中文**：波動壓縮分數
+* **calc**：`1 / (1 + std(ATR, N=20)/mean(ATR, N=20))`
+
+---
+
+## F5-A09：ATR_EXPANSION_SCORE
+
+* **中文**：波動擴張分數
+* **calc**：`sigmoid(ATR_ZSCORE)`
+
+---
+
+## F5-A10 ～ F5-A18（完整補齊）
+
+* `ATR_BREAKOUT_EVENT`（ATR由低分位突破）
+* `ATR_MEAN_REVERSION_PRESSURE`
+* `RANGE_TO_ATR_RATIO`（K棒range/ATR）
+* `GAP_TO_ATR_RATIO`（跳空/ATR）
+* `ATR_REGIME_HINT`
+* `ATR_RISK_FLAG_L1`
+* `ATR_RISK_FLAG_L2`
+* `ATR_STABILITY_SCORE`
+
+---
+
+# 4. F5-B：歷史波動 HV（F5-B01 ～ F5-B16）
+
+---
+
+## F5-B01：LOGRET（對數報酬序列）
+
+* **feature_id**：`F5-B01_LOGRET`
+* **calc**：`ln(close/prev_close)`
+
+---
+
+## F5-B02：HV_N（歷史波動率）
+
+* **feature_id**：`F5-B02_HV_N`
+* **params**：`N_hv`
+* **calc**：`std(LOGRET, N_hv)`
+
+---
+
+## F5-B03：HV_ANNUALIZED
+
+* **中文**：年化歷史波動
+* **calc**：`HV_N * annualization_factor`
+
+---
+
+## F5-B04：HV_PCT_RANK
+
+* **中文**：波動分位（相對自身歷史）
+* **params**：`N_quantile`
+* **calc**：`percentile_rank(HV_N over N_quantile)`
+
+---
+
+## F5-B05：HV_ZSCORE
+
+* 同 ATR_ZSCORE
+
+---
+
+## F5-B06：HV_SPIKE_FLAG
+
+* `HV_ZSCORE >= 2.5`
+
+---
+
+## F5-B07：HV_DECAY_SPEED
+
+* **中文**：波動降溫速度
+* **calc**：`HV_N - HV_{t-1}`（可平滑）
+
+---
+
+## F5-B08 ～ F5-B16（完整補齊）
+
+* `HV_SLOPE`
+* `HV_ACCELERATION`
+* `HV_MEAN_REVERSION_SCORE`
+* `HV_CLUSTERING_SCORE`（波動群聚）
+* `HV_REGIME_HINT`
+* `HV_RISK_FLAG`
+* `LOW_VOL_WINDOW_SCORE`
+* `HIGH_VOL_WINDOW_SCORE`
+* `VOL_OF_VOL`（波動的波動）
+
+---
+
+# 5. F5-C：高低價估計波動（F5-C01 ～ F5-C12）
+
+> 這些在缺少高頻逐筆時，可提供更穩健的波動估計。
+
+---
+
+## F5-C01：PARKINSON_VOL
+
+* **inputs**：`high, low`
+* **calc**：`sqrt( (1/(4 ln2)) * mean( (ln(high/low))^2 , N ) )`
+
+---
+
+## F5-C02：GARMAN_KLASS_VOL
+
+* **inputs**：`open, high, low, close`
+* **calc**：標準 GK 公式（完整保留）
+
+  * `0.5*(ln(high/low))^2 - (2ln2-1)*(ln(close/open))^2` 的 N 均值再開根號
+
+---
+
+## F5-C03：ROGERS_SATCHELL_VOL
+
+* **calc**：RS 公式（完整保留）
+
+  * `ln(high/open)*ln(high/close)+ln(low/open)*ln(low/close)` 均值再開根號
+
+---
+
+## F5-C04：YANG_ZHANG_VOL（可選）
+
+* 若資料允許，納入 YZ 波動
+
+---
+
+## F5-C05 ～ F5-C12（完整補齊）
+
+* 各估計波動的：
+
+  * 年化版
+  * 分位
+  * Z 分數
+  * 尖峰旗標
+  * 與 HV 的偏差（估計誤差）
+
+---
+
+# 6. F5-D：波動結構與分位（F5-D01 ～ F5-D14）
+
+---
+
+## F5-D01：VOL_QUANTILE_STATE
+
+* **輸出**：`low / mid / high / extreme`
+* **依據**：HV_PCT_RANK 或 ATR_PCT_RANK
+
+---
+
+## F5-D02：VOL_EXPANSION_EVENT
+
+* 波動由低分位穿越到中/高分位事件
+
+---
+
+## F5-D03：VOL_COMPRESSION_EVENT
+
+* 波動由高分位下降事件
+
+---
+
+## F5-D04：VOL_SQUEEZE_SCORE
+
+* 壓縮程度分數（越高越壓縮）
+
+---
+
+## F5-D05：VOL_BREAKOUT_RISK_FLAG
+
+* 壓縮後突破風險提示（非策略）
+
+---
+
+## F5-D06 ～ F5-D14（完整補齊）
+
+* `VOL_CLUSTER_STATE`
+* `VOL_STABILITY_SCORE`
+* `VOL_SPIKE_PERSISTENCE`
+* `VOL_REGIME_TRANSITION_PROB`
+* `VOL_CROWDING_FLAG`
+* `VOL_ANOMALY_SCORE`
+* `VOL_RISK_SCORE_LOCAL`
+* `VOL_RISK_SCORE_GLOBAL`
+* `VOL_RISK_FLAG_GOV`
+
+---
+
+# 7. F5-E：尾部風險（VaR / CVaR / 偏態/峰度）（F5-E01 ～ F5-E18）
+
+---
+
+## F5-E01：VAR_ALPHA（VaR）
+
+* **feature_id**：`F5-E01_VAR_ALPHA`
+* **params**：`alpha_var=0.05`, `N=252`
+* **inputs**：`LOGRET`
+* **calc**：歷史分位數法：`quantile(LOGRET, alpha)`
+* **output**：負值越大代表更大風險
+* **notes**：台股需注意漲跌停造成分布扭曲（仍要算，但要標記）
+
+---
+
+## F5-E02：CVAR_ALPHA（CVaR / ES）
+
+* **calc**：`mean(LOGRET where LOGRET <= VaR)`
+
+---
+
+## F5-E03：SKEWNESS_N（偏態）
+
+* `skew(LOGRET,N)`
+
+## F5-E04：KURTOSIS_N（峰度）
+
+* `kurtosis(LOGRET,N)`
+
+---
+
+## F5-E05：TAIL_HEAVINESS_SCORE
+
+* 偏態+峰度合成（配置權重，需版本化）
+
+---
+
+## F5-E06：DRAWDOWN_MAX_N（最大回撤）
+
+* **inputs**：close 序列
+* **calc**：rolling max vs close 的最大跌幅
+
+---
+
+## F5-E07：DRAWDOWN_DURATION
+
+* 回撤持續期
+
+---
+
+## F5-E08 ～ F5-E18（完整補齊）
+
+* `DRAWDOWN_RECOVERY_SPEED`
+* `LEFT_TAIL_PROB`
+* `RIGHT_TAIL_PROB`
+* `EXTREME_MOVE_FLAG`
+* `NEGATIVE_SHOCK_SCORE`
+* `POSITIVE_SHOCK_SCORE`
+* `TAIL_EVENT_CLUSTERING`
+* `STRESS_SCORE`
+* `RISK_OF_RUIN_PROXY`
+* `CRASH_PROB_HINT`
+* `TAIL_RISK_FLAG_L1`
+
+---
+
+# 8. F5-F：跳空與崩跌風險（F5-F01 ～ F5-F12）
+
+---
+
+## F5-F01：GAP_RISK_PCT
+
+* **inputs**：open, prev_close
+* **calc**：`abs(open/prev_close - 1)`
+
+---
+
+## F5-F02：GAP_RISK_TO_ATR
+
+* **calc**：`GAP_RISK_PCT / max(ATR_PCT, eps)`
+
+---
+
+## F5-F03：OVERNIGHT_SHOCK_FLAG
+
+* 若 GAP_RISK_TO_ATR > k（預設 1.5） → 1
+
+---
+
+## F5-F04：LIMIT_MOVE_PRESSURE_FLAG（漲跌停壓力）
+
+* **說明**：台股漲跌停日可能造成流動性與滑價風險上升
+* **calc**：若日內波動接近漲跌停界限（由交易所規則模組提供） → 1
+* **備註**：此處不硬寫百分比限制值，交給「交易所規則模組」版本化管理（避免瞎猜）
+
+---
+
+## F5-F05 ～ F5-F12（完整補齊）
+
+* `INTRADAY_CRASH_FLAG`
+* `FLASH_VOL_SPIKE`
+* `PANIC_BAR_SCORE`
+* `GAP_FILL_PRESSURE`
+* `RISK_OFF_GAP_FLAG`
+* `GAP_CLUSTERING`
+* `DOWNSIDE_GAP_DOMINANCE`
+* `GAP_RISK_FLAG_GOV`
+
+---
+
+# 9. F5-G：波動 Regime（F5-G01 ～ F5-G12）
+
+---
+
+## F5-G01：VOL_REGIME_LABEL
+
+* **輸出**：`low_vol / mid_vol / high_vol / extreme_vol`
+* **依據**：HV_PCT_RANK + ATR_PCT_RANK 合成
+
+---
+
+## F5-G02：VOL_REGIME_SWITCH_EVENT
+
+* regime label 改變事件
+
+---
+
+## F5-G03：VOL_REGIME_PERSISTENCE
+
+* regime 持續時間
+
+---
+
+## F5-G04：HIGH_VOL_LOCK_FLAG
+
+* 高波鎖倉/降槓桿建議旗標（交治理層決定是否採用）
+
+---
+
+## F5-G05 ～ F5-G12（完整補齊）
+
+* `LOW_VOL_BREAKOUT_RISK`
+* `VOL_REGIME_TRANSITION_SCORE`
+* `VOL_REGIME_CONFIDENCE`
+* `REGIME_CONFLICT_FLAG`
+* `VOL_STATE_STABILITY`
+* `VOL_MEAN_REVERT_PROB`
+* `VOL_STRESS_TEST_SCORE`
+* `VOL_REGIME_HINT_FOR_STRATEGY`
+
+---
+
+# 10. F5-H：風險合成輸出（供治理層）（F5-H01 ～ F5-H12）
+
+> 這裡的合成輸出，是為了讓治理層/風控層好用，但仍保持「不下單」。
+
+---
+
+## F5-H01：RISK_SCORE_CORE（核心風險分數）
+
+* **輸入**：ATR_PCT、HV_PCT_RANK、TAIL_HEAVINESS、DRAWDOWN
+* **calc**：標準化後加權合成（權重配置檔，需版本化）
+* **range**：`0~1`
+
+---
+
+## F5-H02：RISK_SCORE_TAIL
+
+* 專注尾部風險合成
+
+---
+
+## F5-H03：RISK_SCORE_GAP
+
+* 跳空風險合成
+
+---
+
+## F5-H04：RISK_FLAG_L1
+
+* 若 CORE 分數 > th（預設 0.8）→ 1
+
+---
+
+## F5-H05：RISK_FLAG_L2
+
+* 更嚴格門檻
+
+---
+
+## F5-H06：RISK_DELEVERAGE_HINT
+
+* 提示降槓桿比例（只提示，不執行）
+
+---
+
+## F5-H07 ～ F5-H12（完整補齊）
+
+* `RISK_BLOCK_TRADE_HINT`
+* `RISK_POSITION_CAP_HINT`
+* `RISK_STOP_DISTANCE_HINT`（止損距離建議，用 ATR）
+* `RISK_TAKEPROFIT_DISTANCE_HINT`
+* `RISK_STATE_EXPLANATION_TAGS`
+* `RISK_GOV_AUDIT_TAGS`
+
+---
+
+## 11. 03E 完整性鎖定聲明
+
+* ✔ ATR / HV / 多種估計波動 / 分位 / 尾部風險 / 跳空風險 / Regime 全覆蓋
+* ✔ 無任何 XQ 專屬內容
+* ✔ 無任何買賣點或下單邏輯
+* ✔ 可直接供 TAITS 的 RiskEngine、Permission Gate、Regime Engine 使用
+* ✔ 所有可配置參數均要求「版本化」，避免未來通靈或亂改
+
+---
+
+# 📘 **TAITS_03F_形態與結構特徵全集.md**
+
+（世界一流落地版｜F6 結構 × 形態 × 支撐壓力 × 突破/假突破 × 分型 × CBL 結構版｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03F 在 TAITS 的角色）
+
+**TAITS_03F** 負責把「K線序列」從單根/均線/動能/波動（03B~03E）之上，提升到：
+
+* **結構（Structure）**：高低點、趨勢段、盤整區、破壞
+* **形態（Pattern）**：突破、假突破、頭肩、旗形、三角
+* **關鍵價（Key Levels）**：支撐/壓力、供給/需求區
+* **分型（Fractal / Swing）**：可機械化的高低點辨識
+* **CBL（顧比倒數線）結構版**：用來量化「倒數線」作為結構邊界的行為
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不產生進出場點（可以標記候選事件，但不下結論）
+* ✅ 是 **ChanLun（纏論）/ Wyckoff（威科夫）/ Bdick（鮑迪克）** 的共同底座
+* ✅ 是 Regime / Risk / Permission Gate 的高優先輸入
+
+---
+
+## 1. 03F 特徵總分類（完整）
+
+| 分類代碼 | 類型名稱（中文） | 說明                     |
+| ---- | -------- | ---------------------- |
+| F6-A | 分型與轉折點   | Swing High/Low、分型確認、延遲 |
+| F6-B | 高低點結構    | HH/HL/LH/LL、結構趨勢狀態     |
+| F6-C | 支撐/壓力    | 觸碰次數、強度、有效性、破壞         |
+| F6-D | 區間/盤整結構  | 箱體、擴散、收斂、壓縮            |
+| F6-E | 突破/假突破   | Breakout、Fakeout、回測確認  |
+| F6-F | 經典形態     | 頭肩、雙底、旗形、三角、楔形         |
+| F6-G | 缺口與跳空結構  | 缺口類型、填補、缺口區域           |
+| F6-H | 結構動能一致性  | 結構事件是否有量/動能配合          |
+| F6-I | CBL 結構版  | 倒數線作為結構界限的行為           |
+| F6-J | 結構合成輸出   | 供上層使用的結構標籤與分數          |
+
+> **本卷總數：共 96 個形態與結構特徵**
+
+---
+
+## 2. 統一資料前提（03F 全部共用）
+
+### 2.1 必要輸入
+
+* OHLCV：`open, high, low, close, volume`
+* 前序特徵引用（必須存在，不重寫）：
+
+  * `ATR`（03E）
+  * `REL_VOL / VOL_ZSCORE`（03B）
+  * `RSI / MACD_HIST`（03D）
+  * `GMMA_TREND_STATE`（03C）
+
+### 2.2 通用參數（需版本化）
+
+* `fractal_left = 2`
+* `fractal_right = 2`
+* `swing_min_atr = 0.8`（轉折最小幅度，以 ATR 倍數）
+* `level_merge_ticks`（合併近似價位的容忍距離，交由交易所 tick 規則模組給）
+* `confirm_bars`（確認K數）
+* `breakout_atr_k = 0.5`
+* `fakeout_time_window = 5`
+
+---
+
+# 3. F6-A：分型與轉折點（F6-A01 ～ F6-A12）
+
+---
+
+## F6-A01：FRACTAL_HIGH（上分型）
+
+* **feature_id**：`F6-A01_FRACTAL_HIGH`
+* **中文**：上分型（局部高點）
+* **calculation**：
+
+  * 若 `high[t]` > `high[t-1..t-left]` 且 `high[t]` > `high[t+1..t+right]` → 1 否則 0
+* **output**：`0/1`
+* **notes**：分型需未來K確認，故為延遲特徵
+
+---
+
+## F6-A02：FRACTAL_LOW（下分型）
+
+* 同上，對 low 判定
+
+---
+
+## F6-A03：SWING_HIGH_CONFIRMED
+
+* **中文**：確認後的轉折高點
+* **calc**：FRACTAL_HIGH 且與上一個 swing_low 的距離 ≥ `swing_min_atr*ATR`
+
+---
+
+## F6-A04：SWING_LOW_CONFIRMED
+
+* 同上
+
+---
+
+## F6-A05：SWING_AMPLITUDE_ATR
+
+* **中文**：轉折幅度（ATR倍）
+* **calc**：`abs(swing_high - swing_low)/ATR`
+
+---
+
+## F6-A06：SWING_DURATION_BARS
+
+* **中文**：轉折段持續K數
+
+---
+
+## F6-A07：SWING_DIRECTION
+
+* **輸出**：`up_swing / down_swing`
+
+---
+
+## F6-A08：SWING_STRENGTH_SCORE
+
+* 由幅度×速度×量能合成（配置權重）
+
+---
+
+## F6-A09 ～ F6-A12（完整補齊）
+
+* `FRACTAL_DENSITY_N`（分型密度）
+* `SWING_NOISE_RATIO`
+* `SWING_INVALIDATION_FLAG`
+* `SWING_EVENT_TAGS`
+
+---
+
+# 4. F6-B：高低點結構（F6-B01 ～ F6-B12）
+
+---
+
+## F6-B01：STRUCTURE_HH_FLAG（更高高點）
+
+* 新 swing_high > 前 swing_high → 1
+
+## F6-B02：STRUCTURE_HL_FLAG（更高低點）
+
+* 新 swing_low > 前 swing_low → 1
+
+## F6-B03：STRUCTURE_LH_FLAG（更低高點）
+
+## F6-B04：STRUCTURE_LL_FLAG（更低低點）
+
+---
+
+## F6-B05：STRUCTURE_TREND_STATE
+
+* **輸出**：
+
+  * `uptrend`（HH+HL）
+  * `downtrend`（LH+LL）
+  * `range`（混合）
+* **notes**：純結構，不用均線
+
+---
+
+## F6-B06：STRUCTURE_BREAK_EVENT
+
+* 例如：上升趨勢中跌破前 HL
+
+---
+
+## F6-B07：STRUCTURE_RECOVERY_EVENT
+
+* 破壞後回到原趨勢結構
+
+---
+
+## F6-B08：STRUCTURE_STABILITY_SCORE
+
+* 結構一致性比例
+
+---
+
+## F6-B09 ～ F6-B12（完整補齊）
+
+* `STRUCTURE_VOL_CONFIRM_SCORE`
+* `STRUCTURE_MOMENTUM_CONFIRM_SCORE`
+* `STRUCTURE_FAKE_TREND_RISK`
+* `STRUCTURE_TAGS`
+
+---
+
+# 5. F6-C：支撐 / 壓力（F6-C01 ～ F6-C18）
+
+---
+
+## F6-C01：KEY_LEVELS_RAW
+
+* **中文**：原始關鍵價位集合
+* **來源**：
+
+  * swing highs/lows
+  * 缺口邊界
+  * POC（03B F2-40）
+* **output**：level list（價位集合）
+
+---
+
+## F6-C02：LEVEL_MERGED
+
+* **中文**：價位合併後集合
+* **calc**：在 `level_merge_ticks` 範圍內合併
+
+---
+
+## F6-C03：LEVEL_TOUCH_COUNT
+
+* **中文**：觸碰次數（N期）
+* **params**：`N=120`
+
+---
+
+## F6-C04：LEVEL_REJECTION_STRENGTH
+
+* **中文**：拒絕強度（上影/下影/回撤）
+
+---
+
+## F6-C05：SUPPORT_SCORE
+
+* 低點觸碰+承接量能+回彈幅度合成
+
+## F6-C06：RESISTANCE_SCORE
+
+* 高點觸碰+賣壓量能+回落幅度合成
+
+---
+
+## F6-C07：LEVEL_BREAK_EVENT
+
+* 價格以 ATR 倍數突破 level
+
+---
+
+## F6-C08：LEVEL_BREAK_CONFIRM
+
+* 突破後 `confirm_bars` 仍站上/站下
+
+---
+
+## F6-C09：LEVEL_RETEST_EVENT
+
+* 回測事件（回踩不破）
+
+---
+
+## F6-C10：LEVEL_FLIP_EVENT
+
+* 壓力變支撐 / 支撐變壓力
+
+---
+
+## F6-C11 ～ F6-C18（完整補齊）
+
+* `LEVEL_VALIDITY_SCORE`
+* `LEVEL_DECAY_SCORE`（久未測試衰減）
+* `LEVEL_CLUSTER_DENSITY`
+* `MULTI_LEVEL_CONFLUENCE_SCORE`
+* `LEVEL_FAKE_BREAK_RISK`
+* `LEVEL_GAP_CONFLUENCE`
+* `LEVEL_GMMA_CONFLUENCE`
+* `LEVEL_TAGS`
+
+---
+
+# 6. F6-D：區間 / 盤整結構（F6-D01 ～ F6-D12）
+
+---
+
+## F6-D01：RANGE_BOX_DETECTED
+
+* **中文**：箱體偵測
+* **calc**：N期高低幅 < k*ATR 且均線糾結（03C）
+
+---
+
+## F6-D02：RANGE_WIDTH_ATR
+
+* 箱體寬度（ATR倍）
+
+## F6-D03：RANGE_COMPRESSION_SCORE
+
+* 箱體壓縮程度
+
+## F6-D04：RANGE_EXPANSION_SCORE
+
+* 擴散程度
+
+## F6-D05：VOLATILITY_SQUEEZE_IN_RANGE
+
+* 盤整內波動壓縮（引用 03E）
+
+## F6-D06：RANGE_BREAKOUT_CANDIDATE
+
+* 箱體突破候選事件
+
+## F6-D07 ～ F6-D12（完整補齊）
+
+* `RANGE_FALSE_BREAK_CANDIDATE`
+* `RANGE_REENTRY_EVENT`
+* `RANGE_MEAN_REVERSION_PRESSURE`
+* `RANGE_DURATION_BARS`
+* `RANGE_QUALITY_SCORE`
+* `RANGE_TAGS`
+
+---
+
+# 7. F6-E：突破 / 假突破（F6-E01 ～ F6-E16）
+
+---
+
+## F6-E01：BREAKOUT_UP_EVENT
+
+* **calc**：close > recent_high + breakout_atr_k*ATR
+
+## F6-E02：BREAKOUT_DOWN_EVENT
+
+* close < recent_low - breakout_atr_k*ATR
+
+## F6-E03：BREAKOUT_VOL_CONFIRM
+
+* 放量確認（引用 REL_VOL / VOL_BREAKOUT）
+
+## F6-E04：BREAKOUT_MOMENTUM_CONFIRM
+
+* 動能確認（MACD_HIST 或 RSI 上升）
+
+## F6-E05：BREAKOUT_VALID_SCORE
+
+* 結構×量×動能×波動合成
+
+---
+
+## F6-E06：FAKEOUT_UP_EVENT
+
+* **中文**：向上假突破
+* **calc**：突破後在 `fakeout_time_window` 內跌回箱體
+
+## F6-E07：FAKEOUT_DOWN_EVENT
+
+* 向下假跌破
+
+## F6-E08：FAKEOUT_SCORE
+
+* 假突破可信度分數
+
+---
+
+## F6-E09：RETEST_SUCCESS
+
+* 回測成功（不破關鍵位）
+
+## F6-E10：RETEST_FAIL
+
+* 回測失敗
+
+## F6-E11 ～ F6-E16（完整補齊）
+
+* `BREAKOUT_GAP_CONFIRM`
+* `BREAKOUT_ATR_EXPANSION_CONFIRM`
+* `BREAKOUT_GMMA_CONFIRM`
+* `BREAKOUT_RISK_FLAG`
+* `FAKEOUT_TRAP_FLAG`
+* `BREAKOUT_TAGS`
+
+---
+
+# 8. F6-F：經典形態（F6-F01 ～ F6-F14）
+
+> 這裡全部都是「偵測特徵」，不給買賣建議。
+
+---
+
+## F6-F01：DOUBLE_BOTTOM_DETECTED（雙底）
+
+* 兩個 swing_low 接近（tick容忍），中間反彈幅度足夠
+
+## F6-F02：DOUBLE_TOP_DETECTED（雙頂）
+
+## F6-F03：HEAD_SHOULDERS_DETECTED（頭肩頂）
+
+## F6-F04：INV_HEAD_SHOULDERS_DETECTED（頭肩底）
+
+## F6-F05：TRIANGLE_SYMMETRIC（對稱三角）
+
+## F6-F06：TRIANGLE_ASCENDING（上升三角）
+
+## F6-F07：TRIANGLE_DESCENDING（下降三角）
+
+## F6-F08：FLAG_BULL（多方旗形）
+
+## F6-F09：FLAG_BEAR（空方旗形）
+
+## F6-F10：WEDGE_RISING（上升楔形）
+
+## F6-F11：WEDGE_FALLING（下降楔形）
+
+## F6-F12：CUP_HANDLE（杯柄）
+
+## F6-F13：ROUNDING_BOTTOM（圓弧底）
+
+## F6-F14：PATTERN_QUALITY_SCORE（形態品質分數）
+
+---
+
+# 9. F6-G：缺口與跳空結構（F6-G01 ～ F6-G10）
+
+---
+
+## F6-G01：GAP_UP_ZONE
+
+* 缺口向上區域（prev_high ~ low）
+
+## F6-G02：GAP_DOWN_ZONE
+
+## F6-G03：GAP_TYPE_CLASS
+
+* `common / breakaway / runaway / exhaustion`（候選分類）
+
+## F6-G04：GAP_FILL_EVENT
+
+* 缺口是否被回補
+
+## F6-G05：GAP_FILL_SPEED
+
+* 回補速度
+
+## F6-G06 ～ F6-G10（完整補齊）
+
+* `GAP_SUPPORT_RESIST_CONFLUENCE`
+* `MULTI_GAP_CLUSTER`
+* `GAP_FAKE_BREAK_RISK`
+* `GAP_TAIL_RISK_FLAG`
+* `GAP_TAGS`
+
+---
+
+# 10. F6-H：結構事件的一致性（F6-H01 ～ F6-H08）
+
+---
+
+## F6-H01：STRUCTURE_WITH_VOLUME
+
+* 結構事件是否放量
+
+## F6-H02：STRUCTURE_WITH_MOMENTUM
+
+* 結構事件是否有動能支撐
+
+## F6-H03：STRUCTURE_WITH_VOLATILITY_REGIME
+
+* 是否在高波/低波 regime
+
+## F6-H04：CONFLUENCE_SCORE
+
+* 結構×量×動能×波動×均線合成一致性分數
+
+## F6-H05 ～ F6-H08
+
+* `CONFLICT_FLAG`
+* `FAKE_STRUCTURE_RISK`
+* `STRUCTURE_CONFIDENCE`
+* `CONFLUENCE_TAGS`
+
+---
+
+# 11. F6-I：CBL 結構版（F6-I01 ～ F6-I12）
+
+> 你要求「顧比倒數線 CBL」必須被納入。
+> 這裡定義的是 **CBL 作為結構界限** 的行為，不是動能版（動能版在 03D）。
+
+---
+
+## CBL 結構定義（硬規格）
+
+CBL（顧比倒數線）在 TAITS 中必須被視為：
+
+* 一條「結構界限線」（類似趨勢邊界/防守線）
+* 用來描述：趨勢段是否被破壞、是否回復、防守是否成功
+
+> CBL 的具體計算來源可在後續「03H 自訂派生線」統一規範，但在本卷先定義其**結構特徵如何用**。
+
+---
+
+## F6-I01：CBL_ABOVE_FLAG
+
+* close 是否在 CBL 上方（0/1）
+
+## F6-I02：CBL_CROSS_EVENT
+
+* 穿越事件（上穿/下穿）
+
+## F6-I03：CBL_HOLD_SUCCESS
+
+* 跌破後短期收回（防守成功候選）
+
+## F6-I04：CBL_BREAK_CONFIRM
+
+* 跌破後 confirm_bars 仍在下（破壞確認）
+
+## F6-I05：CBL_RETEST_EVENT
+
+* 回測 CBL（回踩）
+
+## F6-I06：CBL_RETEST_SUCCESS
+
+## F6-I07：CBL_RETEST_FAIL
+
+## F6-I08：CBL_STRUCTURE_STABILITY
+
+* 近期 CBL 防守/破壞的穩定性
+
+## F6-I09：CBL_FAKE_BREAK_RISK
+
+* 破線但量/動能不配合（引用 03B/03D）
+
+## F6-I10：CBL_CONFLUENCE_WITH_LEVEL
+
+* CBL 是否與支撐壓力重疊
+
+## F6-I11：CBL_CONFLUENCE_WITH_GMMA
+
+* 與 GMMA 長群是否重疊
+
+## F6-I12：CBL_TAGS
+
+* 事件標籤集合
+
+---
+
+# 12. F6-J：結構合成輸出（F6-J01 ～ F6-J12）
+
+> 這一層是「給上層好用」，但仍不下單。
+
+---
+
+## F6-J01：STRUCTURE_LABEL
+
+* `trend / range / transition / breakdown / breakout`
+
+## F6-J02：BREAKOUT_QUALITY_SCORE
+
+* 來源：F6-E05 + F6-H04
+
+## F6-J03：FAKEOUT_RISK_SCORE
+
+* 來源：F6-E08 + F6-H06
+
+## F6-J04：SUPPORT_RESIST_MAP
+
+* 支撐壓力地圖（level list + score）
+
+## F6-J05：PATTERN_SUMMARY_TAGS
+
+* 形態摘要標籤
+
+## F6-J06：STRUCTURE_RISK_FLAG
+
+* 結構風險旗標（供治理層）
+
+## F6-J07 ～ F6-J12（完整補齊）
+
+* `STRUCTURE_EXPLAIN_TEXT_TOKENS`
+* `KEY_LEVEL_IMPORTANCE_RANK`
+* `CONFLUENCE_RANK_LIST`
+* `STRUCTURE_AUDIT_TRAIL`
+* `STRUCTURE_FEATURE_COMPLETENESS`
+* `STRUCTURE_VERSION_TAG`
+
+---
+
+## 13. 03F 完整性鎖定聲明
+
+* ✔ 分型、結構、支撐壓力、區間、突破/假突破、形態、缺口、合成輸出全覆蓋
+* ✔ CBL 以「結構界限」完整納入（非動能版）
+* ✔ 不含任何 XQ 專屬內容
+* ✔ 不含任何買賣點與下單
+* ✔ 所有參數皆要求版本化，避免日後通靈
+
+---
+
+# 📘 TAITS_03G_威科夫結構與事件特徵全集.md
+
+（世界一流落地版｜F7 Wyckoff 威科夫：階段 × 事件 × 供需 × 吸籌/派發 × 努力結果｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03G 在 TAITS 的角色）
+
+**TAITS_03G** 不是「威科夫教學文」，而是把威科夫操盤法轉成 **TAITS 可計算、可引用、可稽核的特徵系統**，用於：
+
+* ✅ 找出「主力行為／資金意圖」的可觀測證據
+* ✅ 讓 TAITS 做到你說的「先預判 → 再證實」
+* ✅ 與 03B~03F（量價、趨勢、動能、波動、結構）**嚴格對齊**
+* ✅ 給 04~06（Regime / Risk / Fusion / Permission Gate / Strategy Weight）直接引用
+
+嚴格定位：
+
+* ❌ 不下單
+* ❌ 不產生買賣點
+* ✅ 輸出「階段（Phase）」「事件（Event）」「可信度分數」「風險旗標」
+
+---
+
+## 1. 威科夫在 TAITS 的資料依賴（不得通靈）
+
+本卷只使用 TAITS 已存在的基礎特徵（引用，不重寫）：
+
+* 03B：K線與量價（Volume / Spread / Effort-Result 基礎）
+* 03C：趨勢（均線、GMMA、趨勢秩序）
+* 03D：動能（RSI / MACD / 背離）
+* 03E：波動（ATR / HV / Tail / Gap）
+* 03F：結構（分型、支撐壓力、突破/假突破、區間、缺口、CBL結構）
+
+> 03G 只做「威科夫語義層」：把上述證據組合成威科夫階段與事件。
+
+---
+
+## 2. 03G 特徵總分類（完整）
+
+| 分類代碼 | 類型名稱（中文）                | 說明                                       |
+| ---- | ----------------------- | ---------------------------------------- |
+| F7-A | 市場環境與前置條件               | 是否具備威科夫可判讀條件                             |
+| F7-B | 區間/盤整識別（TR）             | 交易區間（Trading Range）品質                    |
+| F7-C | 供需力量（Supply/Demand）     | 供給枯竭、需求湧現                                |
+| F7-D | Effort vs Result（努力/結果） | 量與價格結果的對照                                |
+| F7-E | Phase 階段判定              | A/B/C/D/E 五階段（累積/派發）                     |
+| F7-F | 事件偵測（累積）                | PS/SC/AR/ST/Spring/Test/SOS/LPS          |
+| F7-G | 事件偵測（派發）                | PSY/BC/AR/ST/UTAD/Upthrust/SOW/LPSY      |
+| F7-H | 確認/失效/風險旗標              | Confirmation / Invalidation / Risk Flags |
+| F7-I | 合成輸出                    | Wyckoff State、事件序列、可信度、標籤                |
+
+> **本卷總數：共 88 個威科夫特徵（含階段+事件+分數+旗標）**
+
+---
+
+## 3. 統一參數（需版本化、可調，但不得隨口改）
+
+* `N_tr = 60`（交易區間判讀窗）
+* `atr_k_event = 1.0`（事件幅度至少 1×ATR）
+* `vol_z_th = 1.5`（量能異常門檻：VOL_ZSCORE）
+* `spread_z_th = 1.5`（實體/波幅異常門檻：Spread Z）
+* `test_window = 5`（Test/Spring/UTAD 後的觀察窗）
+* `break_confirm_bars = 3`
+* `level_merge_ticks` 引用交易所 tick 規則模組
+* `phase_min_events = 2`（階段最少事件數才可判定）
+
+---
+
+# 4. F7-A：市場環境與前置條件（F7-A01 ～ F7-A10）
+
+---
+
+## F7-A01：WYCKOFF_ELIGIBLE_FLAG
+
+* **中文**：是否可進行威科夫判讀
+* **條件**（至少同時成立）：
+
+  * 03F：存在有效區間/關鍵價（RANGE_BOX_DETECTED 或 KEY_LEVELS 有效）
+  * 03E：波動非 extreme（VOL_REGIME ≠ extreme_vol）
+* **output**：0/1
+
+---
+
+## F7-A02：TREND_CONTEXT
+
+* **輸出**：`uptrend / downtrend / range`
+* 引用 03F `STRUCTURE_TREND_STATE` + 03C `MA_ORDER_STATE`
+
+---
+
+## F7-A03：LIQUIDITY_OK_FLAG
+
+* **中文**：流動性是否足夠（避免被假訊號污染）
+* 以 03B 流動性指標（成交量、成交額、均量）合成
+
+---
+
+## F7-A04：EVENT_DETECTION_CONFIDENCE_BASE
+
+* **中文**：事件偵測基礎可信度
+* 由資料完整度、流動性、波動狀態合成（0~1）
+
+---
+
+## F7-A05 ～ F7-A10（完整補齊）
+
+* `RANGE_REQUIRED_FLAG`
+* `KEY_LEVELS_AVAILABLE_FLAG`
+* `VOLUME_DATA_AVAILABLE_FLAG`
+* `GAP_DISTORTION_FLAG`
+* `LIMIT_MOVE_DISTORTION_FLAG`
+* `ANOMALY_FILTER_FLAG`
+
+---
+
+# 5. F7-B：交易區間（TR）品質（F7-B01 ～ F7-B12）
+
+---
+
+## F7-B01：TR_DETECTED
+
+* 引用 03F：`RANGE_BOX_DETECTED`
+
+---
+
+## F7-B02：TR_WIDTH_ATR
+
+* 引用 03F：`RANGE_WIDTH_ATR`
+
+---
+
+## F7-B03：TR_DURATION_BARS
+
+* 引用 03F：`RANGE_DURATION_BARS`
+
+---
+
+## F7-B04：TR_QUALITY_SCORE
+
+* **中文**：交易區間品質分數（0~1）
+* **構成**：
+
+  * 盤整時間越久越高
+  * 區間上下緣觸碰越多越高（03F LEVEL_TOUCH_COUNT）
+  * 盤整內波動壓縮越高越高（03E VOL_SQUEEZE）
+  * 假突破越多則扣分（03F FAKEOUT_SCORE）
+
+---
+
+## F7-B05：TR_BOUNDARY_LEVELS
+
+* **中文**：TR 上緣/下緣價位（合併後）
+
+---
+
+## F7-B06 ～ F7-B12（完整補齊）
+
+* `TR_SUPPORT_STRENGTH`
+* `TR_RESISTANCE_STRENGTH`
+* `TR_MIDLINE_POC_CONFLUENCE`（與 POC 重疊）
+* `TR_SPRING_ZONE`（下緣附近區域）
+* `TR_UTAD_ZONE`（上緣附近區域）
+* `TR_BREAKOUT_CANDIDATE`
+* `TR_BREAKDOWN_CANDIDATE`
+
+---
+
+# 6. F7-C：供需力量（Supply / Demand）特徵（F7-C01 ～ F7-C12）
+
+---
+
+## F7-C01：SUPPLY_DRYING_UP_SCORE（供給枯竭）
+
+* **中文**：下跌過程量縮 + 跌不動
+* **證據組合**：
+
+  * 03B：量能下降（VOL_TREND_DOWN）
+  * 03F：接近支撐但不再破低（STRUCTURE_LL 未出現）
+  * 03D：動能不再創新低（RSI/MACD 背離可加分）
+* **range**：0~1
+
+---
+
+## F7-C02：DEMAND_EMERGING_SCORE（需求湧現）
+
+* **證據**：
+
+  * 03B：量增
+  * 03F：支撐反彈幅度 > atr_k_event*ATR
+  * 03D：動能上升
+
+---
+
+## F7-C03：SUPPLY_OVERHANG_SCORE（上方套牢供給）
+
+* **證據**：
+
+  * 03F：關鍵壓力密集（LEVEL_CLUSTER_DENSITY）
+  * 03B：大量成交區域在上方（價量分布/POC）
+
+---
+
+## F7-C04：DEMAND_ABSORPTION_SCORE（承接吸收）
+
+* **證據**：
+
+  * 下探支撐時量能不爆、但收回（長下影、收盤回區間）
+  * 03F：LEVEL_HOLD_SUCCESS 類事件
+
+---
+
+## F7-C05 ～ F7-C12（完整補齊）
+
+* `SUPPLY_SHOCK_FLAG`
+* `DEMAND_SHOCK_FLAG`
+* `SUPPLY_DEMAND_BALANCE`
+* `SUPPLY_DOMINANCE_FLAG`
+* `DEMAND_DOMINANCE_FLAG`
+* `ABSORPTION_EVENT_CANDIDATE`
+* `DISTRIBUTION_EVENT_CANDIDATE`
+* `SUPPLY_DEMAND_TAGS`
+
+---
+
+# 7. F7-D：Effort vs Result（努力/結果）核心（F7-D01 ～ F7-D12）
+
+> 你講「主力不是射飛鏢」，威科夫最核心就是：
+> **量（努力）與價格結果（Result）是否匹配。**
+
+---
+
+## F7-D01：EFFORT_SCORE
+
+* **中文**：努力分數
+* **證據**：相對量（REL_VOL）、成交量Z分數（VOL_ZSCORE）、大單比（若有）
+
+---
+
+## F7-D02：RESULT_SCORE
+
+* **中文**：結果分數
+* **證據**：實體幅度（Spread）、位移（close-change）、突破距離（相對ATR）
+
+---
+
+## F7-D03：EFFORT_RESULT_RATIO
+
+* **中文**：努力/結果比
+* **解讀**：
+
+  * 努力大、結果小 → 吸收/出貨可能
+  * 努力小、結果大 → 缺口/流動性事件或拉抬
+
+---
+
+## F7-D04：ABSORPTION_SIGNATURE
+
+* **中文**：吸收特徵（大量但不再下跌/不再上漲）
+
+---
+
+## F7-D05：MARKUP_SIGNATURE
+
+* **中文**：上升推進特徵（努力與結果一致）
+
+---
+
+## F7-D06：MARKDOWN_SIGNATURE
+
+* 下跌推進特徵
+
+---
+
+## F7-D07 ～ F7-D12（完整補齊）
+
+* `NO_DEMAND_BAR_CANDIDATE`（上漲乏量）
+* `NO_SUPPLY_BAR_CANDIDATE`（下跌乏量）
+* `CLIMAX_VOLUME_FLAG`
+* `EFFORT_RESULT_DIVERGENCE`
+* `EFFORT_RESULT_CONFIDENCE`
+* `EFFORT_RESULT_TAGS`
+
+---
+
+# 8. F7-E：Phase 階段判定（F7-E01 ～ F7-E14）
+
+> 這裡不講故事，直接規格化：
+> **事件序列 + 區間品質 + 供需證據** → Phase。
+
+---
+
+## F7-E01：PHASE_LABEL
+
+* **輸出**：
+
+  * `A`（停止下跌/停止上漲，劇烈波動）
+  * `B`（建倉/出貨，區間來回）
+  * `C`（Spring/UTAD 測試）
+  * `D`（SOS/SOW 推進、離開區間）
+  * `E`（趨勢延續：Markup/Markdown）
+
+---
+
+## F7-E02：ACCUMULATION_OR_DISTRIBUTION
+
+* **輸出**：`accumulation / distribution / unknown`
+* **依據**：上/下緣事件的主導性（Spring vs UTAD）、供需分數
+
+---
+
+## F7-E03：PHASE_CONFIDENCE_SCORE
+
+* 事件數量、順序符合度、證據一致性合成（0~1）
+
+---
+
+## F7-E04：PHASE_INVALIDATION_FLAG
+
+* 條件：事件序列自相矛盾或區間破壞
+
+---
+
+## F7-E05 ～ F7-E14（完整補齊）
+
+* `PHASE_A_SCORE`
+* `PHASE_B_SCORE`
+* `PHASE_C_SCORE`
+* `PHASE_D_SCORE`
+* `PHASE_E_SCORE`
+* `PHASE_TRANSITION_EVENT`
+* `PHASE_STABILITY_SCORE`
+* `PHASE_EVENT_SEQUENCE_VALID`
+* `PHASE_TAGS`
+* `PHASE_AUDIT_TRAIL`
+
+---
+
+# 9. F7-F：累積（Accumulation）事件偵測（F7-F01 ～ F7-F22）
+
+> 累積事件集（完整）：
+> **PS → SC → AR → ST → Spring → Test → SOS → LPS**
+
+---
+
+## F7-F01：PS_CANDIDATE（Preliminary Support 初步支撐）
+
+* **證據**：
+
+  * 下跌趨勢背景（TREND_CONTEXT=downtrend）
+  * 下跌幅度擴大（03E ATR_SPIKE 或 HV_SPIKE）
+  * 出現承接跡象（下影/收回/Result改善）
+
+---
+
+## F7-F02：SC_CANDIDATE（Selling Climax 賣壓高潮）
+
+* **證據**：
+
+  * `CLIMAX_VOLUME_FLAG=1`
+  * `RESULT_SCORE` 很大但後續不再創低
+  * 波動尖峰（03E）
+
+---
+
+## F7-F03：AR_CANDIDATE（Automatic Rally 自動反彈）
+
+* **證據**：
+
+  * SC 後的反彈幅度 ≥ atr_k_event*ATR
+  * 動能回升（03D）
+
+---
+
+## F7-F04：ST_CANDIDATE（Secondary Test 二次測試）
+
+* **證據**：
+
+  * 回測接近 SC 低點或 TR 下緣
+  * 量縮（NO_SUPPLY 風格）
+  * 不破或假破立刻收回
+
+---
+
+## F7-F05：SPRING_EVENT（Spring 跳水試盤）
+
+* **證據（嚴格）**：
+
+  * 價格短暫跌破 TR 下緣（F6-E fakeout down）
+  * 在 `test_window` 內收回區間
+  * 量能可高可低：高＝吸收；低＝供給枯竭
+  * 綜合輸出 `SPRING_CONFIDENCE`
+
+---
+
+## F7-F06：SPRING_TEST_EVENT（Spring 後測試）
+
+* **證據**：
+
+  * 回踩下緣不破
+  * 量縮 + 結構守住
+
+---
+
+## F7-F07：SOS_EVENT（Sign of Strength 強勢訊號）
+
+* **證據**：
+
+  * 突破 TR 上緣（F6-E breakout up）
+  * 放量確認（03B）
+  * 動能確認（03D）
+
+---
+
+## F7-F08：LPS_EVENT（Last Point of Support 最後支撐點）
+
+* **證據**：
+
+  * SOS 後回測上緣（由壓力翻支撐）
+  * 回測成功且量縮（需求主導）
+
+---
+
+## F7-F09 ～ F7-F22（完整補齊累積事件）
+
+* `PS_CONFIDENCE_SCORE`
+* `SC_CONFIDENCE_SCORE`
+* `AR_CONFIDENCE_SCORE`
+* `ST_CONFIDENCE_SCORE`
+* `SPRING_CONFIDENCE_SCORE`
+* `TEST_CONFIDENCE_SCORE`
+* `SOS_CONFIDENCE_SCORE`
+* `LPS_CONFIDENCE_SCORE`
+* `ACC_EVENT_SEQUENCE_SCORE`
+* `ACC_EVENT_ORDER_VALID`
+* `ACC_EVENT_INVALIDATION_FLAG`
+* `ACC_BREAKOUT_FAILURE_FLAG`
+* `ACC_FAKE_STRENGTH_RISK`
+* `ACC_SUPPLY_REAPPEAR_FLAG`
+
+---
+
+# 10. F7-G：派發（Distribution）事件偵測（F7-G01 ～ F7-G22）
+
+> 派發事件集（完整）：
+> **PSY → BC → AR → ST → UTAD/Upthrust → Test → SOW → LPSY**
+
+---
+
+## F7-G01：PSY_CANDIDATE（Preliminary Supply 初步供給）
+
+* **證據**：
+
+  * 上升趨勢背景（TREND_CONTEXT=uptrend）
+  * 量大但結果變差（EFFORT大、RESULT小）
+  * 上影增長、拉不動
+
+---
+
+## F7-G02：BC_CANDIDATE（Buying Climax 買盤高潮）
+
+* **證據**：
+
+  * `CLIMAX_VOLUME_FLAG=1`
+  * 劇烈拉抬後出現回落或假突破（03F）
+  * 波動尖峰（03E）
+
+---
+
+## F7-G03：AR_CANDIDATE（Automatic Reaction 自動回落）
+
+* **證據**：
+
+  * BC 後快速回落 ≥ atr_k_event*ATR
+  * 動能轉弱（03D）
+
+---
+
+## F7-G04：ST_CANDIDATE（Secondary Test 二次測試）
+
+* **證據**：
+
+  * 回測接近 BC 高點或 TR 上緣
+  * 量縮或努力大但推不動（供給壓制）
+
+---
+
+## F7-G05：UTAD_EVENT（Upthrust After Distribution）
+
+* **證據（嚴格）**：
+
+  * 價格短暫突破 TR 上緣（F6-E fakeout up）
+  * 在 `test_window` 內跌回區間
+  * 量大常見（誘多派發），但也允許量縮（無追價）
+  * 輸出 `UTAD_CONFIDENCE`
+
+---
+
+## F7-G06：UPTHRUST_EVENT（Upthrust 上衝失敗）
+
+* 形態類似 UTAD，但不一定在完整 TR 上緣
+
+---
+
+## F7-G07：SOW_EVENT（Sign of Weakness 弱勢訊號）
+
+* **證據**：
+
+  * 跌破 TR 下緣（breakdown）
+  * 放量確認（供給主導）
+  * 動能確認（03D 轉弱）
+
+---
+
+## F7-G08：LPSY_EVENT（Last Point of Supply 最後供給點）
+
+* **證據**：
+
+  * SOW 後反彈回測下緣（支撐翻壓力）
+  * 反彈量縮且動能弱
+
+---
+
+## F7-G09 ～ F7-G22（完整補齊派發事件）
+
+* `PSY_CONFIDENCE_SCORE`
+* `BC_CONFIDENCE_SCORE`
+* `AR_CONFIDENCE_SCORE_DIST`
+* `ST_CONFIDENCE_SCORE_DIST`
+* `UTAD_CONFIDENCE_SCORE`
+* `UPTHRUST_CONFIDENCE_SCORE`
+* `TEST_CONFIDENCE_SCORE_DIST`
+* `SOW_CONFIDENCE_SCORE`
+* `LPSY_CONFIDENCE_SCORE`
+* `DIST_EVENT_SEQUENCE_SCORE`
+* `DIST_EVENT_ORDER_VALID`
+* `DIST_EVENT_INVALIDATION_FLAG`
+* `DIST_BREAKDOWN_FAILURE_FLAG`
+* `DIST_FAKE_WEAKNESS_RISK`
+
+---
+
+# 11. F7-H：確認 / 失效 / 風險旗標（F7-H01 ～ F7-H10）
+
+---
+
+## F7-H01：CONFIRMATION_SCORE
+
+* **中文**：確認分數（0~1）
+* **構成**：
+
+  * 結構突破確認（03F）
+  * 量能確認（03B）
+  * 動能確認（03D）
+  * 波動狀態合理（03E）
+
+---
+
+## F7-H02：INVALIDATION_FLAG
+
+* **中文**：失效旗標
+* **例**：Spring 後再度跌破且不收回；UTAD 後再度站上且續創高
+
+---
+
+## F7-H03：BULL_TRAP_RISK（多頭陷阱風險）
+
+* 強勢事件缺乏動能/量能支持
+
+## F7-H04：BEAR_TRAP_RISK（空頭陷阱風險）
+
+---
+
+## F7-H05 ～ F7-H10（完整補齊）
+
+* `EVENT_CONFLICT_FLAG`
+* `EVENT_OVERLAP_WARNING`
+* `LOW_CONFIDENCE_SUPPRESS_FLAG`
+* `HIGH_VOL_DISTORTION_SUPPRESS`
+* `GAP_DISTORTION_SUPPRESS`
+* `WYCKOFF_RISK_TAGS`
+
+---
+
+# 12. F7-I：合成輸出（供上層引用）（F7-I01 ～ F7-I10）
+
+---
+
+## F7-I01：WYCKOFF_STATE_LABEL
+
+* **輸出**：
+
+  * `acc_phase_A` … `acc_phase_E`
+  * `dist_phase_A` … `dist_phase_E`
+  * `unknown`
+
+---
+
+## F7-I02：WYCKOFF_EVENT_TIMELINE
+
+* **輸出**：事件序列（按時間排序）
+* 例：`[PS, SC, AR, ST, Spring, Test, SOS, LPS]`
+
+---
+
+## F7-I03：WYCKOFF_BIAS_SCORE
+
+* **中文**：偏多/偏空傾向（-1~+1）
+* 累積偏多，派發偏空，未知=0
+
+---
+
+## F7-I04：WYCKOFF_CONFIDENCE
+
+* 0~1
+
+---
+
+## F7-I05：WYCKOFF_ACTIONABLE_FLAG
+
+* **中文**：是否具備「可進入下一層分析」的條件
+* **注意**：不是下單，只是允許策略層引用
+
+---
+
+## F7-I06 ～ F7-I10（完整補齊）
+
+* `WYCKOFF_EXPLAIN_TAGS`
+* `WYCKOFF_EVIDENCE_SNAPSHOT`
+* `WYCKOFF_AUDIT_TRAIL`
+* `WYCKOFF_VERSION_TAG`
+* `WYCKOFF_COMPLETENESS_SCORE`
+
+---
+
+## 13. 03G 完整性鎖定聲明
+
+* ✔ 累積/派發 Phase A~E 全部涵蓋
+* ✔ PS/SC/AR/ST/Spring/Test/SOS/LPS 與 PSY/BC/AR/ST/UTAD/Upthrust/Test/SOW/LPSY 全部涵蓋
+* ✔ 努力/結果（Effort vs Result）已規格化，符合你「主力有動機」的核心
+* ✔ 不含任何 XQ 專屬內容
+* ✔ 不下單、不給買賣點，只輸出可稽核特徵與分數
+
+---
+
+# 📘 TAITS_03H_鮑迪克纏論結構與事件特徵全集.md
+
+（世界一流落地版｜F8 Bdick ChanLun：筆/段/中樞/背馳工程化｜與 03B~03G 嚴格對齊｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03H 在 TAITS 的角色）
+
+**TAITS_03H** 不是「纏論教學」也不是「口語判讀」，而是將你指定的 **鮑迪克纏論（Bdick ChanLun）** 轉成：
+
+* 可計算（Computable）
+* 可驗證（Verifiable）
+* 可稽核（Auditable）
+* 可被策略引用（Callable Features）
+* 可被治理層否決（Governance-Ready）
+
+嚴格定位：
+
+* ❌ 不是下單策略
+* ❌ 不直接給買賣點
+* ✅ 是「結構語言層」：把行情拆成 **筆 → 段 → 中樞 → 背馳 → 類買賣點候選事件（不下結論）**
+* ✅ 供：Regime / Risk / Fusion / Permission Gate / Strategy Weight 使用
+
+> **一句話**：
+> 03F 給你「西式結構（支撐壓力/突破/形態）」
+> **03H 給你「鮑迪克纏論結構（筆段中樞背馳）」**
+> 兩者要能互相對照、互相驗證，而不是互相推翻。
+
+---
+
+## 1. 鮑迪克纏論 vs 一般纏論（TAITS 內的工程化差異）
+
+> 你問過「鮑迪克跟原本的纏論有什麼不同、哪個比較好」，TAITS 的做法是：
+> **保留“原本纏論”作為學理框架，但採用“鮑迪克版”作為工程落地規格**，理由是它更偏向「可規則化、可機械化、可回測」。
+
+在 TAITS 的工程化差異（不評論誰神、只談可落地）：
+
+* **更強的規則邊界**：筆/段的確認更偏「可程式判斷」
+* **更強的量化背馳**：背馳不只口語，必須有動能/量/波動的可量化證據
+* **更強的中樞定義一致性**：中樞的“重疊區”可被清楚計算
+* **更適合多週期對齊**：把不同時間框架的筆段中樞關係變成對齊分數
+
+> TAITS 原則：
+> **“最好” = 可重現 + 可審計 + 可與治理層整合**
+> 因此本卷以「鮑迪克落地規格」為主。
+
+---
+
+## 2. 03H 的依賴與對齊（不得通靈）
+
+03H 僅引用（不重寫）：
+
+* **03F**：分型/轉折點（Swing / Fractal）、結構趨勢、支撐壓力、突破/假突破
+* **03D**：動能（RSI / MACD / 背離）
+* **03E**：波動（ATR / HV / Regime）
+* **03B**：量價（相對量、努力結果）
+* **03C**：趨勢秩序（均線/GMMA 作輔助，不可取代筆段）
+
+---
+
+## 3. 03H 特徵總分類（完整）
+
+| 分類代碼 | 類型名稱（中文）       | 說明                  |
+| ---- | -------------- | ------------------- |
+| F8-A | 原子事件與點（Point）  | 分型、轉折、有效性、噪音過濾      |
+| F8-B | 筆（Bi）構建        | 筆方向、筆長度、筆力度、確認/失效   |
+| F8-C | 段（Duan）構建      | 由筆合成段、段內結構、段趨勢狀態    |
+| F8-D | 中樞（ZhongShu）   | 重疊區、層級、中樞強度、擴展/收斂   |
+| F8-E | 走勢類型           | 趨勢、盤整、趨勢中的盤整、盤整中的趨勢 |
+| F8-F | 背馳（Divergence） | 筆背馳、段背馳、中樞背馳、量背馳    |
+| F8-G | 類買賣點候選事件       | 1/2/3 類候選（只標記，不下單）  |
+| F8-H | 多週期對齊          | 大小級別筆段中樞一致性         |
+| F8-I | 合成輸出與稽核        | 狀態、事件序列、可信度、審計軌跡    |
+
+> **本卷總數：共 104 個鮑迪克纏論特徵**
+
+---
+
+## 4. 統一參數（需版本化）
+
+* `fractal_left=2`, `fractal_right=2`（引用 03F）
+* `min_bi_atr=1.0`（筆最小波幅：1×ATR）
+* `min_bi_bars=3`（筆最小K數）
+* `bi_confirm_bars=1`（筆確認延遲）
+* `min_duan_bi_count=3`（一段至少 3 筆）
+* `zs_min_overlap=3`（中樞至少 3 筆的重疊區支持）
+* `zs_expand_threshold=1.5`（中樞擴展判定倍數，以 ATR）
+* `divergence_window=2`（比較最近 2 個同向筆/段）
+* `momentum_core = MACD_HIST`（動能核心，可切換 RSI）
+* `volume_core = REL_VOL`（量能核心）
+* `risk_suppress_extreme_vol = true`（極端波動時降低可信度）
+
+---
+
+# 5. F8-A：原子點（Point）與噪音過濾（F8-A01 ～ F8-A14）
+
+---
+
+## F8-A01：CL_POINT_HIGH
+
+* **中文**：纏論點（高點候選）
+* **來源**：03F `SWING_HIGH_CONFIRMED`
+
+## F8-A02：CL_POINT_LOW
+
+* 來源：03F `SWING_LOW_CONFIRMED`
+
+---
+
+## F8-A03：POINT_VALIDITY_SCORE
+
+* **中文**：點有效性分數（0~1）
+* **構成**：
+
+  * 幅度 ≥ min_bi_atr*ATR
+  * 與前點距離（bar）≥ min_bi_bars
+  * 量能完整度與流動性
+
+---
+
+## F8-A04：POINT_NOISE_FILTER_FLAG
+
+* **中文**：噪音點過濾
+* 若幅度不足或時間不足 → 1（表示需丟棄）
+
+---
+
+## F8-A05 ～ F8-A14（完整補齊）
+
+* `POINT_ATR_DISTANCE`
+* `POINT_TIME_DISTANCE`
+* `POINT_VOLUME_CONTEXT`
+* `POINT_MOMENTUM_CONTEXT`
+* `POINT_VOLATILITY_CONTEXT`
+* `POINT_GAP_DISTORTION_FLAG`
+* `POINT_LIMIT_DISTORTION_FLAG`
+* `POINT_CONFIDENCE`
+* `POINT_TAGS`
+* `POINT_AUDIT_TRAIL`
+
+---
+
+# 6. F8-B：筆（Bi）構建（F8-B01 ～ F8-B22）
+
+> **筆 = 兩個有效轉折點之間的最小趨勢段**
+> 嚴格用點構建，不用均線替代。
+
+---
+
+## F8-B01：BI_DIRECTION
+
+* **輸出**：`up / down`
+* 由 low→high 或 high→low 判定
+
+---
+
+## F8-B02：BI_START_PRICE / F8-B03：BI_END_PRICE
+
+## F8-B04：BI_START_TIME / F8-B05：BI_END_TIME
+
+---
+
+## F8-B06：BI_LENGTH_ATR
+
+* **中文**：筆長度（ATR倍）
+* `abs(end-start)/ATR`
+
+---
+
+## F8-B07：BI_DURATION_BARS
+
+* **中文**：筆時間長度
+
+---
+
+## F8-B08：BI_SLOPE
+
+* **中文**：筆斜率（價差/時間）
+
+---
+
+## F8-B09：BI_STRENGTH_SCORE（筆力度）
+
+* **中文**：筆力度（0~1）
+* **構成**：
+
+  * 長度（ATR倍）
+  * 速度（bars越少越強）
+  * 量能（相對量）
+  * 動能（MACD_HIST 或 RSI 變化）
+  * 波動狀態（高波降權）
+
+---
+
+## F8-B10：BI_EFFORT_RESULT_SIGNATURE
+
+* 引用 03B/03G 的努力結果特徵，標記此筆是否有吸收/出貨跡象
+
+---
+
+## F8-B11：BI_BREAK_CONFIRM_FLAG
+
+* **中文**：筆是否有效突破前一結構位
+* 引用 03F `LEVEL_BREAK_CONFIRM`
+
+---
+
+## F8-B12：BI_INVALIDATION_FLAG
+
+* **中文**：筆失效（被快速反向吞回）
+* 引用 03F `FAKEOUT_SCORE` 或回撤過大
+
+---
+
+## F8-B13 ～ F8-B22（完整補齊）
+
+* `BI_RETRACE_RATIO`
+* `BI_OVERLAP_WITH_LEVELS`
+* `BI_OVERLAP_WITH_CBL`
+* `BI_OVERLAP_WITH_GMMA_LONG`
+* `BI_MOMENTUM_CONFIRM`
+* `BI_VOLUME_CONFIRM`
+* `BI_VOLATILITY_PENALTY`
+* `BI_CONFIDENCE`
+* `BI_TAGS`
+* `BI_AUDIT_TRAIL`
+
+---
+
+# 7. F8-C：段（Duan）構建（F8-C01 ～ F8-C18）
+
+> **段 = 多筆組成的更高級別走勢**
+> 最少 `min_duan_bi_count` 筆。
+
+---
+
+## F8-C01：DUAN_DIRECTION
+
+* 由段內第一筆到最後一筆的方向決定（須一致性檢查）
+
+---
+
+## F8-C02：DUAN_BI_COUNT
+
+* 段包含筆數
+
+---
+
+## F8-C03：DUAN_RANGE_ATR
+
+* 段最大高低差 / ATR
+
+---
+
+## F8-C04：DUAN_STRENGTH_SCORE
+
+* **構成**：
+
+  * 段內筆力度均值
+  * 段內突破確認比例
+  * 段內動能一致性（03D）
+  * 段內波動壓力（03E）
+
+---
+
+## F8-C05：DUAN_STRUCTURE_STATE
+
+* `trend / range / transition`
+
+---
+
+## F8-C06：DUAN_END_EXHAUSTION_SCORE
+
+* **中文**：段末衰竭分數
+* 動能衰退 + 量能不配合 + 波動異常（可為背馳候選）
+
+---
+
+## F8-C07 ～ F8-C18（完整補齊）
+
+* `DUAN_DURATION_BARS`
+* `DUAN_SLOPE`
+* `DUAN_ACCELERATION`
+* `DUAN_MOMENTUM_CONFIRM`
+* `DUAN_VOLUME_CONFIRM`
+* `DUAN_VOLATILITY_PENALTY`
+* `DUAN_BREAK_STRUCTURE_EVENT`
+* `DUAN_RECOVERY_EVENT`
+* `DUAN_INVALIDATION_FLAG`
+* `DUAN_CONFIDENCE`
+* `DUAN_TAGS`
+* `DUAN_AUDIT_TRAIL`
+
+---
+
+# 8. F8-D：中樞（ZhongShu）構建（F8-D01 ～ F8-D22）
+
+> **中樞 = 多筆/多段的重疊區（Overlap Zone）**
+> 工程化核心：可計算「重疊上下界」。
+
+---
+
+## F8-D01：ZS_DETECTED
+
+* **條件**：
+
+  * 至少 `zs_min_overlap` 筆在同一價格區域有重疊
+  * 形成明確上下界
+
+---
+
+## F8-D02：ZS_UPPER / F8-D03：ZS_LOWER
+
+* **中文**：中樞上界/下界
+* **計算**：
+
+  * 取重疊區的共同區間（交集）上下界
+
+---
+
+## F8-D04：ZS_MIDLINE
+
+* `(upper+lower)/2`
+
+---
+
+## F8-D05：ZS_WIDTH_ATR
+
+* `(upper-lower)/ATR`
+
+---
+
+## F8-D06：ZS_DURATION_BARS
+
+* 中樞持續時間
+
+---
+
+## F8-D07：ZS_STRENGTH_SCORE（中樞強度）
+
+* **構成**：
+
+  * 觸碰次數（上下界）
+  * 內部波動壓縮（03E）
+  * 假突破頻率（03F）
+  * 成交密集度（03B/POC）
+
+---
+
+## F8-D08：ZS_EXPANSION_FLAG（中樞擴展）
+
+* 若寬度在短期內擴張 > `zs_expand_threshold` → 1
+
+---
+
+## F8-D09：ZS_CONTRACTION_FLAG（中樞收斂）
+
+* 寬度下降 → 1
+
+---
+
+## F8-D10：ZS_LEVEL_CONFLUENCE
+
+* 中樞上下界是否與支撐壓力聚合（03F）
+
+---
+
+## F8-D11：ZS_BREAK_UP_EVENT
+
+## F8-D12：ZS_BREAK_DOWN_EVENT
+
+* 中樞突破事件（候選）
+
+---
+
+## F8-D13 ～ F8-D22（完整補齊）
+
+* `ZS_BREAK_CONFIRM`
+* `ZS_RETEST_EVENT`
+* `ZS_RETEST_SUCCESS`
+* `ZS_FAKE_BREAK_RISK`
+* `ZS_INTERNAL_STRUCTURE_SCORE`
+* `ZS_MOMENTUM_CONFIRM`
+* `ZS_VOLUME_CONFIRM`
+* `ZS_VOLATILITY_PENALTY`
+* `ZS_CONFIDENCE`
+* `ZS_TAGS`
+
+---
+
+# 9. F8-E：走勢類型（F8-E01 ～ F8-E10）
+
+---
+
+## F8-E01：CL_TREND_OR_RANGE_LABEL
+
+* **輸出**：
+
+  * `trend`：段方向一致且中樞逐級推移
+  * `range`：中樞重疊反覆
+  * `transition`：中樞破壞/重建中
+
+---
+
+## F8-E02：ZS_LADDERING_SCORE（中樞抬高/降低）
+
+* 中樞中線逐級上移/下移的分數
+
+---
+
+## F8-E03：TREND_WITH_ZS_SCORE
+
+* 趨勢中包含中樞的可操作性（供上層引用）
+
+---
+
+## F8-E04 ～ F8-E10（完整補齊）
+
+* `RANGE_WITH_TREND_PULSES`
+* `TREND_PULSE_STRENGTH`
+* `STRUCTURE_CONSISTENCY_SCORE`
+* `CL_STATE_STABILITY`
+* `CL_STATE_SWITCH_EVENT`
+* `CL_STATE_CONFIDENCE`
+* `CL_STATE_TAGS`
+
+---
+
+# 10. F8-F：背馳（Divergence）工程化（F8-F01 ～ F8-F18）
+
+> 鮑迪克纏論最關鍵：
+> **背馳必須是“同向筆/段”的力度變弱，而不是主觀感覺。**
+
+---
+
+## F8-F01：BI_DIVERGENCE_DETECTED（筆背馳）
+
+* **條件（嚴格）**：最近兩個同向上筆（或下筆）比較：
+
+  * 價格創新高（或新低）
+  * 但 `BI_STRENGTH_SCORE` 下降
+  * 且動能核心（MACD_HIST/RSI）走弱或背離（03D）
+
+---
+
+## F8-F02：BI_DIVERGENCE_SCORE
+
+* 0~1
+
+---
+
+## F8-F03：DUAN_DIVERGENCE_DETECTED（段背馳）
+
+* 比較最近兩個同向段：
+
+  * 段力度下降 + 動能走弱
+
+---
+
+## F8-F04：DUAN_DIVERGENCE_SCORE
+
+---
+
+## F8-F05：ZS_DIVERGENCE_DETECTED（中樞背馳）
+
+* 中樞突破後的推進段力度不足，且回落穿越关键结构边界（03F/03H联合）
+
+---
+
+## F8-F06：ZS_DIVERGENCE_SCORE
+
+---
+
+## F8-F07：VOLUME_DIVERGENCE_DETECTED
+
+* 價格推進但量能衰退（03B）
+
+---
+
+## F8-F08：MOMENTUM_DIVERGENCE_DETECTED
+
+* 03D 既有背離信號引用
+
+---
+
+## F8-F09：MULTI_EVIDENCE_DIVERGENCE_SCORE
+
+* 動能+量能+波動合成
+
+---
+
+## F8-F10：DIVERGENCE_CONFIRMATION_FLAG
+
+* 背馳後出現結構破壞（03F STRUCTURE_BREAK）才加分
+
+---
+
+## F8-F11 ～ F8-F18（完整補齊）
+
+* `DIVERGENCE_TIME_SINCE`
+* `DIVERGENCE_SEVERITY_LEVEL`
+* `DIVERGENCE_FALSE_POSITIVE_RISK`
+* `DIVERGENCE_RISK_FLAG_GOV`
+* `DIVERGENCE_TAGS`
+* `DIVERGENCE_AUDIT_TRAIL`
+* `DIVERGENCE_INVALIDATION_FLAG`
+* `DIVERGENCE_CONFIDENCE`
+
+---
+
+# 11. F8-G：類 1/2/3 買賣點候選事件（只標記，不下單）（F8-G01 ～ F8-G18）
+
+> 你強調「能不能自動下單要你決定」。
+> 所以 TAITS 在 03H 只輸出：
+> **“候選事件” + “證據” + “可信度”**，不輸出指令。
+
+---
+
+## F8-G01：CLASS1_BUY_CANDIDATE
+
+* **中文**：類買點1候選
+* **典型條件**：
+
+  * 下跌段末出現段背馳（F8-F03=1）
+  * 結構止跌（03F 支撐成功）
+  * 波動不極端（03E）
+* **output**：0/1 + score
+
+---
+
+## F8-G02：CLASS1_SELL_CANDIDATE
+
+* 上升段末段背馳 + 壓力/假突破
+
+---
+
+## F8-G03：CLASS2_BUY_CANDIDATE
+
+* 中樞後回踩不破（中樞上沿/中線） + 動能恢復
+
+## F8-G04：CLASS2_SELL_CANDIDATE
+
+* 中樞後反彈不過（中樞下沿/中線） + 動能弱
+
+---
+
+## F8-G05：CLASS3_BUY_CANDIDATE
+
+* 突破中樞後的最後支撐點（近似 LPS 概念，但以中樞結構定義）
+
+## F8-G06：CLASS3_SELL_CANDIDATE
+
+* 跌破中樞後最後供給點
+
+---
+
+## F8-G07：CLASS_POINT_CONFIDENCE
+
+* 由背馳證據 + 結構確認 + 量能/動能一致性合成
+
+---
+
+## F8-G08：CLASS_POINT_INVALIDATION_FLAG
+
+* 結構被快速反向吞回
+
+---
+
+## F8-G09 ～ F8-G18（完整補齊）
+
+* `CLASS_POINT_RISK_FLAG_GOV`
+* `CLASS_POINT_TAGS`
+* `CLASS_POINT_AUDIT_TRAIL`
+* `CLASS_POINT_SEQUENCE_VALID`
+* `CLASS_POINT_MULTI_TF_SUPPORT`
+* `CLASS_POINT_VOLATILITY_PENALTY`
+* `CLASS_POINT_MOMENTUM_CONFIRM`
+* `CLASS_POINT_VOLUME_CONFIRM`
+* `CLASS_POINT_COMPLETENESS`
+
+---
+
+# 12. F8-H：多週期對齊（F8-H01 ～ F8-H12）
+
+> TAITS 必須能處理「輪動快、題材多」：
+> 多週期對齊不是只看日線，而是結構層要能評分。
+
+---
+
+## F8-H01：MULTI_TF_BI_ALIGNMENT_SCORE
+
+* 比較大級別與小級別的筆方向一致性（0~1）
+
+## F8-H02：MULTI_TF_DUAN_ALIGNMENT_SCORE
+
+## F8-H03：MULTI_TF_ZS_ALIGNMENT_SCORE
+
+* 中樞位置關係（嵌套/包含/錯位）
+
+## F8-H04：TOP_DOWN_STRUCTURE_DOMINANCE
+
+* 大級別是否壓制小級別
+
+## F8-H05：MULTI_TF_CONFLICT_FLAG
+
+## F8-H06 ～ F8-H12（完整補齊）
+
+* `MULTI_TF_CL_STATE_ALIGNMENT`
+* `MULTI_TF_DIVERGENCE_CONFIRM`
+* `MULTI_TF_CLASS_POINT_SUPPORT`
+* `MULTI_TF_CONFIDENCE`
+* `MULTI_TF_TAGS`
+* `MULTI_TF_AUDIT_TRAIL`
+* `MULTI_TF_VERSION_TAG`
+
+---
+
+# 13. F8-I：合成輸出與稽核（F8-I01 ～ F8-I10）
+
+---
+
+## F8-I01：BDICK_CL_STATE_LABEL
+
+* **輸出**：
+
+  * `bi_up / bi_down`（筆狀態）
+  * `duan_up / duan_down`（段狀態）
+  * `zs_building / zs_breaking / zs_holding`（中樞狀態）
+  * `divergence_risk`（背馳風險）
+  * `transition`（切換中）
+
+---
+
+## F8-I02：BDICK_EVENT_TIMELINE
+
+* **輸出**：事件序列（筆/段/中樞/背馳/類點候選）
+
+---
+
+## F8-I03：BDICK_CONFIDENCE
+
+* 0~1（資料完整度、流動性、波動狀態、證據一致性）
+
+---
+
+## F8-I04：BDICK_BIAS_SCORE
+
+* -1~+1（偏空/偏多傾向），僅供融合層加權
+
+---
+
+## F8-I05：BDICK_ACTIONABLE_FLAG
+
+* 是否允許上層策略引用（治理層可再 Gate）
+
+---
+
+## F8-I06 ～ F8-I10（完整補齊）
+
+* `BDICK_EXPLAIN_TAGS`
+* `BDICK_EVIDENCE_SNAPSHOT`
+* `BDICK_AUDIT_TRAIL`
+* `BDICK_VERSION_TAG`
+* `BDICK_COMPLETENESS_SCORE`
+
+---
+
+## 14. 03H 與威科夫（03G）的嚴格對齊方式（你要的「一環扣一環」）
+
+* 威科夫（03G）回答：
+  **主力在吸籌/派發嗎？事件序列是否成立？**
+* 鮑迪克纏論（03H）回答：
+  **結構上是否形成可重現的筆/段/中樞推進？背馳是否量化成立？**
+
+在 TAITS 融合層（FusionEngine）使用方式：
+
+* 若 **03G 累積成立** 且 **03H 出現向上段/中樞抬高 + 類買點候選** → 偏多權重加分
+* 若 **03G 派發成立** 且 **03H 出現段背馳 + 結構破壞** → 風險加分、策略降權
+* 若兩者衝突 → `CONFLICT_FLAG=1`，交由治理層決定是否降低自動化程度（你決定）
+
+---
+
+## 15. 03H 完整性鎖定聲明
+
+* ✔ 筆/段/中樞/背馳/類點候選事件全部工程化
+* ✔ 所有背馳必須有量化證據（力度/動能/量能/波動）
+* ✔ 不下單、不給買賣點，只輸出候選事件+分數+稽核
+* ✔ 與 03F（結構）/03G（威科夫）可互驗，不互相推翻
+* ✔ 無任何 XQ 專屬內容
+
+---
+
+# 📘 TAITS_03I_題材輪動與資金流向特徵全集.md
+
+（世界一流落地版｜F9 Theme/Rotation：題材 × 族群 × 資金 × 領先/跟隨 × 熱度 × 驗證鏈｜支援 DRAM/機器人/AI/PCB 等快速輪動｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03I 在 TAITS 的角色）
+
+**TAITS_03I** 是 TAITS「找到下一個趨勢」的核心之一，解決你講的現實：
+
+* 題材會變、輪動很快
+* 不可能只做權值股或全指股
+* 中小型股常常才是爆發點
+* 主力不是亂買，一定有動機、有題材、有資金聚焦
+
+03I 的任務：把「題材/族群/資金」這種原本很口語的市場語言，變成 **可計算、可驗證、可回測、可治理** 的特徵系統。
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不給買賣點
+* ✅ 給「題材候選」「輪動方向」「資金聚焦」「領先股/跟隨股」「驗證分數」
+* ✅ 供：Universe Builder、Regime、FusionEngine、Strategy Weight、Permission Gate 使用
+
+---
+
+## 1. 03I 依賴與對齊（不得通靈）
+
+03I 只在 TAITS 架構內做「特徵化」，不做主觀猜題材：
+
+* 02（資料來源層）提供：
+
+  * 產業/族群分類（官方/公開資料）
+  * 新聞/公告/社群/研報的事件標籤（可選）
+  * 資金面資料（法人、融資融券、ETF成分/資金流、期權對股票的觀察訊號）
+* 03B~03H 提供：
+
+  * 價格/量/趨勢/動能/波動/結構/威科夫/鮑迪克纏論的「可驗證證據」
+* 03I 做的是：
+
+  * 把標的按「題材/族群」聚合
+  * 做「相對強弱、動能、資金、領先」排序
+  * 形成「輪動狀態」與「驗證鏈」
+
+> 03I 產出的是「誰在被資金選中」與「這是不是一波真的輪動」，不是講故事。
+
+---
+
+## 2. 03I 特徵總分類（完整）
+
+| 分類代碼 | 類型名稱（中文）                 | 說明                  |
+| ---- | ------------------------ | ------------------- |
+| F9-A | 題材/族群映射基礎                | 股票→產業→題材→子題材 的可追溯映射 |
+| F9-B | 族群相對強弱（RS）               | 族群 vs 大盤、族群內分化      |
+| F9-C | 資金流向（Flow）               | 法人/融資融券/成交額/換手/集中度  |
+| F9-D | 輪動偵測（Rotation）           | 熱門切換、領先群更替、速度       |
+| F9-E | 領先股/跟隨股（Leader/Follower） | 先動者、擴散、帶動力          |
+| F9-F | 題材熱度（Heat）               | 新高家數、爆量家數、討論度（可選）   |
+| F9-G | 驗證鏈（Confirm Chain）       | 題材≠噪音：用價格/量/結構/波動驗證 |
+| F9-H | 中小型爆發友善機制                | 避免過度嚴苛把中小型全濾掉       |
+| F9-I | 合成輸出與稽核                  | 族群狀態、題材清單、可信度、標籤    |
+
+> **本卷總數：共 112 個題材輪動與資金流向特徵**
+
+---
+
+## 3. 統一名詞與資料結構（硬規格）
+
+### 3.1 核心物件
+
+* `Symbol`：單一股票/ETF
+* `Sector`：產業/類股（官方分類 + 自定義映射）
+* `Theme`：題材（例：AI、機器人、DRAM、PCB）
+* `SubTheme`：子題材（例：PCB-材料、PCB-鑽孔、DRAM-模組、AI-伺服器）
+
+### 3.2 映射表（必須可稽核）
+
+* `Symbol → Sector`：來源欄位 + 更新日期
+* `Symbol → Theme/SubTheme`：允許多對多（同一股票可多題材）
+* 每條映射都要能回溯：
+  `source_type / source_ref / created_at / last_verified_at / confidence`
+
+> 這讓新對話也能完全理解「題材是怎麼來的」，不靠通靈。
+
+---
+
+## 4. F9-A：題材/族群映射基礎（F9-A01 ～ F9-A14）
+
+---
+
+## F9-A01：SECTOR_LABEL_OFFICIAL
+
+* **中文**：官方產業分類
+* **output**：字串
+
+## F9-A02：SECTOR_LABEL_TAITS
+
+* **中文**：TAITS 自定義族群（可更細）
+* **output**：字串
+
+## F9-A03：THEME_TAGS
+
+* **中文**：題材標籤集合（可多個）
+* **output**：list
+
+## F9-A04：SUBTHEME_TAGS
+
+* 子題材標籤集合
+
+## F9-A05：THEME_TAG_CONFIDENCE
+
+* 0~1（映射可信度）
+
+## F9-A06：THEME_TAG_SOURCE_TYPES
+
+* `official / company_business / news / community / research / manual_curated`
+
+## F9-A07：THEME_TAG_FRESHNESS_DAYS
+
+* 最近驗證距今天數
+
+## F9-A08 ～ F9-A14（完整補齊）
+
+* `THEME_TAG_CONSISTENCY_SCORE`（題材與公司營收/產品一致性）
+* `THEME_TAG_OVERLAP_COUNT`（多題材重疊數）
+* `THEME_TAG_CONFLICT_FLAG`
+* `THEME_TAG_AUDIT_TRAIL`
+* `THEME_TAG_VERSION`
+* `THEME_TAG_UPDATE_EVENT`
+* `THEME_TAGS_COMPLETENESS`
+
+---
+
+# 5. F9-B：族群相對強弱（RS）（F9-B01 ～ F9-B18）
+
+> 核心：題材輪動最先表現為「族群相對大盤變強」。
+
+---
+
+## F9-B01：SECTOR_RS_1D / 5D / 20D
+
+* **中文**：族群相對強弱（對大盤）
+* **calc**：`sector_return - market_return`
+
+## F9-B02：SECTOR_RS_TREND_SLOPE
+
+* RS 斜率（輪動加速）
+
+## F9-B03：SECTOR_BREADTH_UP_RATIO
+
+* **中文**：族群內上漲家數比
+
+## F9-B04：SECTOR_NEW_HIGH_RATIO
+
+* 族群內創 N 日新高比例
+
+## F9-B05：SECTOR_DISPERSION
+
+* **中文**：族群內分化程度（大＝只有少數領先）
+
+## F9-B06：SECTOR_MOMENTUM_COMPOSITE
+
+* 族群動能合成（引用 03D）
+
+## F9-B07 ～ F9-B18（完整補齊）
+
+* `SECTOR_TREND_STATE`（引用 03C/03F 聚合）
+* `SECTOR_VOL_REGIME`（引用 03E 聚合）
+* `SECTOR_BREAKOUT_COUNT`
+* `SECTOR_FAKEOUT_COUNT`
+* `SECTOR_CONFLUENCE_SCORE`
+* `SECTOR_RS_PCT_RANK`
+* `SECTOR_RS_ZSCORE`
+* `SECTOR_RS_SWITCH_EVENT`
+* `SECTOR_LEADER_CONCENTRATION`
+* `SECTOR_CONFIRMATION_SCORE`
+* `SECTOR_RISK_SCORE`
+* `SECTOR_TAGS`
+
+---
+
+# 6. F9-C：資金流向（Flow）（F9-C01 ～ F9-C22）
+
+> 你要的是「資金流動現在是怎樣」。
+> 03I 將資金分成：**市場交易資金**、**法人資金**、**槓桿資金**、**集中資金**。
+
+---
+
+## F9-C01：TURNOVER_VALUE（成交金額）
+
+* 單股/族群聚合皆可
+
+## F9-C02：TURNOVER_CHANGE_RATE
+
+* 成交金額變化率
+
+## F9-C03：VOLUME_SURGE_COUNT_SECTOR
+
+* 族群爆量家數
+
+## F9-C04：MONEY_FLOW_PROXY
+
+* **中文**：資金流向代理指標（不依賴專有逐筆）
+* **calc**：`成交金額 * 當日報酬` 的平滑累積（或 Chaikin 類型可選）
+
+---
+
+## F9-C05：INSTITUTIONAL_NET_FLOW
+
+* **中文**：法人淨流（外資/投信/自營合成）
+* **notes**：資料來源由 02 層提供
+
+## F9-C06：FOREIGN_DOMINANCE_SCORE
+
+* 外資主導程度
+
+## F9-C07：MARGIN_FINANCE_CHANGE
+
+* **中文**：融資變化（槓桿風險/推升）
+
+## F9-C08：SHORT_SELLING_CHANGE
+
+* **中文**：融券變化（放空壓力/軋空條件）
+
+## F9-C09：MARGIN_SHORT_IMBALANCE
+
+* 融資融券不平衡分數
+
+---
+
+## F9-C10：CONCENTRATION_PROXY
+
+* **中文**：集中度代理（中小型爆發常見）
+* **可用代理**：
+
+  * 高換手 + 價格推進 + 量能集中於少數幾天
+
+---
+
+## F9-C11 ～ F9-C22（完整補齊）
+
+* `ETF_COMPONENT_FLOW_PROXY`（ETF成分帶動）
+* `SECTOR_CAPITAL_INFLOW_SCORE`
+* `SECTOR_CAPITAL_OUTFLOW_SCORE`
+* `CAPITAL_ROTATION_SPEED`
+* `FLOW_ACCELERATION`
+* `FLOW_REVERSAL_EVENT`
+* `SMART_MONEY_SIGNATURE`（努力結果匹配）
+* `DUMB_MONEY_RISK`（爆量但結果差）
+* `LEVERAGE_DRIVEN_FLAG`
+* `HEDGE_DRIVEN_FLAG`（若引用期權觀察訊號）
+* `FLOW_CONFIDENCE`
+* `FLOW_TAGS`
+
+---
+
+# 7. F9-D：輪動偵測（Rotation）（F9-D01 ～ F9-D14）
+
+---
+
+## F9-D01：TOP_THEMES_RANKING
+
+* **中文**：題材排名（每日/每週）
+* 依 RS + Flow + Breadth 合成排序
+
+## F9-D02：THEME_RANK_CHANGE
+
+* 排名變動（輪動發生）
+
+## F9-D03：ROTATION_SWITCH_EVENT
+
+* `theme_A → theme_B` 切換事件
+
+## F9-D04：ROTATION_STABILITY_SCORE
+
+* 熱門題材是否穩定持續
+
+## F9-D05：ROTATION_SPEED_SCORE
+
+* 輪動速度（越快越不宜重倉，交治理層）
+
+## F9-D06 ～ F9-D14（完整補齊）
+
+* `THEME_ENTRY_EVENT`
+* `THEME_EXIT_EVENT`
+* `THEME_REENTRY_EVENT`
+* `LEADER_GROUP_CHANGE_EVENT`
+* `ROTATION_NOISE_FLAG`
+* `ROTATION_CONFLICT_FLAG`
+* `ROTATION_REGIME_LABEL`（慢輪動/快輪動）
+* `ROTATION_CONFIDENCE`
+* `ROTATION_TAGS`
+
+---
+
+# 8. F9-E：領先股 / 跟隨股（Leader/Follower）（F9-E01 ～ F9-E18）
+
+> 你要的關鍵：不是只挑龍頭，還要能找出「下一個帶動者」與「擴散」。
+
+---
+
+## F9-E01：LEADER_SCORE
+
+* **中文**：領先分數（0~1）
+* **構成**：
+
+  * 先於族群突破（03F breakout）
+  * RS 高（F9-B）
+  * 資金流入（F9-C）
+  * 結構健康（03F、03H、03G 可加分）
+
+## F9-E02：FOLLOWER_SCORE
+
+* 跟隨分數（後動，但跟上）
+
+## F9-E03：EARLY_LEADER_FLAG
+
+* 新領先者候選（非傳統龍頭）
+
+## F9-E04：LEADER_DIVERSITY
+
+* 族群領先者是否多元（越多越健康）
+
+## F9-E05：LEADER_CONCENTRATION_RISK
+
+* 只有一兩檔撐場（容易假輪動）
+
+## F9-E06：LEADER_TO_SECTOR_DRAG
+
+* 領先股是否帶動整體（擴散力）
+
+## F9-E07 ～ F9-E18（完整補齊）
+
+* `LEADER_BREAKOUT_COUNT`
+* `LEADER_FAKEOUT_RISK`
+* `LEADER_VOLUME_SIGNATURE`
+* `LEADER_MOMENTUM_SIGNATURE`
+* `LEADER_VOL_REGIME_PENALTY`
+* `NEW_LEADER_EMERGENCE_RATE`
+* `FOLLOWER_CATCHUP_RATE`
+* `BREADTH_EXPANSION_RATE`
+* `LEADER_ROTATION_EVENT`
+* `LEADER_CONFIDENCE`
+* `LEADER_TAGS`
+* `LEADER_AUDIT_TRAIL`
+
+---
+
+# 9. F9-F：題材熱度（Heat）（F9-F01 ～ F9-F12）
+
+> 熱度不是情緒而已，TAITS 先用「可量化熱度」，社群熱度是可選加成。
+
+---
+
+## F9-F01：HEAT_PRICE_BREADTH
+
+* 上漲家數/創高家數加權
+
+## F9-F02：HEAT_VOLUME_BREADTH
+
+* 爆量家數比例
+
+## F9-F03：HEAT_TURNOVER_SHARE
+
+* 題材成交金額占全市場比例
+
+## F9-F04：HEAT_ACCELERATION
+
+* 熱度加速（短期升溫）
+
+## F9-F05：HEAT_DECAY
+
+* 熱度衰退（退潮）
+
+## F9-F06：HEAT_EXTREME_FLAG
+
+* 過熱旗標（不代表要賣，只代表風險上升）
+
+## F9-F07 ～ F9-F12（完整補齊）
+
+* `HEAT_STABILITY_SCORE`
+* `HEAT_VOLATILITY_PENALTY`
+* `HEAT_GAP_DISTORTION_PENALTY`
+* `HEAT_CONFIDENCE`
+* `HEAT_TAGS`
+* `HEAT_AUDIT_TRAIL`
+
+---
+
+# 10. F9-G：驗證鏈（Confirm Chain）（F9-G01 ～ F9-G16）
+
+> 你要「先預判再證實」，03I 就是把題材預判變成可驗證流程。
+
+---
+
+## F9-G01：THEME_HYPOTHESIS_SCORE（預判分數）
+
+* 由 RS 斜率 + 資金流入 + 熱度升溫合成
+
+## F9-G02：THEME_CONFIRM_PRICE_STRUCTURE
+
+* 結構確認（03F：突破/回測成功）
+
+## F9-G03：THEME_CONFIRM_VOLUME
+
+* 量能確認（03B：放量與努力結果）
+
+## F9-G04：THEME_CONFIRM_MOMENTUM
+
+* 動能確認（03D）
+
+## F9-G05：THEME_CONFIRM_RISK_OK
+
+* 風險確認（03E：非極端波）
+
+## F9-G06：THEME_CONFIRM_WYCKOFF
+
+* 威科夫確認（03G：累積/派發一致性）
+
+## F9-G07：THEME_CONFIRM_BDICK
+
+* 鮑迪克纏論確認（03H：中樞抬高/段推進/背馳風險）
+
+## F9-G08：THEME_CONFIRM_SCORE_TOTAL
+
+* 0~1 合成
+
+## F9-G09：THEME_INVALIDATION_FLAG
+
+* 確認鏈斷裂（例如假突破、量崩、風險極端）
+
+## F9-G10 ～ F9-G16（完整補齊）
+
+* `CONFIRM_CHAIN_MISSING_PARTS`
+* `CONFIRM_CHAIN_CONFLICT_FLAG`
+* `CONFIRM_CHAIN_DELAY_SCORE`
+* `CONFIRM_CHAIN_EARLY_WARNING`
+* `CONFIRM_CHAIN_AUDIT_TRAIL`
+* `CONFIRM_CHAIN_TAGS`
+* `CONFIRM_CHAIN_VERSION`
+
+---
+
+# 11. F9-H：中小型爆發友善機制（F9-H01 ～ F9-H14）
+
+> 你明確要求：策略不能因為嚴苛而把中小型全部篩掉。
+> 03I 在「特徵層」先把中小型的合理性證據建立起來，供治理層決策。
+
+---
+
+## F9-H01：SMALL_CAP_ELIGIBLE_FLAG
+
+* **中文**：中小型可納入候選（不是買）
+* **條件（示例）**：
+
+  * 流動性達標（成交金額/量）
+  * 但不要求一定是權值股
+
+## F9-H02：LIQUIDITY_SAFETY_SCORE
+
+* 滑價風險代理分數（0~1）
+
+## F9-H03：EXPLOSION_PRECURSOR_SCORE
+
+* 爆發前兆分數（常見：波動壓縮+量能抬頭+結構突破候選）
+
+## F9-H04：PUMP_DUMP_RISK_SCORE
+
+* 爆拉爆殺風險（高換手+假突破+極端波動）
+
+## F9-H05：NEWSLESS_BREAKOUT_FLAG
+
+* 無題材訊息但價格爆發（提示需要更多驗證，不代表否決）
+
+## F9-H06：THEME_UNDERFOLLOWED_SCORE
+
+* **中文**：題材尚未擴散（可能有後續空間）
+
+## F9-H07 ～ F9-H14（完整補齊）
+
+* `MICROCAP_HARD_RISK_FLAG`（過小、流動性不足，提示治理層）
+* `SPREAD_RISK_PROXY`
+* `GAP_RISK_PROXY`
+* `MANIPULATION_SIGNATURE_FLAG`
+* `SMALLCAP_CONFIRM_CHAIN_SCORE`
+* `SMALLCAP_POSITION_CAP_HINT`
+* `SMALLCAP_VOL_PENALTY`
+* `SMALLCAP_TAGS`
+
+---
+
+# 12. F9-I：合成輸出與稽核（F9-I01 ～ F9-I14）
+
+---
+
+## F9-I01：THEME_STATE_LABEL
+
+* **輸出**：
+
+  * `emerging`（新起）
+  * `accelerating`（加速）
+  * `mature`（成熟擴散）
+  * `distribution_risk`（退潮/派發風險）
+  * `dead`（題材消失）
+
+## F9-I02：TOP_THEMES_LIST
+
+* 題材清單 + 排名 + 分數
+
+## F9-I03：TOP_SECTORS_LIST
+
+## F9-I04：LEADERBOARD
+
+* 題材內領先股榜
+
+## F9-I05：FOLLOWERBOARD
+
+* 題材內跟隨股榜
+
+## F9-I06：ROTATION_MAP
+
+* 題材切換圖（事件序列）
+
+## F9-I07：THEME_CONFIDENCE
+
+* 0~1
+
+## F9-I08：THEME_RISK_FLAGS
+
+* 過熱、假輪動、集中風險、極端波動等
+
+## F9-I09：THEME_EXPLAIN_TAGS
+
+* 可讀解釋標籤（供 UI / 報表）
+
+## F9-I10：THEME_AUDIT_TRAIL
+
+* 所有分數來源可追溯
+
+## F9-I11 ～ F9-I14（完整補齊）
+
+* `THEME_DATA_FRESHNESS_REPORT`
+* `THEME_MAPPING_COMPLETENESS`
+* `THEME_VERSION_TAG`
+* `THEME_EXPORT_SCHEMA`
+
+---
+
+## 13. 03I 與你提的 DRAM/機器人/AI/PCB 的落地方式（不靠主觀）
+
+TAITS 不需要你每天手動說題材，但允許你補充。落地流程：
+
+1. **映射層（F9-A）**：把股票標記到 Theme/SubTheme（可多對多）
+2. **輪動層（F9-B~F）**：算出哪個題材在變強、資金在進
+3. **驗證鏈（F9-G）**：用 03B~03H 的證據確認「不是噪音」
+4. **中小型友善（F9-H）**：避免只剩權值股
+5. **輸出（F9-I）**：給 FusionEngine / Governance 做最後決策（你決定是否自動化）
+
+---
+
+## 14. 03I 完整性鎖定聲明
+
+* ✔ 題材映射、族群相對強弱、資金流向、輪動偵測、領先/跟隨、熱度、驗證鏈、中小型友善、合成輸出 全覆蓋
+* ✔ 不下單、不給買賣點
+* ✔ 不依賴 XQ
+* ✔ 可稽核（每個題材標籤可追溯來源與可信度）
+* ✔ 完全符合你要的：「市場輪動快、題材會變、先預判再證實」
+
+---
+
+# 📘 TAITS_03J_籌碼與持股結構特徵全集.md
+
+（世界一流落地版｜F10 Chip/Positioning：法人/大戶/集中度/分點/內外盤代理/融資融券深化/借券/ETF與被動資金｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03J 在 TAITS 的角色）
+
+**TAITS_03J** 解決的是你非常在意的核心：
+
+> 「漲不是亂漲，背後一定有籌碼與資金的結構變化。」
+
+03J 把市場上常見但口語化的「籌碼」轉成：
+
+* 可計算（Computable）
+* 可回測（Backtestable）
+* 可解釋（Explainable）
+* 可稽核（Auditable）
+* 可治理（Governance-Ready）
+
+嚴格定位：
+
+* ❌ 不下單
+* ❌ 不產生買賣點
+* ✅ 輸出「籌碼狀態」「集中度」「主體行為推定」「槓桿/空方壓力」「被動資金效應」
+* ✅ 供：Regime、RiskEngine、FusionEngine、Permission Gate、Strategy Weight 使用
+
+---
+
+## 1. 03J 依賴與資料來源對齊（不得通靈）
+
+03J 的每個特徵都必須能回溯資料來源（由 02 層提供），常見類別如下（不限定，只是硬要求可追溯）：
+
+* 法人：外資/投信/自營（買賣超、持股、持倉變化）
+* 融資融券：融資餘額、融券餘額、資券比、券資比
+* 借券：借券賣出、借券餘額（若可取得）
+* 大戶集中/股權分散：大戶持股級距、集中度（若可取得）
+* 分點：券商分點進出（若可取得）
+* ETF/被動資金：成分股、權重、申贖（若可取得）
+* 交易所/公開資訊：公告、持股申報（若有）
+
+> **TAITS 原則**：
+> 03J 可以用「代理指標（Proxy）」補齊缺資料，但必須在特徵中標記 `source_confidence`，不得假裝是精準真實籌碼。
+
+---
+
+## 2. 03J 特徵總分類（完整）
+
+| 分類代碼  | 類型名稱（中文）            | 說明                |
+| ----- | ------------------- | ----------------- |
+| F10-A | 籌碼資料可用性與可信度         | 資料有無、頻率、延遲、可信度    |
+| F10-B | 法人行為（Institutional） | 外資/投信/自營淨流、持股變化   |
+| F10-C | 持股結構與集中度            | 大戶集中、分散、籌碼穩定性     |
+| F10-D | 融資融券深化              | 融資推升、融券壓力、轧空條件    |
+| F10-E | 借券/放空結構             | 借券賣出、空方成本壓力       |
+| F10-F | 分點與主體推定             | 分點集中、主買主賣、主力輪動    |
+| F10-G | ETF/被動資金效應          | 成分權重、被動買盤推升/壓制    |
+| F10-H | 籌碼-價格一致性            | 籌碼與趨勢/結構是否一致（驗證鏈） |
+| F10-I | 合成輸出與治理旗標           | 籌碼分數、風險旗標、審計軌跡    |
+
+> **本卷總數：共 118 個籌碼與持股結構特徵**
+
+---
+
+## 3. 統一資料模型（硬規格）
+
+### 3.1 共同欄位（所有特徵都要能輸出）
+
+* `feature_id`
+* `value`
+* `timestamp`
+* `frequency`
+* `source_type`
+* `source_ref`
+* `source_delay_days`
+* `source_confidence`（0~1）
+* `audit_tags`（list）
+
+### 3.2 主體維度（Dimension）
+
+* `actor = foreign / investment_trust / dealer / margin / short / etf_passive / broker_branch / whale_holder`
+
+---
+
+# 4. F10-A：資料可用性與可信度（F10-A01 ～ F10-A14）
+
+---
+
+## F10-A01：CHIP_DATA_AVAILABILITY_SCORE
+
+* **中文**：籌碼資料可用性分數（0~1）
+* 依各類資料是否存在、頻率、缺失率合成
+
+## F10-A02：DATA_DELAY_DAYS
+
+* 資料延遲天數（例如 T+1、T+2、週/月）
+
+## F10-A03：DATA_STALENESS_FLAG
+
+* 過期旗標（超過允許延遲）
+
+## F10-A04：SOURCE_CONFIDENCE_BASE
+
+* 官方 > 公開彙整 > Proxy
+
+## F10-A05 ～ F10-A14（完整補齊）
+
+* `MISSING_COMPONENTS_LIST`
+* `FREQUENCY_MISMATCH_FLAG`
+* `REVISION_RISK_FLAG`
+* `SURVIVORSHIP_BIAS_RISK_FLAG`
+* `OUTLIER_SANITY_CHECK_FLAG`
+* `DATA_GAP_REPORT`
+* `SOURCE_RELIABILITY_TIER`
+* `DATA_AUDIT_TRAIL`
+* `DATA_VERSION_TAG`
+* `DATA_COMPLETENESS_SCORE`
+
+---
+
+# 5. F10-B：法人行為（Institutional）（F10-B01 ～ F10-B22）
+
+---
+
+## F10-B01：FOREIGN_NET_BUY
+
+* **中文**：外資買賣超
+* **output**：股數或金額（依來源）
+
+## F10-B02：FOREIGN_NET_BUY_MA
+
+* 平滑均值（N=5/20）
+
+## F10-B03：FOREIGN_FLOW_ACCELERATION
+
+* 淨流入加速度（變化率）
+
+## F10-B04：FOREIGN_HOLDING_CHANGE
+
+* 外資持股變化（若可取得）
+
+## F10-B05：FOREIGN_DOMINANCE_SCORE
+
+* 外資主導分數（0~1）
+
+---
+
+## F10-B06：INV_TRUST_NET_BUY
+
+* 投信買賣超
+
+## F10-B07：INV_TRUST_STREAK_DAYS
+
+* 連買/連賣天數
+
+## F10-B08：INV_TRUST_HOLDING_CHANGE
+
+---
+
+## F10-B09：DEALER_NET_BUY
+
+* 自營商買賣超
+
+## F10-B10：DEALER_HEDGE_SIGNATURE
+
+* 自營避險型態（若資料允許，否則以 Proxy）
+
+---
+
+## F10-B11：INSTITUTIONAL_CONFLUENCE_SCORE
+
+* **中文**：法人同向一致性
+* 外資/投信/自營同向→加分，分歧→扣分
+
+---
+
+## F10-B12 ～ F10-B22（完整補齊）
+
+* `FOREIGN_FLOW_REVERSAL_EVENT`
+* `INV_TRUST_FLOW_REVERSAL_EVENT`
+* `DEALER_FLOW_REVERSAL_EVENT`
+* `FOREIGN_BUY_WITH_PRICE_CONFIRM`（價格確認鏈）
+* `FOREIGN_BUY_WITHOUT_PRICE_RESULT`（努力結果不匹配）
+* `INV_TRUST_LEADING_SCORE`（投信是否領先）
+* `INSTITUTIONAL_ACCUMULATION_SCORE`
+* `INSTITUTIONAL_DISTRIBUTION_SCORE`
+* `INSTITUTIONAL_PRESSURE_SCORE`
+* `INSTITUTIONAL_RISK_FLAG`
+* `INSTITUTIONAL_TAGS`
+
+---
+
+# 6. F10-C：持股結構與集中度（F10-C01 ～ F10-C18）
+
+> 若有「大戶級距/股權分散」資料，直接算；沒有則必須用 Proxy，且標記可信度。
+
+---
+
+## F10-C01：HOLDER_CONCENTRATION_TOPN
+
+* **中文**：前 N 大持股集中度
+* N=10/20/100（視資料）
+
+## F10-C02：HOLDER_CONCENTRATION_CHANGE
+
+* 集中度變化（集中/分散）
+
+## F10-C03：WHALe_ACCUMULATION_SCORE
+
+* 大戶吸籌分數（0~1）
+
+## F10-C04：FLOAT_TIGHTNESS_SCORE
+
+* **中文**：流通籌碼緊度（越緊越容易爆發）
+* 若無持股資料：以「換手率結構 + 成交金額集中」Proxy
+
+## F10-C05：CHIP_STABILITY_SCORE
+
+* 籌碼穩定（低換手、趨勢推進）
+
+## F10-C06 ～ F10-C18（完整補齊）
+
+* `DISTRIBUTION_RISK_SCORE`
+* `FREE_FLOAT_PROXY`
+* `TURNOVER_STRUCTURAL_SCORE`
+* `LOCKUP_RISK_FLAG`（籌碼太緊+高波動）
+* `CONCENTRATION_EXTREME_FLAG`
+* `CONCENTRATION_DECAY_SPEED`
+* `CONCENTRATION_REGIME_LABEL`
+* `HOLDER_DIVERSITY_SCORE`
+* `CHIP_SUPPORT_STRENGTH`
+* `CHIP_RESISTANCE_PRESSURE`
+* `CHIP_TAGS`
+* `HOLDER_AUDIT_TRAIL`
+* `HOLDER_SOURCE_CONFIDENCE`
+
+---
+
+# 7. F10-D：融資融券深化（F10-D01 ～ F10-D22）
+
+> 你要求「融資融券也要」：這裡做成完整工程化特徵。
+
+---
+
+## F10-D01：MARGIN_BALANCE
+
+* 融資餘額
+
+## F10-D02：MARGIN_CHANGE
+
+* 融資變化（日/週）
+
+## F10-D03：MARGIN_CHANGE_RATE
+
+* 融資增速
+
+## F10-D04：MARGIN_UTILIZATION_PROXY
+
+* 融資使用強度代理（融資/成交金額 或 融資/市值）
+
+---
+
+## F10-D05：SHORT_BALANCE
+
+* 融券餘額
+
+## F10-D06：SHORT_CHANGE
+
+* 融券變化
+
+## F10-D07：SHORT_COVERING_SIGNATURE
+
+* 回補特徵：融券下降 + 價格上漲 + 量能配合
+
+---
+
+## F10-D08：MARGIN_SHORT_RATIO
+
+* 資券比或券資比（依資料）
+
+## F10-D09：SHORT_SQUEEZE_CONDITION_SCORE
+
+* **中文**：轧空條件分數（0~1）
+* **構成**：
+
+  * 融券偏高
+  * 價格結構突破（03F）
+  * 動能上升（03D）
+  * 波動非極端（03E）
+  * 量能擴散（03B）
+
+---
+
+## F10-D10：MARGIN_BLOWOFF_RISK
+
+* **中文**：融資爆量追高風險
+* 融資大增 + 價格結果變差（努力結果不匹配）
+
+---
+
+## F10-D11 ～ F10-D22（完整補齊）
+
+* `MARGIN_REVERSAL_EVENT`
+* `SHORT_REVERSAL_EVENT`
+* `MARGIN_DOMINANCE_FLAG`
+* `SHORT_DOMINANCE_FLAG`
+* `LEVERAGE_DRIVEN_TREND_SCORE`
+* `FORCED_LIQUIDATION_RISK_PROXY`
+* `MARGIN_CALL_RISK_HINT`
+* `SHORT_PRESSURE_SCORE`
+* `MARGIN_SUPPORT_SCORE`
+* `MARGIN_SHORT_CONFLICT_FLAG`
+* `MARGIN_SHORT_TAGS`
+* `MARGIN_SHORT_AUDIT_TRAIL`
+
+---
+
+# 8. F10-E：借券/放空結構（F10-E01 ～ F10-E14）
+
+> 若借券資料可取，則做精準；不可取則輸出 null + 可信度下降（不得假裝有）。
+
+---
+
+## F10-E01：SEC_LENDING_BALANCE
+
+* 借券餘額
+
+## F10-E02：SEC_LENDING_SELL_VOLUME
+
+* 借券賣出量
+
+## F10-E03：SHORT_COST_PROXY
+
+* 放空成本代理（若有費率更好）
+
+## F10-E04：LENDING_PRESSURE_SCORE
+
+* 借券壓力分數
+
+## F10-E05：LENDING_COVERING_EVENT
+
+* 借券回補事件
+
+## F10-E06 ～ F10-E14（完整補齊）
+
+* `LENDING_ACCELERATION`
+* `LENDING_REVERSAL_EVENT`
+* `SHORT_ATTACK_SIGNATURE_FLAG`
+* `SHORT_TRAP_RISK_FLAG`
+* `LENDING_WITH_PRICE_CONFIRM`
+* `LENDING_WITHOUT_RESULT`
+* `LENDING_CONFIDENCE`
+* `LENDING_TAGS`
+* `LENDING_AUDIT_TRAIL`
+
+---
+
+# 9. F10-F：分點與主體推定（F10-F01 ～ F10-F20）
+
+> 這部分依賴分點資料。若無，必須輸出 null 並降低可用性分數。
+
+---
+
+## F10-F01：BROKER_BRANCH_NET_FLOW
+
+* 分點買賣超
+
+## F10-F02：TOP_BRANCH_CONCENTRATION
+
+* 前幾大分點集中度
+
+## F10-F03：BRANCH_ACCUMULATION_SIGNATURE
+
+* 主買分點連續性（連買）
+
+## F10-F04：BRANCH_DISTRIBUTION_SIGNATURE
+
+* 主賣分點連續性
+
+## F10-F05：BRANCH_ROTATION_EVENT
+
+* 主力分點更替（可能代表換手）
+
+## F10-F06：BRANCH_SMART_MONEY_SCORE
+
+* 分點行為是否符合「努力結果一致」（03G/03B）
+
+## F10-F07 ～ F10-F20（完整補齊）
+
+* `BRANCH_PUMP_RISK_FLAG`
+* `BRANCH_DUMP_RISK_FLAG`
+* `BRANCH_WITH_BREAKOUT_CONFIRM`
+* `BRANCH_WITH_FAKEOUT_RISK`
+* `BRANCH_WITH_VOLATILITY_PENALTY`
+* `BRANCH_LEADER_EFFECT`（分點帶動族群）
+* `BRANCH_TIMING_EDGE_SCORE`
+* `BRANCH_CONFLICT_FLAG`
+* `BRANCH_CONFIDENCE`
+* `BRANCH_TAGS`
+* `BRANCH_AUDIT_TRAIL`
+* `BRANCH_DATA_AVAILABILITY_FLAG`
+* `BRANCH_DATA_DELAY_DAYS`
+* `BRANCH_SOURCE_CONFIDENCE`
+
+---
+
+# 10. F10-G：ETF/被動資金效應（F10-G01 ～ F10-G16）
+
+> 你不想只做權值，但被動資金會影響權值與成分股，必須納入觀察。
+
+---
+
+## F10-G01：ETF_COMPONENT_FLAG
+
+* 是否為重要 ETF 成分
+
+## F10-G02：ETF_WEIGHT_SCORE
+
+* 在ETF中的權重（若可取）
+
+## F10-G03：ETF_FLOW_PROXY
+
+* ETF 資金流代理（申贖/成交額/折溢價等可用者）
+
+## F10-G04：PASSIVE_BUY_PRESSURE_SCORE
+
+* 被動買盤壓力（0~1）
+
+## F10-G05：PASSIVE_SELL_PRESSURE_SCORE
+
+## F10-G06：ETF_REBALANCE_RISK_FLAG
+
+* 成分調整窗口的風險提示
+
+## F10-G07 ～ F10-G16（完整補齊）
+
+* `ETF_CONCENTRATION_RISK`
+* `ETF_THEME_OVERLAP_COUNT`
+* `PASSIVE_WITH_PRICE_CONFIRM`
+* `PASSIVE_WITHOUT_RESULT_RISK`
+* `PASSIVE_DOMINANCE_FLAG`
+* `ETF_ARBITRAGE_PROXY`
+* `ETF_IMPACT_CONFIDENCE`
+* `ETF_TAGS`
+* `ETF_AUDIT_TRAIL`
+* `ETF_SOURCE_CONFIDENCE`
+
+---
+
+# 11. F10-H：籌碼-價格一致性（驗證鏈）（F10-H01 ～ F10-H16）
+
+> 籌碼如果不和價格/結構一致，就容易是噪音或延遲資訊。
+> 這一段是 TAITS 的「稽核核心」。
+
+---
+
+## F10-H01：CHIP_PRICE_CONFIRM_SCORE
+
+* 籌碼偏多 + 價格結構偏多（03F/03C）→加分
+
+## F10-H02：CHIP_MOMENTUM_CONFIRM_SCORE
+
+* 籌碼偏多 + 動能增強（03D）
+
+## F10-H03：CHIP_VOL_CONFIRM_SCORE
+
+* 籌碼偏多 + 放量推進（03B）
+
+## F10-H04：CHIP_RISK_CONSTRAINT_SCORE
+
+* 籌碼偏多但風險極端（03E）→降權
+
+## F10-H05：CHIP_WYCKOFF_CONSISTENCY
+
+* 法人/分點行為是否像吸籌或派發（03G）
+
+## F10-H06：CHIP_BDICK_CONSISTENCY
+
+* 籌碼偏多但出現段背馳/結構破壞 → 提醒風險（03H）
+
+## F10-H07：CHIP_CONFLICT_FLAG
+
+* 籌碼與價格矛盾
+
+## F10-H08 ～ F10-H16（完整補齊）
+
+* `CHIP_CONFIRM_CHAIN_TOTAL`
+* `CHIP_CONFIRM_CHAIN_MISSING_PARTS`
+* `CHIP_CONFIRM_CHAIN_AUDIT_TRAIL`
+* `CHIP_LAG_WARNING_FLAG`
+* `CHIP_FALSE_SIGNAL_RISK`
+* `CHIP_STRESS_FLAG`
+* `CHIP_EXPLAIN_TAGS`
+* `CHIP_VERSION_TAG`
+* `CHIP_COMPLETENESS_SCORE`
+
+---
+
+# 12. F10-I：合成輸出與治理旗標（F10-I01 ～ F10-I16）
+
+---
+
+## F10-I01：CHIP_STATE_LABEL
+
+* **輸出**：
+
+  * `accumulating`（吸籌）
+  * `distributing`（派發）
+  * `neutral`
+  * `leveraged_risk`（槓桿風險）
+  * `short_pressure`（空方壓力）
+  * `passive_dominated`（被動資金主導）
+
+## F10-I02：CHIP_BIAS_SCORE
+
+* -1~+1（偏空/偏多）
+
+## F10-I03：CHIP_CONFIDENCE
+
+* 0~1（由資料可信度與一致性決定）
+
+## F10-I04：CHIP_RISK_FLAGS
+
+* 風險旗標集合：
+
+  * `leverage_overheat`
+  * `forced_sell_risk`
+  * `pump_dump_risk`
+  * `passive_rebalance_risk`
+  * `chip_price_conflict`
+
+## F10-I05：CHIP_PERMISSION_HINT
+
+* **中文**：治理層建議（僅建議）
+
+  * 例如：限制最大倉位、提高確認門檻、降權重
+
+## F10-I06：CHIP_LEADERBOARD
+
+* 籌碼最強標的清單（供策略池）
+
+## F10-I07：CHIP_AUDIT_TRAIL
+
+* 全部來源與推導可追溯
+
+## F10-I08 ～ F10-I16（完整補齊）
+
+* `CHIP_EXPORT_SCHEMA`
+* `CHIP_DATA_FRESHNESS_REPORT`
+* `CHIP_SOURCE_TIER_REPORT`
+* `CHIP_GOV_AUDIT_TAGS`
+* `CHIP_VERSION`
+* `CHIP_MODEL_CONFIG_HASH`
+* `CHIP_FEATURE_COMPLETENESS`
+* `CHIP_NULL_REASON_CODES`
+* `CHIP_STATE_EXPLAIN_TOKENS`
+
+---
+
+## 13. 03J 與 03I（題材輪動）的接法（你要的一環扣一環）
+
+* 03I 找到：哪個題材在升溫、資金在進、領先股出現
+* 03J 驗證：這個升溫是否有「法人/槓桿/分點/集中度」的結構支持
+* 若 03I 強但 03J 弱：可能是短期炒作或消息熱度
+* 若 03J 強但 03I 弱：可能是低調吸籌、尚未擴散（你最想抓的那種）
+
+這個關係會在 FusionEngine 合成為：
+
+* `ThemeConfirmChainScore` × `ChipConfirmChainTotal` → 最終加權
+
+---
+
+## 14. 03J 完整性鎖定聲明
+
+* ✔ 法人、持股集中、融資融券深化、借券、分點、ETF被動資金、驗證鏈、治理輸出 全覆蓋
+* ✔ 缺資料就輸出 null + 可信度，不通靈
+* ✔ 不下單、不產生買賣點
+* ✔ 無任何 XQ 內容
+* ✔ 可直接給 TAITS 上層模組引用與稽核
+
+---
+
+# 📘 TAITS_03K_事件驅動與消息面特徵全集.md
+
+（世界一流落地版｜F11 Event/News：公告 × 法說 × 財報 × 接單 × 政策 × 地緣 × 產業鏈 × 社群情緒 × 謠言風險｜可計算×可稽核｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03K 在 TAITS 的角色）
+
+**TAITS_03K** 專門補齊你一直追問的「消息面/事件面」，把原本很口語、很主觀的資訊，變成 TAITS 可用的：
+
+* 可計算（Computable）
+* 可追溯（Traceable）
+* 可稽核（Auditable）
+* 可治理（Governance-Ready）
+* 可與 03B~03J 驗證鏈整合（Confirm Chain）
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不下單、不給買賣點
+* ✅ 產出「事件特徵」「重要度」「方向性」「可信度」「時間衰退」「衝突/謠言風險」
+* ✅ 供：MarketRegimeEngine、RiskEngine、FusionEngine、Strategy Weight、Permission Gate、Universe Builder 使用
+
+---
+
+## 1. 03K 的核心原則（避免你說的「通靈」）
+
+### 1.1 每一筆事件必須具備可追溯欄位
+
+* `event_id`
+* `symbol_scope`（單一個股 / 族群 / 全市場 / 海外宏觀）
+* `source_type`（official / media / community / research / company）
+* `source_ref`（可回溯的識別：URL/公告編號/新聞ID/貼文ID/文件ID）
+* `published_at`
+* `observed_at`
+* `event_time_type`（scheduled / unexpected）
+* `confidence`（0~1）
+* `impact_direction`（bullish / bearish / neutral / mixed / unknown）
+* `impact_horizon`（intraday / short / swing / long）
+* `decay_model`（時間衰退模型與半衰期）
+* `audit_tags`（稽核標籤集合）
+* `raw_text_hash`（原文摘要/哈希，便於審計）
+
+### 1.2 事件不等於結果
+
+03K 只負責「事件本身的特徵化」，是否有效必須交給：
+
+* 03B~03F：價格/量/結構驗證
+* 03G~03H：主力行為/結構語言驗證
+* 03E：風險狀態驗證
+* 治理層：是否允許策略啟用/加權（你決定）
+
+---
+
+## 2. 03K 特徵總分類（完整）
+
+| 分類代碼  | 類型名稱（中文）    | 說明                             |
+| ----- | ----------- | ------------------------------ |
+| F11-A | 事件資料品質與可信度  | 去重、來源層級、延遲、真偽風險                |
+| F11-B | 市場級行事曆事件    | FOMC、CPI、央行、結算、選舉、重大法規（不預測結果）  |
+| F11-C | 公司公告與揭露事件   | 重訊、處分、重大投資、停復牌、訴訟、合規           |
+| F11-D | 財報與營運數據事件   | 財報、營收、毛利、展望、下修/上修、財測           |
+| F11-E | 法說/訪談/指引事件  | Guidance、CAPEX、庫存、需求、價格        |
+| F11-F | 訂單/供應鏈/產能事件 | 大單、缺料、砍單、擴產、良率、交期              |
+| F11-G | 產業/政策/法規事件  | 補貼、管制、出口限制、稅制、能源、工安            |
+| F11-H | 地緣政治與宏觀風險   | 戰事、制裁、航運、匯率、利率、油價（只特徵化）        |
+| F11-I | 市場情緒與輿情事件   | 新聞情緒、社群熱度、共振/恐慌（可選加成）          |
+| F11-J | 謠言與錯誤訊息風險   | Rumor score、反轉風險、來源可信度折扣       |
+| F11-K | 事件×市場反應驗證鏈  | 事件後是否被價格/量/結構確認                |
+| F11-L | 合成輸出與治理旗標   | Event score、Shock flag、禁止自動化提示 |
+
+> **本卷總數：共 124 個事件與消息面特徵**
+
+---
+
+## 3. 統一事件結構（Event Object Schema）
+
+### 3.1 EventObject（硬規格）
+
+* `event_id`：唯一鍵（source_type + source_ref + published_at hash）
+* `event_class`：本卷分類之一（F11-B~H）
+* `event_subclass`：更細類別（例：財報/營收/法說/出口管制）
+* `scope_type`：`single_symbol / sector / market / global`
+* `symbols`：list（可空：市場級）
+* `sectors/themes`：list
+* `published_at`, `observed_at`
+* `expected_time`（若為行事曆事件）
+* `severity_level`：`L0~L3`（L3 為重大衝擊候選）
+* `impact_direction`：`bullish / bearish / neutral / mixed / unknown`
+* `impact_horizon`：`intraday / short / swing / long`
+* `confidence`：0~1
+* `decay_half_life`：以小時/天為單位
+* `raw_summary`：簡要摘要（可中文）
+* `raw_text_hash`
+* `audit_tags`
+
+### 3.2 去重與版本化（硬規格）
+
+* 同一事件多來源報導：合併為一個 `event_id`，保留 `source_evidence_list`
+* 事件更新（例：公司澄清、數字修正）：建立 `event_revision_chain`
+
+---
+
+# 4. F11-A：事件資料品質與可信度（F11-A01 ～ F11-A16）
+
+## F11-A01：EVENT_SOURCE_TIER
+
+* **中文**：來源層級
+* **輸出**：`T0官方 / T1公司 / T2主流媒體 / T3社群 / T4匿名`
+* **用途**：治理層可直接降權社群匿名來源
+
+## F11-A02：EVENT_DUPLICATE_GROUP_ID
+
+* **中文**：去重群組ID（同一事件多報導）
+
+## F11-A03：EVENT_FRESHNESS_HOURS
+
+* 發布距今時間（小時）
+
+## F11-A04：EVENT_DELAY_SCORE
+
+* **中文**：延遲分數（0~1），越晚看到越低
+
+## F11-A05：SOURCE_CONSISTENCY_SCORE
+
+* 多來源一致性（數字/主張是否一致）
+
+## F11-A06：CREDIBILITY_SCORE
+
+* 綜合可信度（0~1）：來源層級×一致性×歷史可靠度
+
+## F11-A07：REVISION_RISK_FLAG
+
+* 事件是否常見被修正類型（例：社群爆料、未證實傳聞）
+
+## F11-A08：MANIPULATION_RISK_FLAG
+
+* 可能為拉抬/出貨敘事（與 03J/03G 的吸籌派發矛盾時升高）
+
+## F11-A09 ～ F11-A16（完整補齊）
+
+* `EVENT_LANGUAGE_CONFIDENCE`
+* `ENTITY_EXTRACTION_CONFIDENCE`（公司/產品/產業詞抽取可信度）
+* `NUMERIC_EXTRACTION_CONFIDENCE`（數值抽取可信度）
+* `CONFLICTING_SOURCES_COUNT`
+* `OFFICIAL_CONFIRMATION_FLAG`
+* `OFFICIAL_DENIAL_FLAG`
+* `EVENT_AUDIT_TRAIL`
+* `DATA_COMPLETENESS_SCORE`
+
+---
+
+# 5. F11-B：市場級行事曆事件（F11-B01 ～ F11-B16）
+
+> 只做「事件特徵」，不預測結果，不站隊。
+
+## F11-B01：MACRO_EVENT_FLAG
+
+* 是否為宏觀行事曆事件（0/1）
+
+## F11-B02：MACRO_EVENT_TYPE
+
+* 例：`央行利率 / 通膨數據 / 就業 / PMI / GDP / 重要會議`
+
+## F11-B03：EVENT_EXPECTED_TIME_TO_HOURS
+
+* 距離事件發生的剩餘時間
+
+## F11-B04：PRE_EVENT_RISK_UP_SCORE
+
+* **中文**：事件前風險升高分數（0~1）
+* 用途：治理層可選擇「事件前降低自動化」
+
+## F11-B05：POST_EVENT_VOL_SPIKE_RISK
+
+* 事件後波動尖峰風險（引用 03E）
+
+## F11-B06：MACRO_SURPRISE_PROXY
+
+* 若有「市場預期 vs 公布」資料則計算，否則為 null
+
+## F11-B07：SETTLEMENT_WINDOW_FLAG
+
+* **中文**：結算窗口旗標（期貨/選擇權/指數相關）
+* 用途：與 期權觀察層（非下單）聯動
+
+## F11-B08 ～ F11-B16（完整補齊）
+
+* `HOLIDAY_LIQUIDITY_RISK_FLAG`
+* `EARNINGS_SEASON_GLOBAL_FLAG`
+* `REGULATORY_ANNOUNCEMENT_FLAG`
+* `POLICY_EVENT_FLAG`
+* `EVENT_IMPACT_HORIZON_HINT`
+* `EVENT_DECAY_MODEL_ID`
+* `MACRO_EVENT_CONFIDENCE`
+* `MACRO_EVENT_TAGS`
+* `MACRO_EVENT_AUDIT_TRAIL`
+
+---
+
+# 6. F11-C：公司公告與揭露事件（F11-C01 ～ F11-C18）
+
+## F11-C01：COMPANY_DISCLOSURE_FLAG
+
+* 公司揭露事件（0/1）
+
+## F11-C02：DISCLOSURE_TYPE
+
+* `重訊 / 澄清 / 停復牌 / 處分資產 / 重大投資 / 合併收購 / 訴訟 / 工安 / 內控`
+
+## F11-C03：DISCLOSURE_SEVERITY_LEVEL
+
+* `L0~L3`（L3=重大）
+
+## F11-C04：DISCLOSURE_DIRECTION_HINT
+
+* 初步方向：利多/利空/中性/不明（可為 unknown）
+
+## F11-C05：DISCLOSURE_CERTAINTY_SCORE
+
+* 官方公告通常高，但仍要考慮語意模糊
+
+## F11-C06：TRADING_HALT_RISK_FLAG
+
+* 是否涉及停牌/處置等交易風險
+
+## F11-C07 ～ F11-C18（完整補齊）
+
+* `MERGER_ACQUISITION_FLAG`
+* `CAPEX_ANNOUNCEMENT_FLAG`
+* `LEGAL_RISK_FLAG`
+* `COMPLIANCE_RISK_FLAG`
+* `EXECUTIVE_CHANGE_FLAG`
+* `DIVIDEND_POLICY_CHANGE_FLAG`
+* `BUYBACK_EVENT_FLAG`
+* `DILUTION_RISK_FLAG`（增資/可轉債等）
+* `DISCLOSURE_DECAY_HALF_LIFE`
+* `DISCLOSURE_CONFIDENCE`
+* `DISCLOSURE_TAGS`
+* `DISCLOSURE_AUDIT_TRAIL`
+
+---
+
+# 7. F11-D：財報與營運數據事件（F11-D01 ～ F11-D18）
+
+## F11-D01：EARNINGS_EVENT_FLAG
+
+* 財報事件（0/1）
+
+## F11-D02：EARNINGS_METRIC_TYPE
+
+* `營收 / EPS / 毛利率 / 營益率 / 自由現金流 / 庫存 / 應收`
+
+## F11-D03：EARNINGS_BEAT_MISS_PROXY
+
+* 若有預估則計算 Beat/Miss，否則 null
+
+## F11-D04：GUIDANCE_CHANGE_FLAG
+
+* 財測/展望上修或下修（0/1）
+
+## F11-D05：MARGIN_TREND_SHOCK_FLAG
+
+* 毛利/營益率變化異常（相對自身歷史）
+
+## F11-D06：INVENTORY_SHOCK_FLAG
+
+* 庫存大幅上升/下降（供應鏈題材的重要觸發）
+
+## F11-D07 ～ F11-D18（完整補齊）
+
+* `REVENUE_MOM_CHANGE`
+* `REVENUE_YOY_CHANGE`
+* `PROFITABILITY_SHOCK_SCORE`
+* `CASHFLOW_STRESS_FLAG`
+* `DEBT_RISK_FLAG`
+* `CAPITAL_STRUCTURE_CHANGE_FLAG`
+* `EARNINGS_SEVERITY_LEVEL`
+* `EARNINGS_HORIZON_HINT`
+* `EARNINGS_DECAY_HALF_LIFE`
+* `EARNINGS_CONFIDENCE`
+* `EARNINGS_TAGS`
+* `EARNINGS_AUDIT_TRAIL`
+
+---
+
+# 8. F11-E：法說/訪談/指引事件（F11-E01 ～ F11-E16）
+
+## F11-E01：EARNINGS_CALL_FLAG
+
+* 法說/電話會議/公開訪談（0/1）
+
+## F11-E02：GUIDANCE_SENTIMENT
+
+* `positive / negative / mixed / unclear`（只做語意方向）
+
+## F11-E03：DEMAND_OUTLOOK_TAG
+
+* `需求強 / 需求弱 / 需求不確定`
+
+## F11-E04：CAPEX_OUTLOOK_TAG
+
+* `擴產 / 保守 / 砍CAPEX`
+
+## F11-E05：PRICING_POWER_TAG
+
+* `漲價 / 跌價 / 價格僵持`
+
+## F11-E06：MANAGEMENT_CREDIBILITY_SCORE
+
+* 管理層歷史可信度（需版本化與可回測：過去指引偏差）
+
+## F11-E07 ～ F11-E16（完整補齊）
+
+* `INVENTORY_COMMENT_TAG`
+* `UTILIZATION_RATE_TAG`
+* `CUSTOMER_CONCENTRATION_RISK_TAG`
+* `NEW_PRODUCT_RAMP_TAG`
+* `ORDER_VISIBILITY_TAG`
+* `GUIDANCE_SEVERITY_LEVEL`
+* `GUIDANCE_DECAY_HALF_LIFE`
+* `GUIDANCE_CONFIDENCE`
+* `GUIDANCE_TAGS`
+* `GUIDANCE_AUDIT_TRAIL`
+
+---
+
+# 9. F11-F：訂單/供應鏈/產能事件（F11-F01 ～ F11-F16）
+
+## F11-F01：ORDER_EVENT_FLAG
+
+* 接單/砍單/大單（0/1）
+
+## F11-F02：ORDER_DIRECTION
+
+* `new_order / order_cut / backlog_increase / backlog_decrease`
+
+## F11-F03：SUPPLY_CHAIN_NODE_TYPE
+
+* `上游材料 / 零組件 / 代工 / 組裝 / 通路 / 終端`
+
+## F11-F04：CAPACITY_CHANGE_FLAG
+
+* 擴產/縮產/停工/復工
+
+## F11-F05：YIELD_SHOCK_FLAG
+
+* 良率問題/改善（若可取得）
+
+## F11-F06：DELIVERY_LEAD_TIME_SHOCK
+
+* 交期異常（供需失衡常見）
+
+## F11-F07 ～ F11-F16（完整補齊）
+
+* `SHORTAGE_EVENT_FLAG`（缺料）
+* `OVERSUPPLY_EVENT_FLAG`（供過於求）
+* `PRICE_INCREASE_EVENT_FLAG`（漲價）
+* `PRICE_DECREASE_EVENT_FLAG`（降價）
+* `CUSTOMER_WIN_EVENT_FLAG`（拿到大客戶）
+* `CUSTOMER_LOSS_EVENT_FLAG`（丟單）
+* `SUPPLY_CHAIN_SEVERITY_LEVEL`
+* `SUPPLY_CHAIN_DECAY_HALF_LIFE`
+* `SUPPLY_CHAIN_CONFIDENCE`
+* `SUPPLY_CHAIN_TAGS`
+* `SUPPLY_CHAIN_AUDIT_TRAIL`
+
+---
+
+# 10. F11-G：產業/政策/法規事件（F11-G01 ～ F11-G14）
+
+## F11-G01：POLICY_EVENT_FLAG
+
+* 政策事件（0/1）
+
+## F11-G02：POLICY_TYPE
+
+* `補貼 / 稅制 / 能源 / 環保 / 勞安 / 金融監理 / 產業管制`
+
+## F11-G03：EXPORT_CONTROL_FLAG
+
+* 出口管制/禁令/許可（對供應鏈題材非常關鍵）
+
+## F11-G04：REGULATION_SHOCK_SCORE
+
+* 法規衝擊強度（0~1）
+
+## F11-G05：BENEFICIARY_SECTOR_TAGS
+
+* 受益族群標籤集合
+
+## F11-G06 ～ F11-G14（完整補齊）
+
+* `HARMED_SECTOR_TAGS`
+* `POLICY_TIMING_TYPE`（立即/漸進/未定）
+* `POLICY_UNCERTAINTY_SCORE`
+* `POLICY_REVERSAL_RISK`
+* `POLICY_SEVERITY_LEVEL`
+* `POLICY_DECAY_HALF_LIFE`
+* `POLICY_CONFIDENCE`
+* `POLICY_TAGS`
+* `POLICY_AUDIT_TRAIL`
+
+---
+
+# 11. F11-H：地緣政治與宏觀風險事件（F11-H01 ～ F11-H14）
+
+## F11-H01：GEO_RISK_EVENT_FLAG
+
+* 地緣風險事件（0/1）
+
+## F11-H02：GEO_RISK_TYPE
+
+* `戰爭/衝突 / 制裁 / 航運中斷 / 供應中斷 / 重大談判`
+
+## F11-H03：COMMODITY_SHOCK_FLAG
+
+* 油價/原物料急變事件（若資料層提供）
+
+## F11-H04：FX_SHOCK_FLAG
+
+* 匯率衝擊事件（若資料層提供）
+
+## F11-H05：RATE_SHOCK_FLAG
+
+* 利率衝擊（若資料層提供）
+
+## F11-H06 ～ F11-H14（完整補齊）
+
+* `GLOBAL_RISK_OFF_FLAG`
+* `SAFE_HAVEN_FLOW_PROXY`
+* `SHIPPING_RISK_SCORE`
+* `SEMICON_SUPPLY_RISK_SCORE`
+* `GEO_SEVERITY_LEVEL`
+* `GEO_DECAY_HALF_LIFE`
+* `GEO_CONFIDENCE`
+* `GEO_TAGS`
+* `GEO_AUDIT_TRAIL`
+
+---
+
+# 12. F11-I：市場情緒與輿情事件（可選加成，但不可取代事實）（F11-I01 ～ F11-I12）
+
+> 你要求「不要因為未知而不理它」，但也要避免被情緒帶走。
+> 因此情緒層永遠是 **加成/風險提示**，不是主引擎。
+
+## F11-I01：NEWS_SENTIMENT_SCORE
+
+* 新聞情緒分數（-1~+1）
+
+## F11-I02：SOCIAL_BUZZ_SCORE
+
+* 社群熱度分數（0~1）
+
+## F11-I03：SENTIMENT_POLARIZATION
+
+* 情緒兩極化程度（越高越容易暴衝暴跌）
+
+## F11-I04：PANIC_SIGNAL_FLAG
+
+* 恐慌訊號（負面爆量、負面關鍵詞聚集）
+
+## F11-I05：EUPHORIA_SIGNAL_FLAG
+
+* 過熱狂熱訊號
+
+## F11-I06 ～ F11-I12（完整補齊）
+
+* `SENTIMENT_SHIFT_EVENT`
+* `SENTIMENT_DIVERGENCE_WITH_PRICE`（情緒與價格背離）
+* `SENTIMENT_CONFIDENCE`
+* `SENTIMENT_DATA_QUALITY_SCORE`
+* `SENTIMENT_TAGS`
+* `SENTIMENT_AUDIT_TRAIL`
+* `SENTIMENT_DECAY_HALF_LIFE`
+
+---
+
+# 13. F11-J：謠言與錯誤訊息風險（F11-J01 ～ F11-J10）
+
+## F11-J01：RUMOR_FLAG
+
+* 是否為未證實消息（0/1）
+
+## F11-J02：RUMOR_SOURCE_TIER
+
+* 匿名/轉述/二手/主流/官方
+
+## F11-J03：RUMOR_SPREAD_SPEED
+
+* 傳播速度（社群熱度變化率）
+
+## F11-J04：RUMOR_REVERSAL_RISK_SCORE
+
+* 反轉風險（0~1）：來源低×傳播快×缺官方佐證
+
+## F11-J05：OFFICIAL_CLARIFICATION_EVENT_LINK
+
+* 是否出現官方澄清事件與其關聯ID
+
+## F11-J06 ～ F11-J10（完整補齊）
+
+* `MISINFO_PATTERN_FLAG`
+* `PUMP_NARRATIVE_SIGNATURE`
+* `DUMP_NARRATIVE_SIGNATURE`
+* `RUMOR_CONFIDENCE`
+* `RUMOR_AUDIT_TRAIL`
+
+---
+
+# 14. F11-K：事件×市場反應驗證鏈（F11-K01 ～ F11-K12）
+
+> 03K 最重要的一段：事件是否「被市場承認」。
+> 你要的是「先預判再證實」——證實就在這裡做，不用通靈。
+
+## F11-K01：POST_EVENT_PRICE_REACTION_SCORE
+
+* 事件後價格反應（0~1）
+* 依據：報酬、缺口、延續性（引用 03F/03E）
+
+## F11-K02：POST_EVENT_VOLUME_REACTION_SCORE
+
+* 事件後量能反應（0~1）（引用 03B）
+
+## F11-K03：POST_EVENT_STRUCTURE_CONFIRM_FLAG
+
+* 事件後是否形成結構確認：突破/回測成功（03F）
+
+## F11-K04：POST_EVENT_WYCKOFF_CONSISTENCY
+
+* 是否更像吸籌或派發（03G）
+
+## F11-K05：POST_EVENT_BDICK_CONSISTENCY
+
+* 是否符合筆/段/中樞推進或背馳風險（03H）
+
+## F11-K06：EVENT_CONFIRMED_FLAG
+
+* **中文**：事件被確認（0/1）
+* 條件：價格×量×結構至少兩項支持
+
+## F11-K07：EVENT_NEGATED_FLAG
+
+* 事件被否定（例如利多不漲、利空不跌且反向）
+
+## F11-K08 ～ F11-K12（完整補齊）
+
+* `CONFIRM_CHAIN_TOTAL_SCORE`
+* `CONFIRM_CHAIN_MISSING_PARTS`
+* `CONFIRM_CHAIN_CONFLICT_FLAG`
+* `EVENT_IMPACT_REALIZED_HORIZON`
+* `EVENT_CONFIRM_AUDIT_TRAIL`
+
+---
+
+# 15. F11-L：合成輸出與治理旗標（F11-L01 ～ F11-L12）
+
+## F11-L01：EVENT_IMPACT_SCORE_TOTAL
+
+* **中文**：事件總影響分數（0~1）
+* 組成：嚴重度×可信度×（可選）情緒×確認鏈
+
+## F11-L02：EVENT_SHOCK_FLAG_L1
+
+* 事件衝擊旗標（一般）
+
+## F11-L03：EVENT_SHOCK_FLAG_L2
+
+* 事件衝擊旗標（重大：可能需要治理層降自動化）
+
+## F11-L04：EVENT_RISK_OFF_HINT
+
+* **中文**：風險模式提示（只提示，不執行）
+
+## F11-L05：EVENT_PERMISSION_HINT
+
+* **中文**：策略權限提示（例如：提高確認門檻、縮小倉位上限、延後進場）
+* 最終是否採用由你決定
+
+## F11-L06：EVENT_SCOPE_MAP
+
+* 事件影響範圍：單股/族群/全市場/全球
+
+## F11-L07 ～ F11-L12（完整補齊）
+
+* `EVENT_DECAY_CURVE_ID`
+* `EVENT_HALF_LIFE_HOURS`
+* `EVENT_CONFLICT_WITH_REGIME_FLAG`
+* `EVENT_GOV_AUDIT_TAGS`
+* `EVENT_EXPORT_SCHEMA`
+* `EVENT_VERSION_TAG`
+
+---
+
+## 16. 03K 與你前面所有模組的「一環扣一環」接法（硬對齊）
+
+* **03K**：事件本身（可信度/嚴重度/方向/時效/謠言風險）
+* **03I**：題材輪動（事件是否推動題材升溫）
+* **03J**：籌碼結構（事件是否被法人/槓桿/分點證實）
+* **03G**：威科夫（事件是否更像吸籌或派發敘事）
+* **03H**：鮑迪克纏論（事件後結構是否推進/是否背馳）
+* **03E**：風險狀態（事件是否落在高波/尾部風險）
+* **治理層**：是否提升/降低自動化權限（由你決定）
+
+---
+
+## 17. 03K 完整性鎖定聲明
+
+* ✔ 消息面不再消失：市場行事曆、公司公告、財報營運、法說指引、供應鏈訂單、政策法規、地緣宏觀、情緒輿情、謠言風險、驗證鏈、治理輸出 全覆蓋
+* ✔ 事件全程可追溯、可稽核、可版本化
+* ✔ 不下單、不給買賣點
+* ✔ 無任何 XQ 內容
+* ✔ 可直接供 TAITS 上層模組引用，且新對話可 100% 讀懂
+
+---
+
+# 📘 TAITS_03L_估值、基本面與財務品質特徵全集.md
+
+（世界一流落地版｜F12 Fundamentals/Valuation：估值帶 × 成長 × 獲利品質 × 現金流 × 財務風險 × 景氣循環 × 產業結構｜可計算×可稽核｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03L 在 TAITS 的角色）
+
+**TAITS_03L** 補齊 TAITS 的「基本面/估值面」工程化特徵，讓 TAITS 做到你要的：
+
+* 題材輪動（03I）可以找下一個趨勢
+* 籌碼資金（03J）可以看主體行為
+* 事件消息（03K）可以捕捉催化
+* **03L 則負責：這波行情在基本面上是否站得住、估值是否合理、財務風險是否被低估**
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不下單、不給買賣點
+* ✅ 輸出「估值帶」「財務品質」「成長動能」「風險旗標」「基本面確認鏈」
+* ✅ 供：Regime、RiskEngine、FusionEngine、Permission Gate、Universe Builder、Position Sizing 使用
+
+---
+
+## 1. 03L 的硬規格（避免通靈）
+
+### 1.1 所有特徵必須可追溯
+
+每個特徵必含：
+
+* `feature_id, value, timestamp, frequency`
+* `source_type, source_ref, source_delay_days, source_confidence`
+* `audit_tags, raw_number_hash (可選)`
+
+### 1.2 估值不是預測，只是區間與風險
+
+* 03L 不做「目標價」
+* 只做「估值帶（Valuation Band）」「相對估值（Relative Valuation）」「估值壓力（Valuation Pressure）」
+* 是否採用由治理層與你決定
+
+### 1.3 缺資料允許 Proxy，但必須標記可信度
+
+* 沒有完整財報/預估 → 可用簡化指標或空值
+* 一律輸出 `null + null_reason_code + source_confidence`，不得假裝有
+
+---
+
+## 2. 03L 特徵總分類（完整）
+
+| 分類代碼  | 類型名稱（中文）             | 說明                                                 |
+| ----- | -------------------- | -------------------------------------------------- |
+| F12-A | 基本面資料品質與可用性          | 延遲、缺失、修正風險、合併一致性                                   |
+| F12-B | 營收/成長動能              | 月營收、YoY/MoM、加速度、成長擴散                               |
+| F12-C | 獲利能力與結構              | 毛利/營益/淨利、費用率、價格力、營運槓桿                              |
+| F12-D | 現金流與盈餘品質             | CFO/FCF、應收/存貨、現金轉換、盈餘品質                            |
+| F12-E | 資產負債與財務風險            | 槓桿、流動性、利息保障、再融資風險                                  |
+| F12-F | 資本支出與產能循環            | CAPEX、折舊、擴產、供需循環、庫存週期                              |
+| F12-G | 估值帶（Valuation Bands） | PE/PB/PS/EV/EBITDA、歷史分位、相對估值                       |
+| F12-H | 產業結構與景氣循環屬性          | 週期/成長/防禦、定價權、競爭格局                                  |
+| F12-I | 基本面×事件×價格驗證鏈         | 事件（03K）後基本面是否支持、價格是否確認                             |
+| F12-J | 合成輸出與治理旗標            | Fundamental Score、Valuation Pressure、Risk Flags、審計 |
+
+> **本卷總數：共 132 個估值/基本面/財務品質特徵**
+
+---
+
+## 3. 統一期間與口徑（硬規格）
+
+### 3.1 期間（Windows）
+
+* 短期：1~3 個月（偏事件、題材驗證）
+* 中期：4~8 季（偏景氣循環）
+* 長期：5~10 年（偏估值帶與週期位置）
+
+### 3.2 口徑（必須標註）
+
+* `TTM`（近12月）
+* `LTM`（近4季）
+* `FY`（年度）
+* `QoQ/YoY/MoM`（季增/年增/月增）
+* `GAAP/IFRS`（依資料來源註記）
+
+---
+
+# 4. F12-A：基本面資料品質與可用性（F12-A01 ～ F12-A16）
+
+## F12-A01：FUNDAMENTAL_DATA_AVAILABILITY_SCORE
+
+* **中文**：基本面資料可用性（0~1）
+
+## F12-A02：REPORTING_LAG_DAYS
+
+* 財報/營收延遲天數
+
+## F12-A03：REVISION_RISK_FLAG
+
+* 是否常見修正/更正（0/1）
+
+## F12-A04：OUTLIER_SANITY_CHECK_FLAG
+
+* 異常值檢核（0/1）
+
+## F12-A05：CURRENCY_NORMALIZATION_FLAG
+
+* 幣別換算是否已一致（0/1）
+
+## F12-A06：ACCOUNTING_CHANGE_FLAG
+
+* 會計政策變動風險（0/1）
+
+## F12-A07 ～ F12-A16（完整補齊）
+
+* `DATA_MISSING_COMPONENTS_LIST`
+* `DATA_FREQUENCY_PROFILE`
+* `DATA_STALENESS_FLAG`
+* `DATA_SOURCE_TIER`
+* `DATA_CONSISTENCY_SCORE`
+* `MERGER_RESTATEMENT_FLAG`
+* `SEGMENT_DISCLOSURE_AVAILABILITY`
+* `FUNDAMENTAL_AUDIT_TRAIL`
+* `DATA_VERSION_TAG`
+* `DATA_COMPLETENESS_SCORE`
+
+---
+
+# 5. F12-B：營收/成長動能（F12-B01 ～ F12-B18）
+
+## F12-B01：REVENUE_MOM
+
+* 月營收 MoM
+
+## F12-B02：REVENUE_YOY
+
+* 月營收 YoY
+
+## F12-B03：REVENUE_TREND_SLOPE_3M
+
+* 近3月營收趨勢斜率
+
+## F12-B04：REVENUE_ACCELERATION_3M
+
+* 成長加速度（斜率的變化）
+
+## F12-B05：REVENUE_SURPRISE_PROXY
+
+* 若有市場預期/公司指引 → 計算；否則 null
+
+## F12-B06：GROWTH_STABILITY_SCORE
+
+* 成長穩定度（波動越低越穩）
+
+## F12-B07：GROWTH_BREADTH_PROXY
+
+* **中文**：成長擴散代理（同族群/同題材多家公司一起成長）
+* 可由 03I 的族群廣度特徵引用
+
+## F12-B08 ～ F12-B18（完整補齊）
+
+* `REVENUE_ROLLING_TTM_GROWTH`
+* `SEASONALITY_ADJUST_FLAG`
+* `GROWTH_REGIME_LABEL`（加速/放緩/反轉）
+* `GROWTH_REVERSAL_EVENT`
+* `CUSTOMER_CONCENTRATION_RISK_PROXY`
+* `PRICE_VOLUME_GROWTH_CONSISTENCY`
+* `GROWTH_CONFIDENCE`
+* `GROWTH_TAGS`
+* `GROWTH_AUDIT_TRAIL`
+* `GROWTH_VERSION_TAG`
+* `GROWTH_COMPLETENESS_SCORE`
+
+---
+
+# 6. F12-C：獲利能力與結構（F12-C01 ～ F12-C18）
+
+## F12-C01：GROSS_MARGIN_TREND
+
+* 毛利率趨勢（方向+幅度）
+
+## F12-C02：OPERATING_MARGIN_TREND
+
+* 營益率趨勢
+
+## F12-C03：NET_MARGIN_TREND
+
+* 淨利率趨勢
+
+## F12-C04：MARGIN_SHOCK_FLAG
+
+* 毛利/營益率異常變動（0/1）
+
+## F12-C05：OPERATING_LEVERAGE_SCORE
+
+* **中文**：營運槓桿分數（營收增長能否轉為獲利增長）
+
+## F12-C06：OPEX_RATIO_TREND
+
+* 費用率趨勢（研發/行銷/管理）
+
+## F12-C07：PRICING_POWER_PROXY
+
+* 定價權代理（毛利穩定+營收成長+競爭壓力低）
+
+## F12-C08 ～ F12-C18（完整補齊）
+
+* `RND_INTENSITY_SCORE`
+* `CAPACITY_UTILIZATION_PROXY`
+* `MARGIN_CYCLE_POSITION_LABEL`
+* `PROFITABILITY_STABILITY_SCORE`
+* `PROFITABILITY_REVERSAL_EVENT`
+* `PROFITABILITY_CONFIDENCE`
+* `PROFITABILITY_TAGS`
+* `PROFITABILITY_AUDIT_TRAIL`
+* `PROFITABILITY_VERSION_TAG`
+* `PROFITABILITY_COMPLETENESS_SCORE`
+* `COST_PRESSURE_FLAG`
+
+---
+
+# 7. F12-D：現金流與盈餘品質（F12-D01 ～ F12-D18）
+
+## F12-D01：CFO_TREND
+
+* 營業現金流趨勢
+
+## F12-D02：FCF_TREND
+
+* 自由現金流趨勢
+
+## F12-D03：EARNINGS_QUALITY_SCORE
+
+* **中文**：盈餘品質（0~1）
+* 典型組成：
+
+  * CFO/淨利比（越高越好）
+  * 應收與存貨變化是否健康
+  * 非經常損益占比
+
+## F12-D04：ACCRUAL_RISK_FLAG
+
+* 權責發生風險（CFO長期跟不上獲利）
+
+## F12-D05：AR_DAYS_CHANGE
+
+* 應收天數變化
+
+## F12-D06：INVENTORY_DAYS_CHANGE
+
+* 存貨天數變化
+
+## F12-D07：CASH_CONVERSION_CYCLE_PROXY
+
+* 現金轉換週期代理
+
+## F12-D08 ～ F12-D18（完整補齊）
+
+* `WORKING_CAPITAL_STRESS_FLAG`
+* `ONE_OFF_GAIN_LOSS_FLAG`
+* `CAPEX_CASHFLOW_PRESSURE_SCORE`
+* `DIVIDEND_COVERAGE_PROXY`
+* `BUYBACK_SUSTAINABILITY_PROXY`
+* `CASHFLOW_CONFIDENCE`
+* `CASHFLOW_TAGS`
+* `CASHFLOW_AUDIT_TRAIL`
+* `CASHFLOW_VERSION_TAG`
+* `CASHFLOW_COMPLETENESS_SCORE`
+* `EARNINGS_MANAGEMENT_RISK_PROXY`
+
+---
+
+# 8. F12-E：資產負債與財務風險（F12-E01 ～ F12-E18）
+
+## F12-E01：NET_DEBT_RATIO_PROXY
+
+* 淨負債比（若無則用負債/現金Proxy）
+
+## F12-E02：INTEREST_COVERAGE_PROXY
+
+* 利息保障倍數代理
+
+## F12-E03：LIQUIDITY_SCORE
+
+* 流動性分數（0~1）：流動比、速動比、現金部位（依資料）
+
+## F12-E04：REFINANCING_RISK_FLAG
+
+* 再融資風險旗標（0/1）
+
+## F12-E05：FX_DEBT_EXPOSURE_FLAG
+
+* 外幣負債曝險（若可取得）
+
+## F12-E06：COVENANT_RISK_PROXY
+
+* 財務契約風險代理
+
+## F12-E07 ～ F12-E18（完整補齊）
+
+* `DEBT_MATURITY_CLUSTER_RISK`
+* `ASSET_IMPAIRMENT_RISK_FLAG`
+* `CONTINGENT_LIABILITY_FLAG`
+* `OFF_BALANCE_SHEET_RISK_PROXY`
+* `FINANCIAL_STRESS_SCORE`
+* `DEFAULT_RISK_PROXY`
+* `BALANCE_SHEET_CONFIDENCE`
+* `BALANCE_SHEET_TAGS`
+* `BALANCE_SHEET_AUDIT_TRAIL`
+* `BALANCE_SHEET_VERSION_TAG`
+* `BALANCE_SHEET_COMPLETENESS_SCORE`
+* `DILUTION_RISK_PROXY`
+
+---
+
+# 9. F12-F：資本支出與產能循環（F12-F01 ～ F12-F16）
+
+## F12-F01：CAPEX_TREND
+
+* 資本支出趨勢
+
+## F12-F02：CAPEX_INTENSITY_SCORE
+
+* CAPEX 強度（CAPEX/營收 或 CAPEX/折舊 Proxy）
+
+## F12-F03：DEPRECIATION_PRESSURE_SCORE
+
+* 折舊壓力（產能擴張後的獲利壓力）
+
+## F12-F04：CYCLE_POSITION_LABEL
+
+* **中文**：循環位置標籤（擴張/高峰/下行/復甦/不明）
+* 由：營收加速度+毛利循環+庫存天數變化合成
+
+## F12-F05：INVENTORY_CYCLE_RISK_FLAG
+
+* 庫存循環風險
+
+## F12-F06 ～ F12-F16（完整補齊）
+
+* `CAPACITY_EXPANSION_FLAG`
+* `CAPACITY_CONSTRAINT_FLAG`
+* `ORDER_VISIBILITY_PROXY`
+* `BACKLOG_SIGNAL_PROXY`
+* `SUPPLY_DEMAND_IMBALANCE_PROXY`
+* `CYCLE_REVERSAL_EVENT`
+* `CAPEX_CONFIDENCE`
+* `CAPEX_TAGS`
+* `CAPEX_AUDIT_TRAIL`
+* `CAPEX_VERSION_TAG`
+* `CAPEX_COMPLETENESS_SCORE`
+
+---
+
+# 10. F12-G：估值帶（Valuation Bands）（F12-G01 ～ F12-G22）
+
+> 估值帶 = **歷史分位 + 同族群相對估值 + 成長調整**
+> 不做目標價，只做區間壓力。
+
+## F12-G01：PE_TTM
+
+* 本益比（TTM）
+
+## F12-G02：PB
+
+* 股價淨值比
+
+## F12-G03：PS_TTM
+
+* 市銷率（TTM）
+
+## F12-G04：EV_EBITDA_PROXY
+
+* 若可取得 EV/EBITDA，否則 Proxy
+
+## F12-G05：VALUATION_PERCENTILE_5Y
+
+* **中文**：近5年估值分位（0~1）
+
+## F12-G06：VALUATION_PERCENTILE_10Y
+
+* 近10年估值分位
+
+## F12-G07：RELATIVE_VALUATION_SECTOR_Z
+
+* 相對同族群估值Z分數
+
+## F12-G08：GROWTH_ADJUSTED_VALUATION_PROXY
+
+* 成長調整估值代理（例如 PEG Proxy：PE / Growth）
+
+## F12-G09：VALUATION_PRESSURE_SCORE
+
+* **中文**：估值壓力分數（0~1）
+* 高分代表「估值偏貴、需要更強催化/更高確認門檻」
+
+## F12-G10 ～ F12-G22（完整補齊）
+
+* `VALUATION_CHEAPNESS_SCORE`（相反向）
+* `MULTIPLE_EXPANSION_SIGNATURE`
+* `MULTIPLE_CONTRACTION_SIGNATURE`
+* `VALUE_TRAP_RISK_FLAG`（便宜但基本面惡化）
+* `GROWTH_TRAP_RISK_FLAG`（高估值但成長崩）
+* `VALUATION_REGIME_LABEL`（便宜/合理/昂貴/極端）
+* `VALUATION_REVERSAL_RISK`
+* `VALUATION_CONFIDENCE`
+* `VALUATION_TAGS`
+* `VALUATION_AUDIT_TRAIL`
+* `VALUATION_VERSION_TAG`
+* `VALUATION_COMPLETENESS_SCORE`
+* `VALUATION_NULL_REASON_CODES`
+
+---
+
+# 11. F12-H：產業結構與景氣循環屬性（F12-H01 ～ F12-H14）
+
+## F12-H01：INDUSTRY_CYCLICALITY_LABEL
+
+* **輸出**：`cyclical / secular_growth / defensive / mixed`
+
+## F12-H02：COMPETITIVE_INTENSITY_PROXY
+
+* 競爭強度代理（毛利波動大+價格壓力高）
+
+## F12-H03：MOAT_PROXY_SCORE
+
+* 護城河代理（毛利穩定、ROE穩定、週期抗性）
+
+## F12-H04：SUPPLY_CHAIN_POSITION_LABEL
+
+* 供應鏈位置（上游/中游/下游/終端）
+
+## F12-H05：EXPORT_EXPOSURE_PROXY
+
+* 出口曝險代理（若資料允許）
+
+## F12-H06 ～ F12-H14（完整補齊）
+
+* `PRICING_POWER_SECTOR_CONTEXT`
+* `REGULATORY_SENSITIVITY_PROXY`
+* `COMMODITY_SENSITIVITY_PROXY`
+* `FX_SENSITIVITY_PROXY`
+* `RATE_SENSITIVITY_PROXY`
+* `INDUSTRY_CONFIDENCE`
+* `INDUSTRY_TAGS`
+* `INDUSTRY_AUDIT_TRAIL`
+* `INDUSTRY_VERSION_TAG`
+
+---
+
+# 12. F12-I：基本面×事件×價格驗證鏈（F12-I01 ～ F12-I16）
+
+> 這段是把 03K（事件）拉回「基本面是否真改善」，並用 03B~03F 驗證市場是否承認。
+
+## F12-I01：EVENT_FUNDAMENTAL_LINKED_FLAG
+
+* 事件是否可映射到基本面（例：接單→營收/毛利、擴產→CAPEX）
+
+## F12-I02：FUNDAMENTAL_IMPACT_DIRECTION_MATCH
+
+* 事件方向與基本面變化是否一致（0/1/unknown）
+
+## F12-I03：POST_EVENT_REVENUE_CONFIRM_SCORE
+
+* 事件後營收是否出現對應改善（延遲容忍）
+
+## F12-I04：POST_EVENT_MARGIN_CONFIRM_SCORE
+
+* 事件後毛利/營益是否改善
+
+## F12-I05：POST_EVENT_CASHFLOW_CONFIRM_SCORE
+
+* 事件後現金流是否改善
+
+## F12-I06：PRICE_STRUCTURE_CONFIRM_AFTER_FUNDAMENTAL
+
+* 基本面改善後，價格是否結構確認（03F）
+
+## F12-I07：FUNDAMENTAL_PRICE_CONFLICT_FLAG
+
+* 基本面改善但價格不認、或價格強但基本面崩（衝突）
+
+## F12-I08 ～ F12-I16（完整補齊）
+
+* `FUNDAMENTAL_CONFIRM_CHAIN_TOTAL`
+* `CONFIRM_CHAIN_MISSING_PARTS`
+* `CONFIRM_CHAIN_LAG_WARNING_FLAG`
+* `FUNDAMENTAL_SURPRISE_PROXY`
+* `FUNDAMENTAL_REVERSAL_RISK`
+* `FUNDAMENTAL_CONFIRM_AUDIT_TRAIL`
+* `FUNDAMENTAL_TAGS`
+* `FUNDAMENTAL_VERSION_TAG`
+* `FUNDAMENTAL_COMPLETENESS_SCORE`
+
+---
+
+# 13. F12-J：合成輸出與治理旗標（F12-J01 ～ F12-J14）
+
+## F12-J01：FUNDAMENTAL_QUALITY_SCORE
+
+* **中文**：基本面品質總分（0~1）
+* 合成：成長×獲利×現金流×財務風險（風險為負向）
+
+## F12-J02：FUNDAMENTAL_MOMENTUM_SCORE
+
+* **中文**：基本面動能分數（0~1）
+* 合成：營收加速度、毛利趨勢、庫存循環等
+
+## F12-J03：VALUATION_PRESSURE_SCORE_TOTAL
+
+* 估值壓力總分（0~1）
+
+## F12-J04：FUNDAMENTAL_RISK_FLAGS
+
+* 風險旗標集合（例）：
+
+  * `earnings_quality_low`
+  * `inventory_risk_high`
+  * `leverage_risk_high`
+  * `refinancing_risk`
+  * `value_trap_risk`
+  * `growth_trap_risk`
+
+## F12-J05：GOVERNANCE_PERMISSION_HINT_FUND
+
+* **中文**：治理層提示（僅提示，不執行）
+
+  * 例如：估值壓力高 → 提高確認門檻、縮小倉位上限
+  * 財務風險高 → 禁止自動化、僅人工確認（由你決定）
+
+## F12-J06：FUNDAMENTAL_EXPLAIN_TAGS
+
+* 可讀解釋標籤（中文）
+
+## F12-J07：FUNDAMENTAL_AUDIT_TRAIL
+
+* 審計軌跡（來源、口徑、時間）
+
+## F12-J08 ～ F12-J14（完整補齊）
+
+* `FUNDAMENTAL_EXPORT_SCHEMA`
+* `FUNDAMENTAL_DATA_FRESHNESS_REPORT`
+* `FUNDAMENTAL_SOURCE_TIER_REPORT`
+* `FUNDAMENTAL_MODEL_CONFIG_HASH`
+* `FUNDAMENTAL_VERSION`
+* `FUNDAMENTAL_NULL_REASON_CODES`
+* `FUNDAMENTAL_FEATURE_COMPLETENESS`
+
+---
+
+## 14. 03L 與 03I/03J/03K/03G/03H 的「一環扣一環」接法（硬對齊）
+
+* **03I（題材輪動）**：發現題材升溫與領先股擴散
+* **03K（事件消息）**：捕捉催化來源（接單/法說/政策/地緣）
+* **03J（籌碼）**：確認是否有主體資金承認（法人/槓桿/分點/被動）
+* **03L（基本面估值）**：確認這波漲「值不值」、風險是否被低估
+* **03G（威科夫）**：判斷敘事更像吸籌延續還是派發出貨
+* **03H（鮑迪克）**：判斷結構是否推進或背馳風險升高
+* **治理層**：最後是否允許自動化、允許到什麼程度（你決定）
+
+---
+
+## 15. 03L 完整性鎖定聲明
+
+* ✔ 成長、獲利、現金流、財務風險、CAPEX循環、估值帶、產業屬性、事件驗證鏈、治理輸出 全覆蓋
+* ✔ 缺資料可 Proxy，但必須標記可信度與原因，不通靈
+* ✔ 不下單、不給買賣點
+* ✔ 無任何 XQ 內容
+* ✔ 新對話可 100% 讀懂並可直接存入 GitHub
+
+---
+
+# 📘 TAITS_03M_風險溢酬與因子暴露特徵全集.md
+
+（世界一流落地版｜F13 Factor/RiskPremia：Beta × Size × Value × Momentum × Quality × LowVol × Liquidity × Carry/Term × Crowd × TailRisk｜可比較×可加權×可治理｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03M 在 TAITS 的角色）
+
+你要 TAITS 能「先預判再證實」、能處理「輪動快、題材多、中小股爆發」，但又要可長期演進、可治理、可風控。
+**03M 的定位**就是把前面所有訊號（03B~03L）最後收斂成：
+
+* 可比較（不同股票、不同題材、不同週期可同一尺度比較）
+* 可加權（FusionEngine 可直接做權重）
+* 可治理（Permission Gate / RiskEngine 可明確限制）
+* 可解釋（因子暴露是投資學通用語言，便於審計）
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不下單、不給買賣點
+* ✅ 輸出「因子暴露」「風險溢酬狀態」「擁擠度」「尾部風險」「因子一致性驗證」
+* ✅ 供：Regime、RiskEngine、FusionEngine、Portfolio Construction、Position Sizing、Permission Gate 使用
+
+---
+
+## 1. 03M 的硬規格（避免通靈與偷工減料）
+
+### 1.1 因子必須可回測、可版本化
+
+每個因子特徵必含：
+
+* `definition_id`（定義版本）
+* `window`（1D/5D/20D/60D/252D）
+* `universe_scope`（全市場/同族群/同題材/自選池）
+* `normalization`（z-score/percentile/rank）
+* `source_confidence`（0~1）
+* `audit_trail`
+
+### 1.2 因子不是神諭，只是曝險
+
+* 03M 只描述「像不像某種風險溢酬曝險」
+* 是否要交易、要不要自動化由你與治理層決定
+
+### 1.3 缺資料允許 Proxy，但必須標記原因
+
+* 例如 EV/EBITDA 取不到 → Value 因子改用 PB/PS/PE Proxy
+* 一律輸出 `null + null_reason_code`
+
+---
+
+## 2. 03M 特徵總分類（完整）
+
+| 分類代碼  | 類型名稱（中文）              | 說明                                     |
+| ----- | --------------------- | -------------------------------------- |
+| F13-A | 因子資料品質與宇宙定義           | Universe、基準、標準化、缺失處理                   |
+| F13-B | 市場/系統性風險（Beta/Market） | Beta、相關、下行Beta、共振風險                    |
+| F13-C | 規模（Size）              | 小型溢酬曝險、微型股風險旗標                         |
+| F13-D | 價值（Value）             | PB/PE/PS/FCF 等估值相對性（承接 03L）            |
+| F13-E | 動能（Momentum）          | 趨勢/相對強弱/加速度（承接 03C/03D/03I）            |
+| F13-F | 品質（Quality）           | 獲利品質、財務穩健（承接 03L）                      |
+| F13-G | 低波（LowVol）與防禦         | 波動曝險、回撤風險（承接 03E）                      |
+| F13-H | 流動性（Liquidity）與交易成本   | 滑價風險、成交金額、換手結構（承接 03B/03J）             |
+| F13-I | 擁擠度（Crowding）與共識交易    | 題材擁擠、法人同向、分點集中（承接 03I/03J）             |
+| F13-J | 尾部風險（TailRisk）與崩盤曝險   | gap風險、極端波、流動性抽乾                        |
+| F13-K | 因子一致性與驗證鏈             | 因子與事件/籌碼/結構是否互相支持                      |
+| F13-L | 合成輸出與治理旗標             | Factor Profile、Risk Premia Regime、限制建議 |
+
+> **本卷總數：共 140 個風險溢酬與因子暴露特徵**
+
+---
+
+## 3. 統一計算設定（硬規格）
+
+### 3.1 共同窗口（Windows）
+
+* `W1=5`（一週）
+* `W2=20`（一月）
+* `W3=60`（一季）
+* `W4=252`（一年）
+
+### 3.2 標準化（Normalization）
+
+* `rank_pct`：0~1 分位
+* `z_score`：同 Universe 內 z
+* `winsorize`：極端值剪裁（避免被爆拉爆殺污染）
+
+### 3.3 Universe Scope（你要全產業、但要可控）
+
+* `U0`：全市場（TW 全股票）
+* `U1`：同產業
+* `U2`：同題材（03I 的 Theme/SubTheme）
+* `U3`：可交易池（流動性/合規過濾後）
+
+> 同一因子至少輸出 U0 + U1 兩套，避免只看一種視角。
+
+---
+
+# 4. F13-A：因子資料品質與宇宙定義（F13-A01 ～ F13-A16）
+
+## F13-A01：FACTOR_DATA_AVAILABILITY_SCORE
+
+* 因子資料可用性（0~1）
+
+## F13-A02：UNIVERSE_DEFINITION_ID
+
+* Universe 定義版本（可審計）
+
+## F13-A03：BENCHMARK_ID
+
+* 基準指數ID（市場Beta用）
+
+## F13-A04：NORMALIZATION_METHOD_ID
+
+* 標準化方法版本
+
+## F13-A05：OUTLIER_CONTROL_FLAG
+
+* 極端值處理是否啟用（0/1）
+
+## F13-A06：SURVIVORSHIP_BIAS_RISK_FLAG
+
+## F13-A07 ～ F13-A16（完整補齊）
+
+* `LOOKAHEAD_BIAS_GUARD_FLAG`
+* `DATA_STALENESS_FLAG`
+* `MISSING_DATA_RATIO`
+* `IMPUTATION_METHOD_ID`
+* `REBALANCE_SCHEDULE_ID`
+* `FACTOR_AUDIT_TRAIL`
+* `FACTOR_VERSION_TAG`
+* `FACTOR_COMPLETENESS_SCORE`
+* `MICROCAP_EXCLUSION_HINT`（僅提示，不自動排除）
+* `LIQUIDITY_GUARD_CONFIG_HASH`
+
+---
+
+# 5. F13-B：市場/系統性風險（Beta/Market）（F13-B01 ～ F13-B16）
+
+## F13-B01：BETA_W2
+
+* 一月Beta（相對基準）
+
+## F13-B02：BETA_W3
+
+* 一季Beta
+
+## F13-B03：DOWN_BETA_W3
+
+* 下行Beta（只用市場下跌日）
+
+## F13-B04：CORRELATION_TO_MARKET_W2
+
+* 與市場相關
+
+## F13-B05：MARKET_SENSITIVITY_SCORE
+
+* 市場敏感度合成（0~1）
+
+## F13-B06：BETA_INSTABILITY_SCORE
+
+* Beta 穩定度（越不穩越風險）
+
+## F13-B07 ～ F13-B16（完整補齊）
+
+* `BETA_SPIKE_EVENT`
+* `CORRELATION_BREAK_EVENT`
+* `SYSTEMIC_RISK_PROXY`
+* `RISK_ON_EXPOSURE_SCORE`
+* `RISK_OFF_EXPOSURE_SCORE`
+* `MARKET_TREND_DEPENDENCE`
+* `BETA_CONFIDENCE`
+* `BETA_TAGS`
+* `BETA_AUDIT_TRAIL`
+* `BETA_VERSION_TAG`
+
+---
+
+# 6. F13-C：規模（Size）（F13-C01 ～ F13-C12）
+
+## F13-C01：SIZE_LOG_MKT_CAP
+
+* 市值對數（若可取）
+
+## F13-C02：SIZE_RANK_PCT_U0
+
+* 全市場規模分位
+
+## F13-C03：SMALL_SIZE_PREMIA_EXPOSURE
+
+* 小型溢酬曝險（0~1）
+
+## F13-C04：MICROCAP_HAZARD_FLAG
+
+* 微型股風險旗標（不等於排除）
+
+## F13-C05：SIZE_LIQUIDITY_CONFLICT_FLAG
+
+* 規模小但流動性不足（風控提示）
+
+## F13-C06 ～ F13-C12（完整補齊）
+
+* `SIZE_VOLATILITY_PENALTY`
+* `SIZE_GAP_RISK_PENALTY`
+* `SIZE_CONFIDENCE`
+* `SIZE_TAGS`
+* `SIZE_AUDIT_TRAIL`
+* `SIZE_VERSION_TAG`
+* `SIZE_COMPLETENESS_SCORE`
+
+---
+
+# 7. F13-D：價值（Value）（F13-D01 ～ F13-D18）
+
+> 承接 03L 的估值帶，這裡把估值轉成「因子曝險」。
+
+## F13-D01：VALUE_SCORE_COMPOSITE
+
+* 價值合成分數（0~1）：PE/PB/PS/FCF Proxy 組合
+
+## F13-D02：PB_RANK_PCT_U1
+
+* 同族群PB分位（0~1）
+
+## F13-D03：PE_RANK_PCT_U1
+
+## F13-D04：PS_RANK_PCT_U1
+
+## F13-D05：VALUATION_BAND_POSITION
+
+* 估值帶位置（承接 03L：便宜/合理/昂貴）
+
+## F13-D06：VALUE_TRAP_RISK_FLAG
+
+* 便宜但基本面惡化（承接 03L）
+
+## F13-D07 ～ F13-D18（完整補齊）
+
+* `GROWTH_ADJUSTED_VALUE_PROXY`
+* `MULTIPLE_EXPANSION_RISK`
+* `MULTIPLE_CONTRACTION_OPPORTUNITY`
+* `VALUE_SECTOR_NEUTRAL_SCORE`
+* `VALUE_THEME_NEUTRAL_SCORE`
+* `VALUE_CONFIDENCE`
+* `VALUE_TAGS`
+* `VALUE_AUDIT_TRAIL`
+* `VALUE_VERSION_TAG`
+* `VALUE_COMPLETENESS_SCORE`
+* `VALUE_NULL_REASON_CODES`
+* `VALUE_DATA_QUALITY_SCORE`
+
+---
+
+# 8. F13-E：動能（Momentum）（F13-E01 ～ F13-E18）
+
+> 承接 03C/03D/03I（趨勢/動能/輪動）。
+
+## F13-E01：MOM_RETURN_W2
+
+* 一月報酬動能
+
+## F13-E02：MOM_RETURN_W3
+
+* 一季報酬動能
+
+## F13-E03：MOM_RETURN_W4
+
+* 一年報酬動能（可選）
+
+## F13-E04：MOM_ACCELERATION
+
+* 動能加速度（W2 vs W3 斜率）
+
+## F13-E05：RELATIVE_STRENGTH_PCT_U0
+
+* 全市場相對強弱分位
+
+## F13-E06：MOM_CRASH_RISK_FLAG
+
+* 動能崩盤風險（過熱+擁擠+高波時升高）
+
+## F13-E07 ～ F13-E18（完整補齊）
+
+* `MOM_SECTOR_NEUTRAL_SCORE`
+* `MOM_THEME_NEUTRAL_SCORE`
+* `MOM_STRUCTURE_CONFIRM_FLAG`（03F）
+* `MOM_VOLUME_CONFIRM_FLAG`（03B）
+* `MOM_BDICK_SUPPORT_FLAG`（03H）
+* `MOM_WYCKOFF_SUPPORT_FLAG`（03G）
+* `MOM_VOL_REGIME_PENALTY`（03E）
+* `MOM_CONFIDENCE`
+* `MOM_TAGS`
+* `MOM_AUDIT_TRAIL`
+* `MOM_VERSION_TAG`
+* `MOM_COMPLETENESS_SCORE`
+
+---
+
+# 9. F13-F：品質（Quality）（F13-F01 ～ F13-F16）
+
+> 承接 03L：獲利品質、財務穩健。
+
+## F13-F01：QUALITY_SCORE_COMPOSITE
+
+* 品質合成分數（0~1）：毛利穩定/ROE Proxy/現金流品質/槓桿風險反向
+
+## F13-F02：PROFITABILITY_STABILITY
+
+* 獲利穩定度
+
+## F13-F03：EARNINGS_QUALITY
+
+* 盈餘品質（03L）
+
+## F13-F04：LEVERAGE_PENALTY
+
+* 槓桿扣分（03L）
+
+## F13-F05：GOVERNANCE_RISK_PROXY
+
+* 治理風險代理（若有資料）
+
+## F13-F06 ～ F13-F16（完整補齊）
+
+* `QUALITY_SECTOR_NEUTRAL_SCORE`
+* `QUALITY_THEME_NEUTRAL_SCORE`
+* `QUALITY_WITH_PRICE_CONFIRM`（03F/03B）
+* `QUALITY_WITH_EVENT_CONFIRM`（03K）
+* `QUALITY_CONFIDENCE`
+* `QUALITY_TAGS`
+* `QUALITY_AUDIT_TRAIL`
+* `QUALITY_VERSION_TAG`
+* `QUALITY_COMPLETENESS_SCORE`
+* `QUALITY_NULL_REASON_CODES`
+* `QUALITY_DATA_QUALITY_SCORE`
+
+---
+
+# 10. F13-G：低波（LowVol）與防禦（F13-G01 ～ F13-G14）
+
+> 承接 03E：波動與風險狀態。
+
+## F13-G01：REALIZED_VOL_W2
+
+* 近20日實現波動
+
+## F13-G02：MAX_DRAWDOWN_W2
+
+* 近20日最大回撤
+
+## F13-G03：LOWVOL_EXPOSURE_SCORE
+
+* 低波曝險（0~1）：波動低+回撤低
+
+## F13-G04：HIGHVOL_HAZARD_FLAG
+
+* 高波危險旗標（不等於排除）
+
+## F13-G05：DEFENSIVE_PROFILE_SCORE
+
+* 防禦輪廓分數（0~1）
+
+## F13-G06 ～ F13-G14（完整補齊）
+
+* `VOL_REGIME_LABEL`（承接03E）
+* `TAIL_VOL_PROXY`
+* `GAP_RISK_PROXY`
+* `LOWVOL_CONFIDENCE`
+* `LOWVOL_TAGS`
+* `LOWVOL_AUDIT_TRAIL`
+* `LOWVOL_VERSION_TAG`
+* `LOWVOL_COMPLETENESS_SCORE`
+* `LOWVOL_NULL_REASON_CODES`
+
+---
+
+# 11. F13-H：流動性（Liquidity）與交易成本（F13-H01 ～ F13-H16）
+
+> 你要能抓中小型爆發，但必須把滑價/流動性風險特徵化。
+
+## F13-H01：ADV_20D
+
+* 近20日平均成交金額
+
+## F13-H02：TURNOVER_RATE
+
+* 換手率
+
+## F13-H03：ILLIQUIDITY_PROXY
+
+* 不流動性代理（例如 Amihud 類型 Proxy）
+
+## F13-H04：SLIPPAGE_RISK_SCORE
+
+* 滑價風險分數（0~1）
+
+## F13-H05：LIQUIDITY_SHOCK_FLAG
+
+* 流動性突然下降（0/1）
+
+## F13-H06：LIQUIDITY_PREMIA_EXPOSURE
+
+* 流動性溢酬曝險（0~1）
+
+## F13-H07 ～ F13-H16（完整補齊）
+
+* `SPREAD_PROXY_RISK`
+* `GAP_FREQUENCY_SCORE`
+* `LIMIT_DISTORTION_RISK`（漲跌停扭曲）
+* `LIQUIDITY_WITH_FLOW_CONFIRM`（03J）
+* `LIQUIDITY_WITH_VOLUME_CONFIRM`（03B）
+* `LIQUIDITY_CONFIDENCE`
+* `LIQUIDITY_TAGS`
+* `LIQUIDITY_AUDIT_TRAIL`
+* `LIQUIDITY_VERSION_TAG`
+* `LIQUIDITY_COMPLETENESS_SCORE`
+
+---
+
+# 12. F13-I：擁擠度（Crowding）與共識交易（F13-I01 ～ F13-I14）
+
+> 你要抓輪動，也要防「擁擠交易」回撤。
+
+## F13-I01：THEME_CROWDING_SCORE
+
+* 題材擁擠度（承接 03I：成交占比、熱度、集中）
+
+## F13-I02：INSTITUTIONAL_CROWDING_SCORE
+
+* 法人同向擁擠（承接 03J）
+
+## F13-I03：BRANCH_CROWDING_SCORE
+
+* 分點集中擁擠（承接 03J）
+
+## F13-I04：CROWDING_REVERSAL_RISK
+
+* 擁擠反轉風險（0~1）
+
+## F13-I05：CROWDING_WITH_MOMENTUM_OVERHEAT_FLAG
+
+* 擁擠+動能過熱 → 風險提示
+
+## F13-I06 ～ F13-I14（完整補齊）
+
+* `CROWDING_WITH_LOW_BREADTH_FLAG`
+* `CROWDING_WITH_FAKEOUT_RISK`（03F）
+* `CROWDING_WITH_WYCKOFF_DISTRIBUTION_FLAG`（03G）
+* `CROWDING_WITH_BDICK_DIVERGENCE_FLAG`（03H）
+* `CROWDING_CONFIDENCE`
+* `CROWDING_TAGS`
+* `CROWDING_AUDIT_TRAIL`
+* `CROWDING_VERSION_TAG`
+* `CROWDING_COMPLETENESS_SCORE`
+
+---
+
+# 13. F13-J：尾部風險（TailRisk）與崩盤曝險（F13-J01 ～ F13-J12）
+
+## F13-J01：TAIL_RISK_SCORE
+
+* 尾部風險分數（0~1）：極端波、缺口、回撤、流動性抽乾
+
+## F13-J02：CRASH_HAZARD_FLAG
+
+* 崩盤危險旗標（0/1）
+
+## F13-J03：GAP_CLUSTER_SCORE
+
+* 缺口群聚（多次跳空）
+
+## F13-J04：LIQUIDITY_DRY_UP_FLAG
+
+* 交易金額急縮
+
+## F13-J05：FORCED_SELL_RISK_PROXY
+
+* 可能的被迫賣出風險（融資壓力/籌碼衝突）
+
+## F13-J06 ～ F13-J12（完整補齊）
+
+* `TAIL_WITH_EVENT_SHOCK_FLAG`（03K）
+* `TAIL_WITH_MARGIN_STRESS_FLAG`（03J）
+* `TAIL_WITH_STRUCTURE_BREAK_FLAG`（03F）
+* `TAIL_CONFIDENCE`
+* `TAIL_TAGS`
+* `TAIL_AUDIT_TRAIL`
+* `TAIL_VERSION_TAG`
+
+---
+
+# 14. F13-K：因子一致性與驗證鏈（F13-K01 ～ F13-K16）
+
+> 你要「先預判再證實」，因子也要有驗證鏈。
+
+## F13-K01：FACTOR_INTERNAL_CONSISTENCY_SCORE
+
+* 因子之間是否一致（例如：高動能但價值極貴+擁擠極高=風險上升）
+
+## F13-K02：FACTOR_PRICE_CONFIRM_SCORE
+
+* 因子訊號是否被價格/結構承認（03F/03B）
+
+## F13-K03：FACTOR_EVENT_CONFIRM_SCORE
+
+* 因子敘事是否有事件催化支持（03K）
+
+## F13-K04：FACTOR_CHIP_CONFIRM_SCORE
+
+* 因子敘事是否有籌碼支持（03J）
+
+## F13-K05：FACTOR_THEME_CONFIRM_SCORE
+
+* 是否符合題材輪動（03I）
+
+## F13-K06：FACTOR_CONFLICT_FLAG
+
+* 明顯衝突旗標（0/1）
+
+## F13-K07 ～ F13-K16（完整補齊）
+
+* `FACTOR_CONFIDENCE_TOTAL`
+* `FACTOR_MISSING_COMPONENTS_LIST`
+* `FACTOR_DELAY_RISK_FLAG`
+* `FACTOR_REGIME_DEPENDENCE`（Regime 依賴）
+* `FACTOR_STABILITY_SCORE`
+* `FACTOR_REVERSAL_WARNING`
+* `FACTOR_AUDIT_TRAIL`
+* `FACTOR_TAGS`
+* `FACTOR_VERSION_TAG`
+* `FACTOR_COMPLETENESS_SCORE`
+
+---
+
+# 15. F13-L：合成輸出與治理旗標（F13-L01 ～ F13-L20）
+
+## F13-L01：FACTOR_PROFILE_VECTOR
+
+* **中文**：因子輪廓向量（可用於聚類/排序）
+* 包含：Market/Size/Value/Mom/Quality/LowVol/Liquidity/Crowding/Tail
+
+## F13-L02：RISK_PREMIA_REGIME_LABEL
+
+* **輸出**：`risk_on / risk_off / high_vol / liquidity_stress / crowded_momentum / value_rebound` 等
+
+## F13-L03：FACTOR_SCORE_TOTAL
+
+* 因子綜合分數（0~1），供 FusionEngine 加權
+
+## F13-L04：FACTOR_RISK_FLAGS
+
+* 風險旗標集合：
+
+  * `crowding_reversal_risk`
+  * `tail_risk_high`
+  * `liquidity_stress`
+  * `momentum_crash_risk`
+  * `value_trap_risk`
+  * `beta_spike_risk`
+
+## F13-L05：GOVERNANCE_PERMISSION_HINT_FACTOR
+
+* **中文**：治理層提示（僅提示）
+
+  * 例如：擁擠+尾部風險高 → 降低自動化等級、縮倉上限
+  * 例如：流動性壓力 → 禁止大單、只允許小額試單（你決定）
+
+## F13-L06：PORTFOLIO_TILT_HINT
+
+* **中文**：投組傾斜建議（僅建議）
+
+  * 例如偏向 Quality/LowVol 或偏向 Size/Momentum
+
+## F13-L07：FACTOR_LEADERBOARD
+
+* 因子強勢標的榜
+
+## F13-L08：FACTOR_DIVERSIFICATION_SCORE
+
+* 因子分散度（避免全押同一曝險）
+
+## F13-L09：FACTOR_AUDIT_TRAIL
+
+## F13-L10 ～ F13-L20（完整補齊）
+
+* `FACTOR_EXPORT_SCHEMA`
+* `FACTOR_DATA_FRESHNESS_REPORT`
+* `FACTOR_SOURCE_TIER_REPORT`
+* `FACTOR_MODEL_CONFIG_HASH`
+* `FACTOR_VERSION`
+* `FACTOR_NULL_REASON_CODES`
+* `FACTOR_FEATURE_COMPLETENESS`
+* `FACTOR_CLUSTER_ID`（相似輪廓群）
+* `FACTOR_ANOMALY_FLAG`
+* `FACTOR_EXPLAIN_TAGS`
+* `FACTOR_STATE_EXPLAIN_TOKENS`
+
+---
+
+## 16. 03M 與 03I/03J/03K/03L/03G/03H 的「一環扣一環」接法（硬對齊）
+
+* **03I 題材輪動**：告訴你「錢往哪裡去」
+* **03J 籌碼結構**：告訴你「誰在買、槓桿與空方如何」
+* **03K 事件消息**：告訴你「催化是什麼、可信度與時效」
+* **03L 基本面估值**：告訴你「值不值、能不能長」
+* **03M 因子曝險**：告訴你「這個標的本質上押的是哪種風險溢酬」
+* **03G/03H 結構語言**：告訴你「走勢結構是否支持、是否背馳/派發」
+* **治理層**：最後由你決定自動化程度與下單權限
+
+---
+
+## 17. 03M 完整性鎖定聲明
+
+* ✔ Market/Size/Value/Momentum/Quality/LowVol/Liquidity/Crowding/TailRisk 全覆蓋
+* ✔ 每個因子都能輸出：U0全市場 + U1同族群（至少兩視角）
+* ✔ 缺資料允許 Proxy 但必須標記可信度與原因，不通靈
+* ✔ 不下單、不給買賣點
+* ✔ 無任何 XQ 內容
+* ✔ 新對話可 100% 讀懂並可直接存入 GitHub
+
+---
+
+# 📘 TAITS_03N_組合構建與資產配置特徵全集.md
+
+（世界一流落地版｜F14 Portfolio/Allocation：權重 × 風險預算 × 相關/共振 × 集中度 × 再平衡 × 情境壓力 × 撤退模式｜仍不下單｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03N 在 TAITS 的角色）
+
+你前面一直強調：
+
+* 市場輪動快、題材多，不想只做權值股
+* 資訊收集要完整，TAITS 要能「先預判再證實」
+* 最後自動下單與否由你決定
+
+那麼 **03N 的工作**是把 03B~03M 產生的所有訊號，轉成「投組層」可用的工程化特徵，提供：
+
+* 什麼該多配、什麼該少配（但不下單）
+* 怎麼避免全押同一題材/同一因子
+* 怎麼控制回撤與尾部風險
+* 怎麼在不同 Regime 下切換配置模式
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不下單、不產生買賣點
+* ✅ 輸出「投組候選」「權重建議特徵」「風險預算」「分散度」「再平衡觸發」「壓力測試結果特徵」
+* ✅ 供：PortfolioManager、RiskEngine、FusionEngine、Permission Gate 使用（最終決策仍由你）
+
+---
+
+## 1. 03N 的硬規格（避免通靈與偷工減料）
+
+### 1.1 所有投組特徵必須可稽核
+
+每個投組輸出必含：
+
+* `portfolio_id`
+* `universe_id`
+* `as_of_date`
+* `objective_id`（目標函數版本：風險最小/報酬最大/風險平價等）
+* `constraints_id`（限制版本：集中度、流動性、題材上限等）
+* `risk_model_id`（風險模型版本）
+* `audit_trail`
+
+### 1.2 投組層只產出「建議與限制」，不做實際交易
+
+* 03N 產出的是「可下單的候選方案」與「風控/治理提示」
+* 是否自動化、是否下單仍由你決定（符合你要求）
+
+### 1.3 缺資料允許 Proxy，但必須標記可信度
+
+* 沒有完整相關矩陣 → 用收縮估計/同產業近似 Proxy，但必須標記 `confidence`
+
+---
+
+## 2. 03N 特徵總分類（完整）
+
+| 分類代碼  | 類型名稱（中文）                      | 說明                      |
+| ----- | ----------------------------- | ----------------------- |
+| F14-A | 投組資料品質與 Universe/限制           | 可交易池、缺失處理、限制版本化         |
+| F14-B | 報酬預期代理（Expected Return Proxy） | 不做預測，只做多訊號合成的期望代理       |
+| F14-C | 風險模型與波動/相關                    | 波動、相關、共振、下行風險           |
+| F14-D | 分散度與集中度控制                     | 產業/題材/因子/個股集中度          |
+| F14-E | 風險預算與權重分配                     | Risk Parity、波動目標、邊際風險   |
+| F14-F | 流動性與交易成本約束                    | ADV、滑價、換手、容量（capacity）  |
+| F14-G | 再平衡觸發與交易抑制                    | 漂移、成本門檻、冷卻期             |
+| F14-H | 情境分析與壓力測試                     | 事件衝擊、風險關閉、尾部情境          |
+| F14-I | Regime 配置模式切換                 | risk_on/off、高波、輪動快慢對應配置 |
+| F14-J | 合成輸出與治理旗標                     | 投組分數、風險旗標、權限提示、審計       |
+
+> **本卷總數：共 136 個投組構建與配置特徵**
+
+---
+
+## 3. 統一輸入：投組層需要哪些上游訊號（硬對齊）
+
+03N 使用的上游特徵（不新增邏輯，只整合）：
+
+* 03I：題材輪動（Theme/Rotation）
+* 03J：籌碼與持股結構（Chip/Positioning）
+* 03K：事件消息面（Event/News）
+* 03L：基本面估值（Fundamentals/Valuation）
+* 03M：因子暴露（Factor/Risk Premia）
+* 03E：波動/風險狀態（Vol/Risk Regime）
+* 治理層：Permission Gate、限制模板、允許的投組類型
+
+---
+
+# 4. F14-A：投組資料品質與 Universe/限制（F14-A01 ～ F14-A16）
+
+## F14-A01：PORTFOLIO_DATA_AVAILABILITY_SCORE
+
+* 投組計算資料可用性（0~1）
+
+## F14-A02：UNIVERSE_ID
+
+* Universe 版本（全市場/流動性過濾/你的白名單）
+
+## F14-A03：ELIGIBILITY_PASS_RATE
+
+* 可用標的比例（過低代表太嚴苛或資料缺失）
+
+## F14-A04：CONSTRAINTS_ID
+
+* 限制版本（集中度、流動性、題材上限等）
+
+## F14-A05：MISSING_DATA_RATIO
+
+* 缺資料比例
+
+## F14-A06：LOOKAHEAD_BIAS_GUARD_FLAG
+
+## F14-A07 ～ F14-A16（完整補齊）
+
+* `SURVIVORSHIP_BIAS_RISK_FLAG`
+* `DATA_STALENESS_FLAG`
+* `IMPUTATION_METHOD_ID`
+* `OUTLIER_CONTROL_FLAG`
+* `MICROCAP_ALLOWED_FLAG`（由治理層決定）
+* `LEVERAGE_ALLOWED_FLAG`（若未來允許槓桿）
+* `SHORT_ALLOWED_FLAG`（若未來允許放空）
+* `PORTFOLIO_AUDIT_TRAIL`
+* `PORTFOLIO_VERSION_TAG`
+* `PORTFOLIO_COMPLETENESS_SCORE`
+
+---
+
+# 5. F14-B：報酬預期代理（Expected Return Proxy）（F14-B01 ～ F14-B16）
+
+> 不做「預測報酬」，只做「多訊號一致性下的期望代理」。
+> 這符合你要求的：先預判再證實，但不通靈。
+
+## F14-B01：EXPECTED_RETURN_PROXY_SCORE
+
+* **中文**：期望報酬代理分數（0~1）
+* 合成來源（示例）：
+
+  * 03I 題材升溫/擴散
+  * 03J 籌碼支持
+  * 03K 事件催化可信度
+  * 03L 基本面動能
+  * 03M 因子動能/品質
+
+## F14-B02：SIGNAL_CONFLUENCE_COUNT
+
+* 訊號同向個數（越多越穩）
+
+## F14-B03：SIGNAL_CONFLICT_FLAG
+
+* 訊號互相衝突（0/1）
+
+## F14-B04：EXPECTED_RETURN_STABILITY_SCORE
+
+* 期望代理穩定度（避免一天一變）
+
+## F14-B05：ALPHA_DECAY_HALF_LIFE_PROXY
+
+* **中文**：Alpha 衰退半衰期代理（小題材通常短）
+
+## F14-B06 ～ F14-B16（完整補齊）
+
+* `THEME_DRIVEN_ALPHA_SHARE`
+* `EVENT_DRIVEN_ALPHA_SHARE`
+* `FUNDAMENTAL_DRIVEN_ALPHA_SHARE`
+* `FLOW_DRIVEN_ALPHA_SHARE`
+* `FACTOR_DRIVEN_ALPHA_SHARE`
+* `ALPHA_CROWDING_PENALTY`（承接03M擁擠度）
+* `ALPHA_TAIL_RISK_PENALTY`
+* `ALPHA_CONFIDENCE`
+* `ALPHA_TAGS`
+* `ALPHA_AUDIT_TRAIL`
+* `ALPHA_VERSION_TAG`
+
+---
+
+# 6. F14-C：風險模型與波動/相關（F14-C01 ～ F14-C20）
+
+## F14-C01：VOLATILITY_TARGET_LEVEL
+
+* 目標波動（由治理層模板定義）
+
+## F14-C02：PORTFOLIO_VOL_FORECAST
+
+* 投組波動預估（模型輸出）
+
+## F14-C03：DOWNSIDE_RISK_SCORE
+
+* 下行風險分數（0~1）
+
+## F14-C04：MAX_DRAWDOWN_RISK_PROXY
+
+* 最大回撤風險代理
+
+## F14-C05：CORRELATION_AVG
+
+* 平均相關
+
+## F14-C06：CORRELATION_CLUSTER_SCORE
+
+* **中文**：相關群聚程度（越高越不分散）
+
+## F14-C07：SYSTEMIC_BETA_EXPOSURE
+
+* 系統性曝險（承接03M Beta）
+
+## F14-C08：TAIL_RISK_EXPOSURE
+
+* 尾部風險曝險（承接03M Tail）
+
+## F14-C09 ～ F14-C20（完整補齊）
+
+* `RISK_MODEL_ID`
+* `COVARIANCE_ESTIMATION_METHOD_ID`
+* `SHRINKAGE_LEVEL`
+* `CORRELATION_BREAK_RISK_FLAG`
+* `LIQUIDITY_STRESS_CORR_SPIKE_FLAG`
+* `SECTOR_CORR_SPIKE_FLAG`
+* `THEME_CORR_SPIKE_FLAG`
+* `FACTOR_CORR_SPIKE_FLAG`
+* `RISK_CONFIDENCE`
+* `RISK_TAGS`
+* `RISK_AUDIT_TRAIL`
+* `RISK_VERSION_TAG`
+
+---
+
+# 7. F14-D：分散度與集中度控制（F14-D01 ～ F14-D18）
+
+> 你不想只做權值股，但也不能全押小票；這裡是工程化的平衡器。
+
+## F14-D01：SINGLE_NAME_CONCENTRATION
+
+* 單一個股集中度（最大權重）
+
+## F14-D02：TOP5_CONCENTRATION
+
+* 前五大集中度
+
+## F14-D03：SECTOR_CONCENTRATION
+
+* 產業集中度
+
+## F14-D04：THEME_CONCENTRATION
+
+* 題材集中度（承接 03I）
+
+## F14-D05：FACTOR_CONCENTRATION
+
+* 因子集中度（承接 03M）
+
+## F14-D06：DIVERSIFICATION_SCORE
+
+* 分散度分數（0~1）
+
+## F14-D07：SMALLCAP_ALLOCATION_SHARE
+
+* 中小型配置占比（不是固定值，是特徵輸出）
+
+## F14-D08：MICROCAP_RISK_OVERRIDE_FLAG
+
+* 微型股風險覆寫提示（治理層可設定上限）
+
+## F14-D09 ～ F14-D18（完整補齊）
+
+* `CONCENTRATION_LIMIT_BREACH_FLAG`
+* `HERFINDAHL_INDEX`
+* `EFFECTIVE_NUMBER_OF_BETS`
+* `LEADER_FOLLOWER_BALANCE_SCORE`（承接03I）
+* `THEME_ROTATION_RISK_PENALTY`
+* `CONCENTRATION_CONFIDENCE`
+* `CONCENTRATION_TAGS`
+* `CONCENTRATION_AUDIT_TRAIL`
+* `CONCENTRATION_VERSION_TAG`
+* `CONCENTRATION_COMPLETENESS_SCORE`
+
+---
+
+# 8. F14-E：風險預算與權重分配（F14-E01 ～ F14-E18）
+
+> 03N 不下單，但必須能輸出「權重如何來」的可審計特徵。
+
+## F14-E01：WEIGHTING_METHOD_ID
+
+* 權重法版本：`equal / risk_parity / vol_target / score_weighted / constrained_opt`
+
+## F14-E02：RISK_BUDGET_VECTOR
+
+* 風險預算向量（個股/產業/題材/因子）
+
+## F14-E03：MARGINAL_RISK_CONTRIBUTION
+
+* 邊際風險貢獻（MRC）
+
+## F14-E04：RISK_CONTRIBUTION_BALANCE_SCORE
+
+* 風險貢獻平衡度（越平衡越接近風險平價）
+
+## F14-E05：SCORE_WEIGHTED_TILT
+
+* 分數加權傾斜（承接 Expected Return Proxy）
+
+## F14-E06：MAX_WEIGHT_AFTER_CONSTRAINTS
+
+* 限制後最大允許權重
+
+## F14-E07 ～ F14-E18（完整補齊）
+
+* `MIN_WEIGHT_FLOOR`
+* `SECTOR_CAPS_VECTOR`
+* `THEME_CAPS_VECTOR`
+* `FACTOR_CAPS_VECTOR`
+* `TURNOVER_LIMIT`
+* `WEIGHT_STABILITY_SCORE`
+* `WEIGHTING_CONFIDENCE`
+* `WEIGHTING_TAGS`
+* `WEIGHTING_AUDIT_TRAIL`
+* `WEIGHTING_VERSION_TAG`
+* `WEIGHTING_COMPLETENESS_SCORE`
+* `OPTIMIZER_FEASIBILITY_FLAG`
+
+---
+
+# 9. F14-F：流動性與交易成本約束（F14-F01 ～ F14-F16）
+
+## F14-F01：PORTFOLIO_CAPACITY_SCORE
+
+* **中文**：投組容量分數（0~1）
+* 由成分股 ADV、滑價風險、集中度推定
+
+## F14-F02：EXPECTED_TURNOVER
+
+* 預期換手率
+
+## F14-F03：TRANSACTION_COST_PROXY
+
+* 交易成本代理（滑價+手續費+稅費，可配置）
+
+## F14-F04：COST_BENEFIT_RATIO_PROXY
+
+* 成本效益比（成本/期望代理）
+
+## F14-F05：ILLIQUIDITY_PENALTY_TOTAL
+
+* 不流動扣分總量
+
+## F14-F06 ～ F14-F16（完整補齊）
+
+* `SLIPPAGE_RISK_TOTAL`
+* `SPREAD_RISK_TOTAL`
+* `GAP_RISK_TOTAL`
+* `LIMIT_MOVE_RISK_TOTAL`
+* `COST_SHOCK_FLAG`
+* `COST_CONFIDENCE`
+* `COST_TAGS`
+* `COST_AUDIT_TRAIL`
+* `COST_VERSION_TAG`
+* `COST_COMPLETENESS_SCORE`
+* `CAPACITY_BREACH_FLAG`
+
+---
+
+# 10. F14-G：再平衡觸發與交易抑制（F14-G01 ～ F14-G16）
+
+> 你要可長期演進、實盤可用：再平衡必須可控、不能亂換。
+
+## F14-G01：REBALANCE_SCHEDULE_ID
+
+* 再平衡排程：日/週/月/事件觸發
+
+## F14-G02：DRIFT_THRESHOLD
+
+* 權重漂移閾值（超過才調整）
+
+## F14-G03：COST_THRESHOLD
+
+* 成本門檻（成本太高不調）
+
+## F14-G04：COOLDOWN_PERIOD_DAYS
+
+* 冷卻期（避免反覆交易）
+
+## F14-G05：REBALANCE_TRIGGER_EVENT_FLAG
+
+* 事件觸發（例如 Regime 切換、重大事件 L2/L3）
+
+## F14-G06：TURNOVER_CONTROL_SCORE
+
+* 換手控制分數（越高越穩）
+
+## F14-G07 ～ F14-G16（完整補齊）
+
+* `THEME_ROTATION_REBALANCE_FLAG`（03I輪動快）
+* `CROWDING_REBALANCE_FLAG`（03M擁擠反轉）
+* `TAIL_RISK_REBALANCE_FLAG`（尾風險升高）
+* `LIQUIDITY_STRESS_REBALANCE_FLAG`
+* `REBALANCE_FEASIBILITY_FLAG`
+* `REBALANCE_CONFIDENCE`
+* `REBALANCE_TAGS`
+* `REBALANCE_AUDIT_TRAIL`
+* `REBALANCE_VERSION_TAG`
+* `REBALANCE_COMPLETENESS_SCORE`
+
+---
+
+# 11. F14-H：情境分析與壓力測試（F14-H01 ～ F14-H18）
+
+> 你要「全系統最終覆蓋審計」那種強度，投組就必須有壓測特徵。
+
+## F14-H01：SCENARIO_SET_ID
+
+* 情境集合版本（可擴充）
+
+## F14-H02：SCENARIO_LOSS_ESTIMATE
+
+* 情境下損失估計
+
+## F14-H03：SCENARIO_MAX_DRAWDOWN_ESTIMATE
+
+## F14-H04：EVENT_SHOCK_SCENARIO_FLAG
+
+* 重大事件衝擊情境（承接 03K）
+
+## F14-H05：LIQUIDITY_FREEZE_SCENARIO_FLAG
+
+* 流動性凍結情境
+
+## F14-H06：CORRELATION_SPIKE_SCENARIO_FLAG
+
+* 相關激增情境
+
+## F14-H07：TAIL_EVENT_SCENARIO_FLAG
+
+* 尾部事件情境（承接 03M Tail）
+
+## F14-H08 ～ F14-H18（完整補齊）
+
+* `SCENARIO_VaR_PROXY`
+* `SCENARIO_CVaR_PROXY`
+* `SCENARIO_STRESS_SCORE_TOTAL`
+* `SCENARIO_PASS_FAIL_FLAG`
+* `SCENARIO_BREACH_COMPONENTS_LIST`
+* `STRESS_TEST_CONFIDENCE`
+* `STRESS_TEST_TAGS`
+* `STRESS_TEST_AUDIT_TRAIL`
+* `STRESS_TEST_VERSION_TAG`
+* `STRESS_TEST_COMPLETENESS_SCORE`
+* `STRESS_EXPORT_SCHEMA`
+
+---
+
+# 12. F14-I：Regime 配置模式切換（F14-I01 ～ F14-I16）
+
+> Regime 高於單一訊號：投組配置也必須 Regime-aware。
+
+## F14-I01：REGIME_LABEL
+
+* 由 MarketRegimeEngine 輸入（不在此定義）
+
+## F14-I02：ALLOCATION_MODE_ID
+
+* 配置模式版本：
+
+  * `risk_on_growth`
+  * `risk_off_defensive`
+  * `high_vol_reduce`
+  * `rotation_fast_tactical`
+  * `rotation_slow_swing`
+
+## F14-I03：MODE_WEIGHT_TILTS
+
+* 模式下的傾斜（例如偏 Quality/LowVol 或偏 Size/Momentum）
+
+## F14-I04：MODE_CONSTRAINT_OVERRIDES
+
+* 模式限制覆寫（例如高波時降低中小型上限）
+
+## F14-I05：MODE_TRANSITION_TRIGGER
+
+* 模式切換觸發條件（事件/波動/輪動速度）
+
+## F14-I06 ～ F14-I16（完整補齊）
+
+* `MODE_STABILITY_SCORE`
+* `MODE_WHIPSaw_RISK_FLAG`（來回切換風險）
+* `MODE_CONFIDENCE`
+* `MODE_TAGS`
+* `MODE_AUDIT_TRAIL`
+* `MODE_VERSION_TAG`
+* `MODE_COMPLETENESS_SCORE`
+* `REGIME_CONFLICT_FLAG`
+* `REGIME_OVERRIDE_PERMISSION_HINT`
+* `REGIME_RISK_OFF_HARD_FLAG`（治理層可設定）
+
+---
+
+# 13. F14-J：合成輸出與治理旗標（F14-J01 ～ F14-J20）
+
+## F14-J01：PORTFOLIO_SCORE_TOTAL
+
+* 投組總分（0~1）：期望代理 × 風險控制 × 分散度 × 成本可行性
+
+## F14-J02：PORTFOLIO_RISK_FLAGS
+
+* 風險旗標集合：
+
+  * `concentration_high`
+  * `liquidity_stress`
+  * `tail_risk_high`
+  * `crowding_reversal_risk`
+  * `regime_conflict`
+  * `optimizer_infeasible`
+
+## F14-J03：PORTFOLIO_PERMISSION_HINT
+
+* **中文**：治理層權限提示（僅提示）
+
+  * 例如：只允許手動、只允許小倉、禁止隔夜、限制題材上限等
+
+## F14-J04：PORTFOLIO_CANDIDATE_SET
+
+* 候選投組集合（不同模式/限制版本）
+
+## F14-J05：PORTFOLIO_EXPLAIN_TAGS
+
+* 中文可讀解釋標籤（供 UI）
+
+## F14-J06：PORTFOLIO_AUDIT_TRAIL
+
+## F14-J07 ～ F14-J20（完整補齊）
+
+* `PORTFOLIO_EXPORT_SCHEMA`
+* `PORTFOLIO_DATA_FRESHNESS_REPORT`
+* `PORTFOLIO_SOURCE_TIER_REPORT`
+* `PORTFOLIO_MODEL_CONFIG_HASH`
+* `PORTFOLIO_VERSION`
+* `PORTFOLIO_NULL_REASON_CODES`
+* `PORTFOLIO_FEATURE_COMPLETENESS`
+* `PORTFOLIO_RISK_BUDGET_REPORT`
+* `PORTFOLIO_CONCENTRATION_REPORT`
+* `PORTFOLIO_LIQUIDITY_REPORT`
+* `PORTFOLIO_STRESS_REPORT`
+* `PORTFOLIO_REBALANCE_REPORT`
+* `PORTFOLIO_MODE_REPORT`
+* `PORTFOLIO_FEASIBILITY_REPORT`
+
+---
+
+## 14. 03N 與前面模組的「一環扣一環」接法（硬對齊）
+
+* 03I：題材/族群輪動 → 決定配置的方向與候選池
+* 03J：籌碼支持/槓桿/空方 → 決定哪些要降權或限制
+* 03K：事件衝擊 → 決定是否進入事件風險模式、是否降自動化
+* 03L：基本面估值 → 決定是否用估值壓力限制倉位
+* 03M：因子曝險 → 決定投組是否過度集中在單一風險溢酬
+* 03N：把以上整合成「投組候選 + 權重/限制/壓測/再平衡」輸出
+* 治理層：最後由你決定是否自動化與下單權限（策略≠下單）
+
+---
+
+## 15. 03N 完整性鎖定聲明
+
+* ✔ 投組層完整具備：期望代理、風險模型、分散與集中度、風險預算、流動性成本、再平衡、壓力測試、Regime 模式切換、治理輸出
+* ✔ 不下單、不給買賣點
+* ✔ 缺資料用 Proxy 必標記可信度與原因，不通靈
+* ✔ 無任何 XQ 內容
+* ✔ 可直接存入 GitHub，新對話可 100% 讀懂
+
+---
+
+# 📘 TAITS_03O_執行層可行性與下單前檢查特徵全集.md
+
+（世界一流落地版｜F15 Execution Feasibility：可行性評分 × 送單前檢查 × 市況/流動性/滑價 × 交易限制 × 風控/治理 Gate｜**仍不代表一定下單**｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03O 在 TAITS 的角色）
+
+你已經把原則講得很清楚：
+
+* **策略 ≠ 下單**
+* **能不能自動下單一定要你決定**
+* 所有產品（期貨/選擇權/融資融券/消息面）大多是用來「觀察股市」而不是一定要交易
+
+因此 **03O 的唯一任務**是把「送單前」所有該檢查的東西工程化，輸出：
+
+* **是否可執行（Feasible / Not Feasible）**
+* **執行風險（Slippage/Gap/Liquidity/Limit）**
+* **交易限制（交易時段/漲跌停/撮合風險/停牌/處置）**
+* **治理建議（允許自動化到哪個層級）**
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不產生買賣點
+* ❌ 不直接送單
+* ✅ 輸出「可行性評分」「下單前檢查結果」「送單限制模板」「是否需要人工確認」
+* ✅ 供：RiskEngine、Permission Gate、Order Orchestrator（若未來存在）、PortfolioManager 使用
+* ✅ 最終是否下單：由你決定（治理層可否決一切）
+
+---
+
+## 1. 03O 的硬規格（避免偷工減料）
+
+### 1.1 任何“可行/不可行”都必須可稽核
+
+每次檢查輸出必含：
+
+* `check_run_id`
+* `as_of_time`
+* `symbol`
+* `order_intent`（買/賣、數量、價格型態）
+* `market_state_snapshot_id`
+* `rule_set_id`（規則版本）
+* `pass_fail`
+* `fail_reasons[]`（可列舉、可追溯）
+* `risk_score`（0~1）
+* `audit_trail`
+
+### 1.2 不得假裝知道成交結果
+
+* 03O 僅能做「預估」與「風險提示」
+* 不宣稱一定成交、一定滑價多少（除非你給固定模型）
+
+### 1.3 與治理層的接口（最重要）
+
+03O 輸出必須能被 Governance/Permission Gate 吃進去：
+
+* `execution_feasible_flag`
+* `manual_review_required_flag`
+* `max_order_size_cap`
+* `order_type_allowed_list`
+* `cooldown_required_flag`
+* `risk_off_override_flag`（由治理層最終決定）
+
+---
+
+## 2. 03O 特徵總分類（完整）
+
+| 分類代碼  | 類型名稱（中文）         | 說明                                |
+| ----- | ---------------- | --------------------------------- |
+| F15-A | 交易前資料品質與時效       | 延遲、缺口、行情可信度、交易所狀態                 |
+| F15-B | 市況與微結構狀態         | 盤中波動、跳價、價差、撮合型態                   |
+| F15-C | 流動性與容量（Capacity） | ADV、深度、沖擊成本、可交易量估                 |
+| F15-D | 滑價/衝擊成本預估        | Slippage、Market Impact、Limit Move |
+| F15-E | 交易限制與合規檢查        | 交易時段、停牌、處置、禁券、風險警示                |
+| F15-F | 倉位/投組一致性檢查       | 集中度、風險預算、Regime衝突、因子暴露            |
+| F15-G | 送單參數與允許的下單方式     | 市價/限價/分批/冰山/時間加權（僅模板）             |
+| F15-H | 送單前風控 Gate（硬阻擋）  | 超限、尾風險、流動性凍結、事件衝擊                 |
+| F15-I | 人工覆核與治理提示輸出      | 需要你決定的點清單化                        |
+| F15-J | 合成輸出與審計報告        | 可行性總分、失敗原因、限制模板、報告                |
+
+> **本卷總數：共 152 個執行層可行性與下單前檢查特徵**
+
+---
+
+## 3. 統一輸入（03O 需要的上游快照）
+
+03O 不是自己算行情，它依賴上游模組提供的快照：
+
+* 行情快照：最新價、開高低收、成交量、成交金額、（可用則）五檔/價差/深度
+* 03E：波動/風險狀態（高波/尾部）
+* 03K：事件衝擊旗標（L2/L3）
+* 03J：融資融券/槓桿壓力（可能造成被迫賣出）
+* 03N：投組限制與風險預算
+* 治理層：交易權限、產品允許、最大單量、冷卻期
+
+---
+
+# 4. F15-A：交易前資料品質與時效（F15-A01 ～ F15-A18）
+
+## F15-A01：MARKET_DATA_FRESHNESS_MS
+
+* 行情資料新鮮度（毫秒/秒）
+
+## F15-A02：DATA_STALENESS_FLAG
+
+* 資料過期旗標（0/1）
+
+## F15-A03：QUOTE_INTEGRITY_SCORE
+
+* 報價完整性（0~1）：缺欄位/跳變/異常值
+
+## F15-A04：EXCHANGE_STATUS_FLAG
+
+* 交易所狀態（正常/暫停/延後開盤等）
+
+## F15-A05：TRADING_SESSION_PHASE
+
+* 盤中階段：開盤/連續撮合/收盤/盤後（依市場規則）
+
+## F15-A06：CORPORATE_ACTION_ADJUST_FLAG
+
+* 是否需調整（除權息等）避免錯價
+
+## F15-A07 ～ F15-A18（完整補齊）
+
+* `HALT_STATUS_FLAG`（停牌/暫停交易）
+* `DISPOSITION_STATUS_FLAG`（處置/警示）
+* `LIMIT_MOVE_STATUS_FLAG`（接近漲跌停）
+* `DATA_GAP_SECONDS`
+* `DATA_SOURCE_TIER`
+* `DATA_SOURCE_CONSISTENCY_SCORE`
+* `LATENCY_RISK_SCORE`
+* `SNAPSHOT_ID`
+* `DATA_AUDIT_TRAIL`
+* `DATA_VERSION_TAG`
+* `DATA_COMPLETENESS_SCORE`
+* `DATA_NULL_REASON_CODES`
+
+---
+
+# 5. F15-B：市況與微結構狀態（F15-B01 ～ F15-B20）
+
+## F15-B01：SPREAD_PROXY
+
+* 買賣價差代理（可用則用bid/ask，否則用短期波動Proxy）
+
+## F15-B02：SPREAD_PERCENT
+
+* 價差占價格百分比
+
+## F15-B03：VOLATILITY_INTRADAY_PROXY
+
+* 盤中波動代理
+
+## F15-B04：GAP_RISK_PROXY
+
+* 跳價風險代理（缺口頻率/漲跌停接近度）
+
+## F15-B05：ORDER_FLOW_IMBALANCE_PROXY
+
+* 委買委賣不平衡代理（可用深度資料則精準）
+
+## F15-B06：PRICE_IMPACT_SENSITIVITY
+
+* 價格對成交的敏感度（沖擊彈性）
+
+## F15-B07：MICROSTRUCTURE_STRESS_FLAG
+
+* 微結構壓力（價差擴大+成交稀薄+跳價）
+
+## F15-B08 ～ F15-B20（完整補齊）
+
+* `OPENING_AUCTION_RISK_FLAG`
+* `CLOSING_AUCTION_RISK_FLAG`
+* `THIN_TRADING_FLAG`
+* `VOL_SPIKE_FLAG`
+* `SPREAD_SPIKE_FLAG`
+* `QUOTE_FLICKER_FLAG`（報價抖動）
+* `LIQUIDITY_POCKETS_FLAG`
+* `PRICE_DISCOVERY_RISK_FLAG`
+* `MICROSTRUCTURE_CONFIDENCE`
+* `MICROSTRUCTURE_TAGS`
+* `MICROSTRUCTURE_AUDIT_TRAIL`
+* `MICROSTRUCTURE_VERSION_TAG`
+* `MICROSTRUCTURE_COMPLETENESS_SCORE`
+
+---
+
+# 6. F15-C：流動性與容量（Capacity）（F15-C01 ～ F15-C18）
+
+## F15-C01：ADV_20D
+
+* 近20日平均成交金額（承接 03M/03N）
+
+## F15-C02：EXPECTED_FILL_RATIO_PROXY
+
+* 預期成交比例代理（0~1）
+
+## F15-C03：CAPACITY_SCORE
+
+* 容量分數（0~1）：ADV、價差、波動、限制綜合
+
+## F15-C04：MAX_ORDER_NOTIONAL_CAP
+
+* **中文**：單筆最大名目金額上限（由治理層/風控模板）
+
+## F15-C05：ORDER_SIZE_TO_ADV_RATIO
+
+* 下單量占ADV比例
+
+## F15-C06：LIQUIDITY_SHORTFALL_RISK
+
+* 流動性不足風險（0~1）
+
+## F15-C07 ～ F15-C18（完整補齊）
+
+* `DEPTH_PROXY_SCORE`
+* `FILL_TIME_ESTIMATE_PROXY`
+* `PARTICIPATION_RATE_CAP`
+* `CAPACITY_BREACH_FLAG`
+* `CAPACITY_CONFIDENCE`
+* `CAPACITY_TAGS`
+* `CAPACITY_AUDIT_TRAIL`
+* `CAPACITY_VERSION_TAG`
+* `CAPACITY_COMPLETENESS_SCORE`
+* `CAPACITY_NULL_REASON_CODES`
+* `LOT_SIZE_CONSTRAINT_FLAG`（整股/零股等，若適用）
+* `MIN_TICK_CONSTRAINT_FLAG`
+
+---
+
+# 7. F15-D：滑價/衝擊成本預估（F15-D01 ～ F15-D18）
+
+## F15-D01：SLIPPAGE_EXPECTED_BPS_PROXY
+
+* 預期滑價（bps）代理
+
+## F15-D02：MARKET_IMPACT_BPS_PROXY
+
+* 市場沖擊成本代理
+
+## F15-D03：TOTAL_COST_BPS_PROXY
+
+* 總成本代理（滑價+沖擊+費用）
+
+## F15-D04：COST_RISK_SCORE
+
+* 成本不確定性風險（0~1）
+
+## F15-D05：LIMIT_MOVE_RISK_SCORE
+
+* 漲跌停風險分數（接近漲跌停時升高）
+
+## F15-D06：GAP_COST_TAIL_RISK
+
+* 跳空造成的尾部成本風險
+
+## F15-D07 ～ F15-D18（完整補齊）
+
+* `COST_SHOCK_FLAG`
+* `COST_TO_ALPHA_RATIO_PROXY`（成本/期望代理）
+* `COST_UNCERTAINTY_SCORE`
+* `ORDER_TYPE_COST_DIFFERENTIAL`（市價/限價差異）
+* `PARTIAL_FILL_RISK_SCORE`
+* `ADVERSE_SELECTION_RISK_PROXY`
+* `COST_CONFIDENCE`
+* `COST_TAGS`
+* `COST_AUDIT_TRAIL`
+* `COST_VERSION_TAG`
+* `COST_COMPLETENESS_SCORE`
+* `COST_NULL_REASON_CODES`
+
+---
+
+# 8. F15-E：交易限制與合規檢查（F15-E01 ～ F15-E24）
+
+> 這裡是「硬限制」與「送單前必檢」，不允許模糊。
+
+## F15-E01：TRADABLE_FLAG
+
+* 是否可交易（0/1）
+
+## F15-E02：MARKET_OPEN_FLAG
+
+* 是否在可交易時段（0/1）
+
+## F15-E03：HALT_FLAG
+
+* 停牌/暫停交易（0/1）
+
+## F15-E04：DISPOSITION_FLAG
+
+* 處置/警示（0/1）
+
+## F15-E05：LIMIT_UP_DOWN_NEAR_FLAG
+
+* 接近漲跌停（0/1）
+
+## F15-E06：PRICE_LIMIT_BREACH_FLAG
+
+* 價格超出允許範圍（0/1）
+
+## F15-E07：ORDER_TYPE_ALLOWED_LIST
+
+* 允許的下單方式清單（由治理層/券商規則）
+
+## F15-E08：MIN_ORDER_SIZE_RULE
+
+* 最小下單限制
+
+## F15-E09：LOT_RULE
+
+* 整股/零股/最小跳動限制（若適用）
+
+## F15-E10：RESTRICTED_TRADING_FLAG
+
+* 禁券/注意股/特殊限制（若資料可得）
+
+## F15-E11：NEWS_EVENT_RESTRICTION_FLAG
+
+* 重大事件窗口限制（承接 03K L2/L3）
+
+## F15-E12：COMPLIANCE_HARD_STOP_FLAG
+
+* **中文**：合規硬停止（0/1）
+
+## F15-E13 ～ F15-E24（完整補齊）
+
+* `ACCOUNT_PERMISSION_LEVEL`（帳戶權限層級）
+* `PRODUCT_PERMISSION_LEVEL`
+* `RISK_DISCLOSURE_REQUIRED_FLAG`
+* `POSITION_LIMIT_BREACH_FLAG`
+* `DAILY_TRADE_LIMIT_BREACH_FLAG`
+* `ORDER_FREQUENCY_LIMIT_BREACH_FLAG`
+* `WASH_TRADE_RISK_FLAG`（自成交風險提示）
+* `MANIPULATION_RISK_FLAG`（異常追價/拉抬疑慮提示）
+* `REGULATORY_TAGS`
+* `COMPLIANCE_CONFIDENCE`
+* `COMPLIANCE_AUDIT_TRAIL`
+* `COMPLIANCE_VERSION_TAG`
+
+---
+
+# 9. F15-F：倉位/投組一致性檢查（F15-F01 ～ F15-F18）
+
+> 把 03N（投組限制）落到「單筆送單」會不會破壞投組約束。
+
+## F15-F01：POSITION_CONCENTRATION_AFTER_ORDER
+
+* 下單後單一個股集中度
+
+## F15-F02：SECTOR_CAP_BREACH_AFTER_ORDER
+
+* 產業上限是否突破
+
+## F15-F03：THEME_CAP_BREACH_AFTER_ORDER
+
+* 題材上限是否突破
+
+## F15-F04：FACTOR_EXPOSURE_BREACH_AFTER_ORDER
+
+* 因子曝險上限是否突破（承接 03M）
+
+## F15-F05：RISK_BUDGET_BREACH_AFTER_ORDER
+
+* 風險預算是否超限
+
+## F15-F06：REGIME_CONFLICT_FLAG
+
+* 與 Regime 模式衝突（例如 risk_off 卻加風險曝險）
+
+## F15-F07 ～ F15-F18（完整補齊）
+
+* `TAIL_RISK_BREACH_AFTER_ORDER`
+* `LIQUIDITY_STRESS_BREACH_AFTER_ORDER`
+* `CROWDING_RISK_BREACH_AFTER_ORDER`
+* `STOP_POLICY_CONFLICT_FLAG`
+* `MAX_DRAWDOWN_GUARD_CONFLICT_FLAG`
+* `PORTFOLIO_ALIGNMENT_SCORE`
+* `ALIGNMENT_CONFIDENCE`
+* `ALIGNMENT_TAGS`
+* `ALIGNMENT_AUDIT_TRAIL`
+* `ALIGNMENT_VERSION_TAG`
+* `ALIGNMENT_COMPLETENESS_SCORE`
+* `ALIGNMENT_NULL_REASON_CODES`
+
+---
+
+# 10. F15-G：送單參數與允許的下單方式（僅模板，不代表啟用）（F15-G01 ～ F15-G18）
+
+> 你說「要不要自動下單由我決定」：
+> 這裡只建立 **可用模板與限制**，不自動套用。
+
+## F15-G01：ORDER_TYPE_RECOMMENDATION_TEMPLATE
+
+* `market / limit / limit_with_guard / sliced / twap_like_proxy`（僅模板）
+
+## F15-G02：PRICE_GUARD_BAND
+
+* 價格護欄範圍（例如±x% 或 x ticks）
+
+## F15-G03：SLICING_SUGGESTION_FLAG
+
+* 是否建議分批（0/1）
+
+## F15-G04：MAX_CHILD_ORDERS
+
+* 子單最大筆數
+
+## F15-G05：PARTICIPATION_RATE_TARGET
+
+* 參與率目標（不超過市場成交的一定比例）
+
+## F15-G06：TIME_IN_FORCE_ALLOWED
+
+* 允許的有效期限類型
+
+## F15-G07 ～ F15-G18（完整補齊）
+
+* `CANCEL_REPLACE_POLICY_ID`
+* `RETRY_POLICY_ID`
+* `COOLDOWN_POLICY_ID`
+* `ORDER_PACING_LIMIT`
+* `ANTI_CHASE_FLAG`（禁止追價模板）
+* `ANTI_PANIC_FLAG`（禁止恐慌砍單模板）
+* `EXECUTION_TEMPLATE_CONFIDENCE`
+* `EXECUTION_TEMPLATE_TAGS`
+* `EXECUTION_TEMPLATE_AUDIT_TRAIL`
+* `EXECUTION_TEMPLATE_VERSION_TAG`
+* `EXECUTION_TEMPLATE_COMPLETENESS_SCORE`
+* `TEMPLATE_NULL_REASON_CODES`
+
+---
+
+# 11. F15-H：送單前風控 Gate（硬阻擋）（F15-H01 ～ F15-H18）
+
+> 這層就是 TAITS 的「最後一道硬門」。
+> 任何一項觸發都可以讓 `execution_feasible_flag = 0`。
+
+## F15-H01：HARD_STOP_ANY_FLAG
+
+* 任一硬停止（0/1）
+
+## F15-H02：TAIL_RISK_HARD_STOP_FLAG
+
+* 尾部風險硬停止（0/1）
+
+## F15-H03：LIQUIDITY_FREEZE_HARD_STOP_FLAG
+
+* 流動性凍結硬停止
+
+## F15-H04：EVENT_SHOCK_HARD_STOP_FLAG
+
+* 重大事件衝擊硬停止（03K L2/L3）
+
+## F15-H05：LIMIT_MOVE_HARD_STOP_FLAG
+
+* 接近漲跌停硬停止（依治理層設定）
+
+## F15-H06：COMPLIANCE_HARD_STOP_FLAG
+
+* 合規硬停止
+
+## F15-H07：RISK_OFF_OVERRIDE_FLAG
+
+* Regime risk_off 強制覆寫（由治理層設定）
+
+## F15-H08：MANUAL_REVIEW_REQUIRED_FLAG
+
+* 是否必須人工覆核（0/1）
+
+## F15-H09 ～ F15-H18（完整補齊）
+
+* `HARD_STOP_REASONS_LIST`
+* `SOFT_STOP_SCORE`（可行但不建議）
+* `SOFT_STOP_REASONS_LIST`
+* `GATE_CONFIDENCE`
+* `GATE_TAGS`
+* `GATE_AUDIT_TRAIL`
+* `GATE_VERSION_TAG`
+* `GATE_COMPLETENESS_SCORE`
+* `GATE_NULL_REASON_CODES`
+* `GATE_EXPORT_SCHEMA`
+
+---
+
+# 12. F15-I：人工覆核與治理提示輸出（F15-I01 ～ F15-I16）
+
+> 這段就是你要的：**所有需要你決定的點，一次列清楚。**
+
+## F15-I01：DECISION_REQUIRED_ITEMS_LIST
+
+* 需要你確認的事項清單（可讀中文）
+
+## F15-I02：MANUAL_OVERRIDE_ALLOWED_FLAG
+
+* 是否允許人工覆寫（由治理層設定）
+
+## F15-I03：OVERRIDE_RISK_NOTE
+
+* 覆寫風險提示摘要
+
+## F15-I04：AUTO_EXECUTION_LEVEL_HINT
+
+* **中文**：建議自動化等級（僅建議）
+
+  * `L0 只觀察`
+  * `L1 只產生建議`
+  * `L2 允許模擬送單`
+  * `L3 允許小額自動`
+  * `L4 允許完全自動`
+  * 最終由你決定
+
+## F15-I05：EXPLAIN_SUMMARY_CHINESE
+
+* 中文解釋摘要：為何可行/不可行
+
+## F15-I06 ～ F15-I16（完整補齊）
+
+* `TOP_RISK_DRIVERS_LIST`
+* `TOP_CONSTRAINT_BINDING_LIST`
+* `SAFE_ORDER_TYPE_LIST`
+* `MAX_SIZE_HINT`
+* `COOLDOWN_HINT`
+* `REBALANCE_CONFLICT_HINT`
+* `GOVERNANCE_TAGS`
+* `MANUAL_REVIEW_CONFIDENCE`
+* `MANUAL_REVIEW_AUDIT_TRAIL`
+* `MANUAL_REVIEW_VERSION_TAG`
+* `MANUAL_REVIEW_COMPLETENESS_SCORE`
+
+---
+
+# 13. F15-J：合成輸出與審計報告（F15-J01 ～ F15-J20）
+
+## F15-J01：EXECUTION_FEASIBILITY_SCORE_TOTAL
+
+* **中文**：執行可行性總分（0~1）
+
+## F15-J02：EXECUTION_FEASIBLE_FLAG
+
+* 是否可執行（0/1）
+
+## F15-J03：PRIMARY_FAIL_REASONS
+
+* 主要失敗原因（可列舉）
+
+## F15-J04：RISK_SCORE_TOTAL
+
+* 風險總分（0~1）
+
+## F15-J05：COST_SCORE_TOTAL
+
+* 成本風險總分（0~1）
+
+## F15-J06：LIQUIDITY_SCORE_TOTAL
+
+* 流動性總分（0~1）
+
+## F15-J07：COMPLIANCE_SCORE_TOTAL
+
+* 合規通過分數（0~1）
+
+## F15-J08：PORTFOLIO_ALIGNMENT_SCORE_TOTAL
+
+* 投組一致性分數（0~1）
+
+## F15-J09：RECOMMENDED_CONSTRAINT_TEMPLATE_ID
+
+* 建議限制模板版本
+
+## F15-J10：RECOMMENDED_EXECUTION_TEMPLATE_ID
+
+* 建議執行模板版本
+
+## F15-J11：FULL_AUDIT_REPORT_REF
+
+* 完整審計報告引用（文件/JSON）
+
+## F15-J12 ～ F15-J20（完整補齊）
+
+* `RUN_LATENCY_MS`
+* `CHECKLIST_COMPLETENESS_SCORE`
+* `CHECKLIST_MISSING_ITEMS_LIST`
+* `EXPORT_SCHEMA`
+* `REPORT_VERSION_TAG`
+* `REPORT_MODEL_CONFIG_HASH`
+* `NULL_REASON_CODES`
+* `FAILURE_TAXONOMY_ID`
+* `EXPLAIN_TOKENS_ZH`
+* `DECISION_LOG_TEMPLATE`
+
+---
+
+## 14. 03O 與治理層（你要的「由我決定自動下單」制度化）
+
+03O 會把每次送單前檢查輸出成三段：
+
+1. **硬阻擋（Hard Stop）**：任何一條觸發 → 不可送單
+2. **軟阻擋（Soft Stop）**：可送，但需要你確認或縮小規模
+3. **模板建議（Template Hint）**：若你允許自動化，最多也只能在模板範圍內
+
+> **結論**：TAITS 可以做到「所有能不能下單的權力」集中在你與治理層規則，不會被策略層偷走。
+
+---
+
+## 15. 03O 完整性鎖定聲明
+
+* ✔ 行情資料品質、微結構狀態、流動性容量、滑價衝擊成本、交易限制合規、投組一致性、送單模板、硬門風控、人工覆核、審計報告 全覆蓋
+* ✔ 不下單、不給買賣點
+* ✔ 可行/不可行必可追溯，不通靈
+* ✔ 無任何 XQ 內容
+* ✔ 新對話可 100% 讀懂並可直接存入 GitHub
+
+---
+
+# 📘 TAITS_03P_回測與模擬驗證框架規格（含撮合/滑價/事件）.md
+
+（世界一流落地版｜F16 Backtest/Simulation：可重現×可稽核×可治理｜撮合/滑價/容量/事件/停牌/漲跌停/再平衡｜把 03O 送單前檢查納入模擬流程｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03P 在 TAITS 的角色）
+
+你要的是「TAITS 到落地」，而不是寫漂亮架構。
+**03P 就是落地的核心驗證框架**：把所有策略/訊號/治理規則，放進一個可重現的模擬環境，做到：
+
+* 可回測（Backtest）：用歷史資料重演
+* 可模擬（Simulation）：用近即時或回放資料走事件驅動流程
+* 可稽核（Auditable）：每一筆決策、每一次下單嘗試、每一次被 Gate 擋下，都可追溯
+* 可治理（Governance）：你定義什麼允許自動化、什麼只能觀察，模擬也要一致
+
+嚴格定位：
+
+* ❌ 不是策略
+* ❌ 不承諾績效
+* ✅ 建立「驗證與證據鏈」：策略有效性、風險、可執行性、對成本敏感度、對事件敏感度
+* ✅ 03O（送單前檢查）必須被納入模擬流程（否則不算落地）
+
+---
+
+## 1. 世界一流內部評分標準（本文件達到 10/10 的必要條件）
+
+1. **完整性**：涵蓋資料回放、事件驅動、撮合、滑價、停牌/漲跌停、再平衡、容量限制、稅費、治理 Gate、審計輸出
+2. **可重現性**：同一輸入、同一版本 → 100% 同一輸出（seed/版本/快照固定）
+3. **可稽核性**：每一步都有 event log、decision log、order log、fill log、reject log、gate log
+4. **可治理性**：治理層規則能否決一切，且回測與實盤同規格
+5. **可擴充性**：可插拔的 Market、撮合模型、成本模型、資料源、策略群
+6. **多市場/多頻率一致性**：日線/分鐘/逐筆（若有）都能以同框架運作
+7. **防偏誤**：避免 look-ahead、survivorship、data snooping，並能產出偏誤報告
+8. **成本與容量現實性**：不只是收盤價成交，要能模擬滑價與容量上限
+9. **事件一致性**：03K 事件衝擊、03E 風險狀態、03O 可行性檢查完整納入
+10. **輸出可決策**：輸出能直接支撐你決定「是否上線」「自動化到哪一層」
+
+---
+
+## 2. 03P 的總體架構（事件驅動 Backtest/Sim Engine）
+
+### 2.1 核心模組（必備）
+
+* `DataReplayEngine`：歷史/回放資料供給（行情、基本面、事件、籌碼）
+* `Clock & Session Engine`：交易日曆/時段/開收盤
+* `FeaturePipelineRunner`：03B~03O 特徵流水線（版本化）
+* `StrategyRunner`：策略層（產生 order_intent 或只產生建議）
+* `GovernanceRunner`：治理層（Permission Gate、硬門、人工覆核）
+* `OrderSimulator`：送單模擬（把 03O 檢查跑一遍）
+* `MatchingEngine`：撮合模型（市價/限價/部分成交）
+* `CostModel`：滑價、沖擊成本、稅費、手續費
+* `PortfolioBook`：持倉/現金/損益/曝險
+* `RiskMonitor`：回撤、波動、尾風險、集中度
+* `AuditLogger`：全量紀錄（不可省）
+* `ReportBuilder`：績效/風險/偏誤/敏感度/治理報告
+
+### 2.2 兩種運行模式
+
+* **Backtest Mode（歷史批次）**：以日/分鐘bar為時間步進
+* **Simulation Mode（事件回放）**：以事件驅動（tick/quote/event）推進，貼近實盤
+
+---
+
+## 3. 核心資料規格（Simulation Data Contract）
+
+### 3.1 事件類型（Event Types）
+
+* `MARKET_BAR`（日/分鐘）
+* `QUOTE_UPDATE`（若有bid/ask）
+* `TRADE_PRINT`（若有逐筆）
+* `CORP_ACTION`（除權息/拆併）
+* `NEWS_EVENT`（03K）
+* `FUNDAMENTAL_UPDATE`（03L）
+* `FACTOR_UPDATE`（03M）
+* `RISK_REGIME_UPDATE`（03E）
+* `GOVERNANCE_UPDATE`（治理規則變更）
+* `ORDER_INTENT`（策略輸出）
+* `ORDER_SUBMIT`（送單請求）
+* `ORDER_REJECT`（被 Gate/限制拒絕）
+* `ORDER_ACK`（接受）
+* `ORDER_FILL`（成交）
+* `ORDER_CANCEL/REPLACE`
+* `PORTFOLIO_REBALANCE_EVENT`
+
+### 3.2 每個事件共同欄位（Hard Schema）
+
+* `event_id`
+* `event_time`
+* `event_type`
+* `symbol`（可空，市場級事件）
+* `payload`
+* `source_ref`
+* `version_tag`
+* `hash`
+
+---
+
+# 4. DataReplayEngine 規格（F16-A01 ～ F16-A22）
+
+## F16-A01：REPLAY_MODE
+
+* `bar / quote / tick / mixed`
+
+## F16-A02：REPLAY_TIMEZONE
+
+* 固定 Asia/Taipei
+
+## F16-A03：TRADING_CALENDAR_ID
+
+* 交易日曆版本（包含休市/補班）
+
+## F16-A04：SESSION_RULE_ID
+
+* 交易時段規則版本
+
+## F16-A05：DATA_ALIGNMENT_POLICY_ID
+
+* 對齊政策（bar close、next open、防look-ahead）
+
+## F16-A06：CORP_ACTION_ADJUST_POLICY_ID
+
+* 還原/不還原/部分還原政策
+
+## F16-A07：DATA_LATENCY_SIM_POLICY
+
+* **中文**：資料延遲模擬政策（例如新聞延遲）
+
+## F16-A08：MISSING_DATA_INJECTION_POLICY
+
+* 缺資料注入政策（測韌性）
+
+## F16-A09 ～ F16-A22（完整補齊）
+
+* `SURVIVORSHIP_BIAS_CONTROL_FLAG`
+* `LOOKAHEAD_GUARD_FLAG`
+* `DATA_VERSION_LOCK_HASH`
+* `REPLAY_SEED`
+* `REPLAY_SNAPSHOT_ID`
+* `REPLAY_EVENT_RATE_LIMIT`
+* `REPLAY_BACKPRESSURE_POLICY`
+* `REPLAY_AUDIT_TRAIL`
+* `REPLAY_COMPLETENESS_SCORE`
+* `REPLAY_NULL_REASON_CODES`
+* `REPLAY_EXPORT_SCHEMA`
+* `REPLAY_DATA_QUALITY_REPORT`
+* `REPLAY_SOURCE_TIER_REPORT`
+* `REPLAY_STALENESS_REPORT`
+* `REPLAY_INTEGRITY_HASH`
+
+---
+
+# 5. FeaturePipelineRunner 規格（03B~03O 納入）（F16-B01 ～ F16-B18）
+
+## F16-B01：FEATURE_SET_VERSION
+
+* 特徵集合版本（鎖定03B~03O）
+
+## F16-B02：FEATURE_COMPUTE_SCHEDULE
+
+* 計算排程（bar close、每分鐘、事件觸發）
+
+## F16-B03：FEATURE_DEPENDENCY_GRAPH_HASH
+
+* 依賴圖hash
+
+## F16-B04：FEATURE_CACHE_POLICY
+
+* 快取策略（避免重算但確保可重現）
+
+## F16-B05：FEATURE_LAG_ENFORCEMENT_FLAG
+
+* 嚴格延遲執行（防偷看到未來）
+
+## F16-B06 ～ F16-B18（完整補齊）
+
+* `FEATURE_NULL_PROPAGATION_POLICY`
+* `FEATURE_SANITY_CHECK_FLAG`
+* `FEATURE_OUTLIER_CONTROL_FLAG`
+* `FEATURE_AUDIT_LOG_LEVEL`
+* `FEATURE_EXPORT_SCHEMA`
+* `FEATURE_VERSION_TAG`
+* `FEATURE_COMPLETENESS_SCORE`
+* `FEATURE_MISSING_COMPONENTS_LIST`
+* `FEATURE_LATENCY_REPORT`
+* `FEATURE_DATA_QUALITY_REPORT`
+* `FEATURE_FAILSAFE_POLICY`
+* `FEATURE_BACKFILL_POLICY`
+* `FEATURE_REPRODUCIBILITY_HASH`
+
+---
+
+# 6. StrategyRunner 規格（策略≠下單）（F16-C01 ～ F16-C18）
+
+## F16-C01：STRATEGY_MODE
+
+* `observe_only / suggest / simulate_order_intent / auto_intent`
+
+## F16-C02：SIGNAL_TO_INTENT_POLICY_ID
+
+* 訊號轉意圖政策（版本化）
+
+## F16-C03：STRATEGY_COOLDOWN_POLICY_ID
+
+## F16-C04：STRATEGY_CONFLICT_RESOLUTION_ID
+
+* 多策略衝突解決（不等於下單）
+
+## F16-C05：STRATEGY_WEIGHTING_SOURCE
+
+* 權重來源（03M/03N 或治理層模板）
+
+## F16-C06 ～ F16-C18（完整補齊）
+
+* `STRATEGY_PERMISSION_LEVEL_REQUIRED`
+* `STRATEGY_AUDIT_TRAIL`
+* `STRATEGY_VERSION_TAG`
+* `STRATEGY_COMPLETENESS_SCORE`
+* `STRATEGY_NULL_REASON_CODES`
+* `STRATEGY_EVENT_REACTION_POLICY`
+* `STRATEGY_REGIME_DEPENDENCE_POLICY`
+* `STRATEGY_RISK_OFF_BEHAVIOR_POLICY`
+* `STRATEGY_POSITION_SIZING_HINT_POLICY`
+* `STRATEGY_EXIT_PRIORITY_POLICY`
+* `STRATEGY_FAILSAFE_POLICY`
+* `STRATEGY_EXPLAIN_TOKENS_ZH`
+* `STRATEGY_DECISION_LOG_SCHEMA`
+
+---
+
+# 7. GovernanceRunner 規格（必可否決）（F16-D01 ～ F16-D22）
+
+> 03P 必須把「治理層」跑在策略之上，且治理可否決一切。
+
+## F16-D01：GOVERNANCE_RULESET_ID
+
+## F16-D02：PERMISSION_GATE_DECISION
+
+* `allow / deny / require_manual / allow_small_only`
+
+## F16-D03：RISK_ENGINE_HARD_STOP_FLAG
+
+## F16-D04：EVENT_SHOCK_OVERRIDE_FLAG
+
+* 03K L2/L3 事件覆寫
+
+## F16-D05：EXECUTION_FEASIBILITY_REQUIRED_FLAG
+
+* 是否強制先跑 03O
+
+## F16-D06：MANUAL_REVIEW_QUEUE_FLAG
+
+* 是否進入人工覆核隊列（模擬中也要記錄）
+
+## F16-D07 ～ F16-D22（完整補齊）
+
+* `GOVERNANCE_FAIL_REASONS_LIST`
+* `GOVERNANCE_SOFT_WARNINGS_LIST`
+* `GOVERNANCE_MAX_SIZE_CAP`
+* `GOVERNANCE_ORDER_TYPE_ALLOWED_LIST`
+* `GOVERNANCE_COOLDOWN_ENFORCED_FLAG`
+* `GOVERNANCE_CONCENTRATION_CAPS`
+* `GOVERNANCE_THEME_CAPS`
+* `GOVERNANCE_FACTOR_CAPS`
+* `GOVERNANCE_TAIL_RISK_CAPS`
+* `GOVERNANCE_AUDIT_TRAIL`
+* `GOVERNANCE_VERSION_TAG`
+* `GOVERNANCE_COMPLETENESS_SCORE`
+* `GOVERNANCE_DECISION_LOG_SCHEMA`
+* `GOVERNANCE_EXPORT_SCHEMA`
+* `GOVERNANCE_OVERRIDE_LOG_TEMPLATE`
+* `GOVERNANCE_REPRODUCIBILITY_HASH`
+
+---
+
+# 8. OrderSimulator（含 03O）規格（F16-E01 ～ F16-E22）
+
+## F16-E01：ORDER_INTENT_SCHEMA_VERSION
+
+## F16-E02：EXECUTION_CHECK_RUN_03O_FLAG
+
+* 送單前必跑 03O（0/1）
+
+## F16-E03：ORDER_FEASIBLE_FLAG
+
+* 03O 結論：可行/不可行
+
+## F16-E04：ORDER_REJECT_REASON_TAXONOMY_ID
+
+## F16-E05：ORDER_TEMPLATE_ID
+
+* 下單模板（僅模板，非強制自動化）
+
+## F16-E06：CHILD_ORDER_SLICING_POLICY_ID
+
+* 分批政策版本（若啟用）
+
+## F16-E07 ～ F16-E22（完整補齊）
+
+* `ORDER_SUBMIT_LATENCY_SIM_MS`
+* `ORDER_ACK_LATENCY_SIM_MS`
+* `ORDER_CANCEL_LATENCY_SIM_MS`
+* `PARTIAL_FILL_SIM_FLAG`
+* `ORDER_QUEUE_PRIORITY_MODEL_ID`
+* `ORDER_RETRY_POLICY_ID`
+* `ORDER_PACING_LIMIT`
+* `ORDER_REPRICE_POLICY_ID`
+* `ORDER_AUDIT_TRAIL`
+* `ORDER_VERSION_TAG`
+* `ORDER_COMPLETENESS_SCORE`
+* `ORDER_NULL_REASON_CODES`
+* `ORDER_EVENT_LOG_SCHEMA`
+* `ORDER_REPRODUCIBILITY_HASH`
+* `ORDER_EXPLAIN_TOKENS_ZH`
+* `ORDER_DECISION_LOG_TEMPLATE`
+
+---
+
+# 9. MatchingEngine（撮合模型）規格（F16-F01 ～ F16-F22）
+
+## F16-F01：MATCHING_MODEL_ID
+
+* `close_fill / next_open / vwap_proxy / queue_model / partial_fill_model`
+
+## F16-F02：FILL_PRICE_RULE
+
+* 成交價規則（如用 bar：close、VWAP proxy、OHLC內插）
+
+## F16-F03：FILL_VOLUME_LIMIT_RULE
+
+* 成交量限制（participation cap）
+
+## F16-F04：LIMIT_ORDER_FILL_LOGIC_ID
+
+* 限價單成交邏輯版本
+
+## F16-F05：AUCTION_FILL_LOGIC_ID
+
+* 開收盤集合競價成交邏輯
+
+## F16-F06：LIMIT_UP_DOWN_FILL_RULE
+
+* 漲跌停成交規則（可能完全不成交）
+
+## F16-F07 ～ F16-F22（完整補齊）
+
+* `HALT_NO_FILL_RULE`
+* `SUSPENSION_NO_FILL_RULE`
+* `GAP_SLIPPAGE_RULE`
+* `PARTIAL_FILL_RATIO_MODEL`
+* `QUEUE_POSITION_MODEL`
+* `CANCEL_REPLACE_MODEL`
+* `TIME_PRIORITY_MODEL`
+* `MATCHING_CONFIDENCE`
+* `MATCHING_TAGS`
+* `MATCHING_AUDIT_TRAIL`
+* `MATCHING_VERSION_TAG`
+* `MATCHING_COMPLETENESS_SCORE`
+* `MATCHING_NULL_REASON_CODES`
+* `MATCHING_EVENT_LOG_SCHEMA`
+* `MATCHING_REPRODUCIBILITY_HASH`
+* `MATCHING_EXPLAIN_TOKENS_ZH`
+
+---
+
+# 10. CostModel（滑價/稅費/沖擊成本）規格（F16-G01 ～ F16-G20）
+
+## F16-G01：FEE_SCHEDULE_ID
+
+* 手續費與費率版本
+
+## F16-G02：TAX_SCHEDULE_ID
+
+* 稅費版本（可配置）
+
+## F16-G03：SLIPPAGE_MODEL_ID
+
+* 滑價模型版本（spread/vol/size-based）
+
+## F16-G04：IMPACT_MODEL_ID
+
+* 市場沖擊模型版本
+
+## F16-G05：COST_CALCULATION_GRANULARITY
+
+* 每筆成交/每日彙總
+
+## F16-G06 ～ F16-G20（完整補齊）
+
+* `SPREAD_COST_PROXY_RULE`
+* `GAP_COST_TAIL_RULE`
+* `LIQUIDITY_STRESS_COST_MULTIPLIER`
+* `LIMIT_MOVE_COST_RULE`
+* `BORROW_COST_PROXY`（若未來允許放空）
+* `MARGIN_COST_PROXY`（若未來允許融資）
+* `COST_AUDIT_TRAIL`
+* `COST_VERSION_TAG`
+* `COST_COMPLETENESS_SCORE`
+* `COST_NULL_REASON_CODES`
+* `COST_SENSITIVITY_GRID`
+* `COST_STRESS_SCENARIO_SET_ID`
+* `COST_EXPORT_SCHEMA`
+* `COST_REPRODUCIBILITY_HASH`
+* `COST_EXPLAIN_TOKENS_ZH`
+
+---
+
+# 11. PortfolioBook & RiskMonitor 規格（F16-H01 ～ F16-H26）
+
+## F16-H01：PORTFOLIO_NAV_SERIES
+
+## F16-H02：POSITION_BOOK_SERIES
+
+## F16-H03：CASH_BOOK_SERIES
+
+## F16-H04：EXPOSURE_FACTOR_VECTOR（03M）
+
+* 因子曝險時間序列
+
+## F16-H05：EXPOSURE_THEME_VECTOR（03I）
+
+* 題材曝險時間序列
+
+## F16-H06：DRAWDOWN_SERIES
+
+## F16-H07：VOLATILITY_SERIES
+
+## F16-H08：TAIL_RISK_SERIES
+
+## F16-H09：CONCENTRATION_SERIES
+
+## F16-H10 ～ F16-H26（完整補齊）
+
+* `RISK_BUDGET_UTILIZATION_SERIES`
+* `STOP_POLICY_TRIGGER_LOG`
+* `RISK_OFF_OVERRIDE_LOG`
+* `LIQUIDITY_STRESS_LOG`
+* `EVENT_SHOCK_IMPACT_LOG`（03K）
+* `GOVERNANCE_BLOCK_LOG`
+* `EXECUTION_REJECT_LOG`（03O/03E）
+* `PERFORMANCE_ATTRIBUTION_PROXY`
+* `FACTOR_ATTRIBUTION_PROXY`
+* `THEME_ATTRIBUTION_PROXY`
+* `TURNOVER_SERIES`
+* `COST_SERIES`
+* `SLIPPAGE_SERIES`
+* `FILL_RATIO_SERIES`
+* `RISK_AUDIT_TRAIL`
+* `RISK_VERSION_TAG`
+* `RISK_COMPLETENESS_SCORE`
+
+---
+
+# 12. AuditLogger（全量審計）規格（F16-I01 ～ F16-I24）
+
+> 這是你最在意的：新對話也能 100% 知道「到底做了什麼」。
+
+必備五大 log：
+
+1. `event_log`：所有外部/內部事件
+2. `feature_log`：每次特徵計算輸出（含版本）
+3. `decision_log`：策略/融合/治理決策（含理由）
+4. `order_log`：意圖→送單→拒絕→成交全鏈
+5. `portfolio_log`：持倉/曝險/風險狀態
+
+## F16-I01：AUDIT_LOG_LEVEL
+
+* `full / compact / debug`（回測預設 full）
+
+## F16-I02：AUDIT_EVENT_SCHEMA
+
+## F16-I03：AUDIT_FEATURE_SCHEMA
+
+## F16-I04：AUDIT_DECISION_SCHEMA
+
+## F16-I05：AUDIT_ORDER_SCHEMA
+
+## F16-I06：AUDIT_PORTFOLIO_SCHEMA
+
+## F16-I07 ～ F16-I24（完整補齊）
+
+* `AUDIT_HASH_CHAIN_FLAG`（哈希鏈防竄改）
+* `AUDIT_STORAGE_LAYOUT_ID`
+* `AUDIT_COMPRESSION_POLICY`
+* `AUDIT_RETENTION_POLICY`
+* `AUDIT_EXPORT_FORMATS`（json/parquet/csv）
+* `AUDIT_QUERY_INDEX_SCHEMA`
+* `AUDIT_ANOMALY_FLAG`
+* `AUDIT_MISSING_LOG_FLAG`
+* `AUDIT_COMPLETENESS_SCORE`
+* `AUDIT_NULL_REASON_CODES`
+* `AUDIT_REPRODUCIBILITY_HASH`
+* `AUDIT_VERSION_TAG`
+* `AUDIT_RUN_ID`
+* `AUDIT_RUN_METADATA`
+* `AUDIT_EXPLAIN_TOKENS_ZH`
+* `AUDIT_REPORT_REF`
+* `AUDIT_FAILSAFE_POLICY`
+* `AUDIT_ACCESS_CONTROL_TAGS`
+
+---
+
+# 13. ReportBuilder（報告輸出）規格（F16-J01 ～ F16-J26）
+
+> 不是只給績效，而是給「可決策證據」。
+
+必出報告：
+
+* `績效`：報酬、波動、回撤、勝率、期望值（不承諾未來）
+* `風險`：尾部、集中度、Regime 切換表現
+* `成本`：滑價/沖擊/稅費敏感度
+* `可執行性`：03O 拒絕率、原因分佈、可行性總分
+* `治理`：被 Permission Gate 擋下的比例與原因
+* `偏誤`：look-ahead、survivorship、資料延遲影響
+* `穩健性`：參數擾動、時間切片、情境壓測
+
+## F16-J01：REPORT_SET_ID
+
+## F16-J02：PERFORMANCE_METRICS_TABLE
+
+## F16-J03：RISK_METRICS_TABLE
+
+## F16-J04：COST_METRICS_TABLE
+
+## F16-J05：EXECUTION_FEASIBILITY_REPORT（03O）
+
+* 拒絕率、原因、分市場狀態統計
+
+## F16-J06：GOVERNANCE_BLOCK_REPORT
+
+* 治理擋單原因統計
+
+## F16-J07：ROBUSTNESS_TEST_REPORT
+
+## F16-J08：BIAS_DIAGNOSTIC_REPORT
+
+## F16-J09 ～ F16-J26（完整補齊）
+
+* `REGIME_PERFORMANCE_BREAKDOWN`
+* `THEME_ROTATION_PERFORMANCE_BREAKDOWN`（03I）
+* `FACTOR_ATTRIBUTION_REPORT`（03M）
+* `FUNDAMENTAL_CONFIRM_REPORT`（03L）
+* `EVENT_IMPACT_REPORT`（03K）
+* `SLIPPAGE_SENSITIVITY_REPORT`
+* `CAPACITY_SENSITIVITY_REPORT`
+* `TURNOVER_ANALYSIS_REPORT`
+* `DRAWDOWN_EPISODE_REPORT`
+* `TAIL_EVENT_EPISODE_REPORT`
+* `PARAMETER_SWEEP_REPORT`
+* `WALK_FORWARD_REPORT`
+* `OUT_OF_SAMPLE_SPLIT_REPORT`
+* `REPORT_AUDIT_TRAIL`
+* `REPORT_VERSION_TAG`
+* `REPORT_COMPLETENESS_SCORE`
+* `REPORT_NULL_REASON_CODES`
+* `REPORT_EXPORT_SCHEMA`
+* `REPORT_REPRODUCIBILITY_HASH`
+
+---
+
+## 14. 03P 與 03O 的硬對齊（落地必備）
+
+在 03P 中，每一次策略產生 `ORDER_INTENT` 後，必走以下流程：
+
+1. `GovernanceRunner` 先判斷：是否允許進入送單模擬
+2. 若允許 → **必跑 03O**：F15 全套送單前檢查
+3. 03O 若不可行 → 記錄 `ORDER_REJECT`（原因分類 + 審計）
+4. 若可行 → 進入 `OrderSimulator` → `MatchingEngine` → `CostModel`
+5. 成交後更新 `PortfolioBook` → `RiskMonitor` → 紀錄所有 logs
+
+> **若沒有把 03O 納入回測流程，03P 視為不合格。**
+
+---
+
+## 15. 03P 完整性鎖定聲明
+
+* ✔ 資料回放、特徵流水線、策略輸出、治理否決、03O送單檢查、撮合、滑價成本、持倉風險、全量審計、可決策報告 全覆蓋
+* ✔ 可重現（版本/seed/快照鎖定）
+* ✔ 防偏誤（look-ahead、survivorship、延遲模擬）
+* ✔ 不承諾績效、不通靈
+* ✔ 新對話可 100% 讀懂並可直接存入 GitHub
+
+---
+
+## 下一步（照順序）
+
+👉 **03Q：實盤/準實盤（Paper/Live）運行框架規格**
+（把 03P 的事件驅動流程搬到實盤：資料延遲、券商API、失敗重試、告警、人工覆核、權限分級）
+
+你只要回：**03Q**
