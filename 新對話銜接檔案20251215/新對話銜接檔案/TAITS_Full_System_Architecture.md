@@ -244,3 +244,213 @@ TAITS/
 
 （EOF）
 ```
+
+# 【TAITS 全系統最終架構藍圖（10 層 × 全量落地）】
+## 版本：v2025-12-16
+## 性質：Only-Add（追加，不覆蓋既有內容）
+
+本章節用於「一次把話說完」：  
+TAITS 從資料進來，到你看到畫面、做決定為止，**每一層在幹嘛、誰能否決誰、哪裡新增過能力**。
+
+---
+
+## L1｜資料接入層（Data Ingestion Layer）
+
+### 這一層在幹嘛（白話）
+把所有市場相關資訊「原封不動抓進來」，不判斷、不過濾、不做決定。
+
+### 吃什麼（輸入）
+- 官方 OpenAPI（TWSE / TPEx / TAIFEX / MOPS）
+- 新聞 / 社群 / 題材資料
+- Observe-only：期貨 / 選擇權 / 融資融券
+
+### 吐什麼（輸出）
+- raw_market_data
+- raw_news_data
+- raw_derivatives_data
+- source_ref + captured_at
+
+### 誰能否決
+- 無（此層不做判斷）
+
+---
+
+## L2｜資料正規化層（Normalization Layer）
+
+### 這一層在幹嘛
+把不同來源的資料整理成「系統看得懂、可比對」的格式。
+
+### 輸入
+- L1 raw data
+
+### 處理
+- 欄位對齊
+- 標的代碼統一
+- 時間軸校正
+
+### 輸出
+- normalized_data
+
+### 否決權
+- 無（只整理，不刪資料）
+
+---
+
+## L3｜快照與封存層（Snapshot Layer）
+
+### 這一層在幹嘛
+把「當下世界」封存成不可變版本，防止事後改資料。
+
+### 輸入
+- normalized_data
+
+### 輸出
+- snapshot_ref
+- snapshot_manifest
+
+### 否決權
+- 無，但 **沒有 snapshot_ref 的資料禁止進下一層**
+
+---
+
+## L4｜特徵與方法論層（Feature & Methodology Layer）
+
+### 這一層在幹嘛
+把資料轉成「可以被判斷的訊號與證據」。
+
+### 包含（全部都在這層）
+- 技術特徵（趨勢 / 動能 / 波動 / 量能）
+- 威科夫（階段 / 事件 / 量價）
+- 鮑迪克纏論（結構 / 背離 / 段落）
+- Observe-only 特徵（期貨 / 選擇權 / 融資）
+- 題材 / 消息特徵
+
+### 輸出
+- feature_vector
+- feature_manifest
+
+### 否決權
+- 無（只產生證據，不下結論）
+
+---
+
+## L5｜證據包中樞（Evidence Bundler）
+
+### 這一層在幹嘛
+把所有零散特徵「整理成一包可以解釋、可以審計的理由」。
+
+### 輸入
+- feature_vector
+
+### 輸出（固定）
+- Evidence Bundle（全欄位）
+
+### 否決權
+- 無，但 **沒有 Evidence Bundle 不得判斷**
+
+---
+
+## L6｜市場狀態層（Market Regime Layer）
+
+### 這一層在幹嘛
+判斷現在市場適合積極、保守、還是觀望。
+
+### 輸入
+- Evidence Bundle
+
+### 輸出
+- regime_state
+- regime_confidence
+
+### 否決權
+- 可否決激進策略方向
+
+---
+
+## L7｜風控與合規層（Risk & Compliance Layer）
+
+### 這一層在幹嘛
+確保「活得久比賺得快重要」。
+
+### 輸入
+- Regime + Evidence
+
+### 輸出
+- Risk Audit Bundle
+- blocked_actions
+- weight_adjustments
+
+### 否決權
+- **最高否決權**
+- 可否決 Regime / Strategy / AI
+
+---
+
+## L8｜策略與 Universe 層（Strategy & Universe Layer）
+
+### 這一層在幹嘛
+把市場狀態轉成「哪些策略能用、哪些不能」。
+
+### 輸入
+- Risk 結果
+- Evidence
+
+### 輸出
+- allowed_strategies
+- universe（三池）
+- weights
+
+### 否決權
+- 不得覆寫 Risk
+
+---
+
+## L9｜治理與授權層（Governance Gate）
+
+### 這一層在幹嘛
+控制「誰可以改系統、什麼時候要你確認」。
+
+### 輸入
+- Strategy 結果
+- Risk 狀態
+
+### 輸出
+- permission_state
+- gate_reason
+
+### 否決權
+- 可要求人工確認
+- 不得覆寫 Risk
+
+---
+
+## L10｜呈現與決策層（UI & Decision Layer）
+
+### 這一層在幹嘛
+讓你「看懂一切，再自己決定要不要做」。
+
+### 輸入
+- 全部上游結果
+
+### 輸出
+- UI
+- 報告
+- 決策歷史
+
+### 否決權
+- 人（你）
+
+---
+
+## 架構鐵律總結（不可違反）
+
+- 策略 ≠ 下單  
+- 方法論 ≠ 策略  
+- Observe-only 永不下單  
+- Risk / Compliance 最高否決  
+- Evidence / Snapshot 不可省略  
+
+---
+
+# 【End of TAITS_Full_System_Architecture 追加章節】
+
