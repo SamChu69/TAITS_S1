@@ -342,7 +342,7 @@ TWSE → FinMind → Yahoo → Cache
 
 ---
 
-# 【TAITS 資料來源全量補齊與用途定位】
+# 【TAITS 資料來源全量補齊與用途定位】#
 ## 版本：v2025-12-16
 ## 性質：Only-Add（追加，不覆蓋既有內容）
 
@@ -553,4 +553,5 @@ TWSE → FinMind → Yahoo → Cache
 ---
 
 # 【End of TAITS_DataSources_Universe 補齊】
+
 
