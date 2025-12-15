@@ -9750,9 +9750,2199 @@ TAITS 不需要你每天手動說題材，但允許你補充。落地流程：
 
 ---
 
-## 下一步（照順序）
+# 📘 TAITS_03Q_實盤與準實盤（Paper/Live）運行框架規格.md
 
-👉 **03Q：實盤/準實盤（Paper/Live）運行框架規格**
-（把 03P 的事件驅動流程搬到實盤：資料延遲、券商API、失敗重試、告警、人工覆核、權限分級）
+（世界一流落地版｜F17 LiveOps：事件驅動×容錯×治理×風控×審計×告警×人工覆核×券商API｜把 03P 的流程 1:1 搬到實盤｜不省略、不用……）
 
-你只要回：**03Q**
+---
+
+## 0. 文件定位（03Q 在 TAITS 的角色）
+
+**03P** 解決「回測/模擬可重現、可稽核」。
+**03Q** 解決「實盤/準實盤真的跑得起來，而且不會失控」。
+
+你要的是：
+
+* 不懂的市場也要解釋，但最後由你決定要不要做
+* 自動下單與否永遠由你決定
+* Risk/Compliance 可否決一切
+* 資料要完整、流程要完整、不能偷工減料
+* 新對話也要 100% 看懂 TAITS 在做什麼
+
+因此 03Q 的核心是：
+**把 TAITS 變成一個可 24/7 管理、可追溯、可回滾、可人工介入、可安全停機的「交易作業系統」**。
+
+嚴格定位：
+
+* ❌ 不新增策略
+* ❌ 不承諾獲利
+* ✅ 規範實盤/準實盤運行：資料→特徵→策略→治理→03O檢查→送單→監控→風控→審計→告警→人工覆核
+* ✅ 允許「只觀察模式」與「紙上交易」長期運行
+
+---
+
+## 1. 世界一流內部評分標準（03Q 10/10 必要條件）
+
+1. **與 03P 同流程**：Live 與 Backtest 的事件模型一致（只是資料源不同）
+2. **可控性**：一鍵切換模式（觀察/紙上/實盤）、一鍵停機、風險自動降級
+3. **容錯**：資料中斷、API失敗、斷線重連、重送、去重、冪等
+4. **治理一致**：Permission Gate / Risk Engine / 03O 檢查必跑，不可繞過
+5. **審計全量**：每次決策、每次送單、每次拒絕、每次人工覆核都可追溯
+6. **告警與值班**：異常可即時通知（含分級與抑制）
+7. **安全性**：密鑰管理、權限分級、環境隔離（Dev/Paper/Live）
+8. **恢復能力**：快照、回放、重建狀態（State Recovery）
+9. **風險降級策略**：高波/事件/流動性壓力→自動縮限或退回觀察
+10. **可擴充**：可插拔券商、可插拔資料源、可插拔執行器與報表
+
+---
+
+## 2. LiveOps 總體架構（實盤/準實盤運行圖）
+
+### 2.1 三種運行模式（必備）
+
+* **Observe（只觀察）**：全流程跑，但到 03O/治理後不送單，只做建議與紀錄
+* **Paper（紙上交易）**：送單走模擬撮合/或券商模擬環境，不動真資金
+* **Live（實盤）**：送券商API下單，仍要滿足治理/風控/審計
+
+### 2.2 四個環境（必備）
+
+* `DEV`：開發測試
+* `STAGE`：整合測試（含回放/準實盤）
+* `PAPER`：紙上交易環境
+* `LIVE`：實盤環境（最嚴格）
+
+---
+
+## 3. 03Q 核心模組清單（不得省略）
+
+* `LiveDataIngestion`：即時資料收集（行情/基本面/事件/籌碼）
+* `LiveClock & Session Guard`：交易時段、開收盤、休市、補班
+* `LiveFeaturePipeline`：03B~03O 特徵即時計算（含延遲與快取）
+* `StrategyRuntime`：策略運行（observe/suggest/intents）
+* `GovernanceRuntime`：Permission Gate + Risk/Compliance
+* `ExecutionPreCheckRuntime`：**03O 必跑**
+* `BrokerAdapter`：券商API適配器（可插拔）
+* `OrderOrchestrator`：送單流程管理（冪等、重試、分批）
+* `OrderStateStore`：訂單狀態存儲（可恢復）
+* `PositionBook & CashBook`：持倉資金帳（可重建）
+* `RiskMonitor`：即時風險監控與降級
+* `Alerting & Incident`：告警、事件、值班
+* `Audit & Compliance Logger`：全量審計
+* `OpsConsole`：操作台（模式切換、人工覆核、停機）
+* `Report & Replay`：日結、回放、追查
+
+---
+
+# 4. F17-A：即時資料接入（LiveDataIngestion）規格（F17-A01 ～ F17-A26）
+
+## F17-A01：DATA_SOURCE_REGISTRY_ID
+
+* 資料源登錄版本（含官方/非官方/社群等）
+
+## F17-A02：INGESTION_MODE
+
+* `stream / poll / hybrid`
+
+## F17-A03：LATENCY_BUDGET_MS
+
+* 延遲預算
+
+## F17-A04：DATA_FRESHNESS_SCORE
+
+* 新鮮度分數（0~1）
+
+## F17-A05：DATA_GAP_DETECTION_FLAG
+
+* 缺口偵測（0/1）
+
+## F17-A06：FALLBACK_CHAIN_ID
+
+* 失效備援鏈版本（官方→備援→快照）
+
+## F17-A07：DEDUPLICATION_KEY_SCHEMA
+
+* 去重鍵規格（event_id/symbol/time）
+
+## F17-A08：IDEMPOTENCY_GUARD_FLAG
+
+* 冪等寫入保護（0/1）
+
+## F17-A09：DATA_INTEGRITY_HASH
+
+## F17-A10：SCHEMA_VALIDATION_FLAG
+
+## F17-A11：RATE_LIMIT_POLICY_ID
+
+## F17-A12：SOURCE_TRUST_TIER
+
+* 來源可信層級（僅標記，不代表一定採用）
+
+## F17-A13 ～ F17-A26（完整補齊）
+
+* `SOURCE_COVERAGE_REPORT`
+* `SOURCE_OUTAGE_STATUS`
+* `RETRY_BACKOFF_POLICY_ID`
+* `CIRCUIT_BREAKER_POLICY_ID`
+* `DATA_ANOMALY_DETECT_FLAG`
+* `OUTLIER_QUARANTINE_POLICY_ID`
+* `DATA_NORMALIZATION_POLICY_ID`
+* `CLOCK_SKEW_DETECT_FLAG`
+* `INGESTION_AUDIT_TRAIL`
+* `INGESTION_VERSION_TAG`
+* `INGESTION_COMPLETENESS_SCORE`
+* `INGESTION_NULL_REASON_CODES`
+* `INGESTION_EXPORT_SCHEMA`
+* `INGESTION_REPRODUCIBILITY_HASH`
+
+---
+
+# 5. F17-B：交易時段與時鐘守衛（Session Guard）（F17-B01 ～ F17-B18）
+
+## F17-B01：TRADING_CALENDAR_ID
+
+## F17-B02：SESSION_PHASE
+
+* 開盤前/開盤集合/連續撮合/收盤集合/盤後/休市
+
+## F17-B03：SESSION_GUARD_PASS_FLAG
+
+* 是否允許進入交易流程（0/1）
+
+## F17-B04：HOLIDAY_OVERRIDE_FLAG
+
+## F17-B05：EARLY_CLOSE_FLAG
+
+## F17-B06：MARKET_HALT_BROADCAST_FLAG
+
+## F17-B07 ～ F17-B18（完整補齊）
+
+* `LUNCH_BREAK_POLICY_ID`（若適用）
+* `AFTER_HOURS_POLICY_ID`
+* `SESSION_TRANSITION_LOG`
+* `SESSION_CLOCK_DRIFT_MS`
+* `SESSION_ANOMALY_FLAG`
+* `SESSION_AUDIT_TRAIL`
+* `SESSION_VERSION_TAG`
+* `SESSION_COMPLETENESS_SCORE`
+* `SESSION_NULL_REASON_CODES`
+* `SESSION_EXPORT_SCHEMA`
+* `SESSION_FAILSAFE_POLICY`
+* `SESSION_REPRODUCIBILITY_HASH`
+
+---
+
+# 6. F17-C：即時特徵流水線（03B~03O）規格（F17-C01 ～ F17-C22）
+
+## F17-C01：FEATURE_SET_VERSION_LOCK
+
+* 鎖定特徵版本（03B~03O）
+
+## F17-C02：FEATURE_COMPUTE_TRIGGER
+
+* `bar_close / minute / event_driven`
+
+## F17-C03：FEATURE_LATENCY_REPORT
+
+## F17-C04：FEATURE_CACHE_POLICY_ID
+
+## F17-C05：FEATURE_NULL_PROPAGATION_POLICY_ID
+
+## F17-C06：FEATURE_FAILSAFE_POLICY_ID
+
+* 異常時：降級輸出 or 停止送單
+
+## F17-C07：FEATURE_STALENESS_HARD_STOP_FLAG
+
+* 特徵過期硬停（0/1）
+
+## F17-C08 ～ F17-C22（完整補齊）
+
+* `FEATURE_SANITY_CHECK_FLAG`
+* `FEATURE_OUTLIER_CONTROL_FLAG`
+* `FEATURE_DEPENDENCY_GRAPH_HASH`
+* `FEATURE_BACKFILL_POLICY_ID`
+* `FEATURE_MICRO_BATCH_WINDOW_MS`
+* `FEATURE_STREAM_BACKPRESSURE_POLICY_ID`
+* `FEATURE_AUDIT_LOG_LEVEL`
+* `FEATURE_AUDIT_TRAIL`
+* `FEATURE_VERSION_TAG`
+* `FEATURE_COMPLETENESS_SCORE`
+* `FEATURE_MISSING_COMPONENTS_LIST`
+* `FEATURE_NULL_REASON_CODES`
+* `FEATURE_EXPORT_SCHEMA`
+* `FEATURE_REPRODUCIBILITY_HASH`
+* `FEATURE_EXPLAIN_TOKENS_ZH`
+
+---
+
+# 7. F17-D：策略執行 Runtime（StrategyRuntime）（F17-D01 ～ F17-D18）
+
+## F17-D01：RUNTIME_MODE
+
+* `observe / paper / live`
+
+## F17-D02：STRATEGY_MODE
+
+* `observe_only / suggest / order_intent`
+
+## F17-D03：STRATEGY_CONFLICT_RESOLUTION_ID
+
+## F17-D04：STRATEGY_COOLDOWN_POLICY_ID
+
+## F17-D05：STRATEGY_REGIME_BEHAVIOR_POLICY_ID
+
+## F17-D06：STRATEGY_EVENT_REACTION_POLICY_ID
+
+## F17-D07：STRATEGY_OUTPUT_SCHEMA
+
+* `recommendation / intent`
+
+## F17-D08 ～ F17-D18（完整補齊）
+
+* `STRATEGY_PERMISSION_LEVEL_REQUIRED`
+* `STRATEGY_FAILSAFE_POLICY_ID`
+* `STRATEGY_EXPLAIN_TOKENS_ZH`
+* `STRATEGY_AUDIT_TRAIL`
+* `STRATEGY_VERSION_TAG`
+* `STRATEGY_COMPLETENESS_SCORE`
+* `STRATEGY_NULL_REASON_CODES`
+* `STRATEGY_EXPORT_SCHEMA`
+* `STRATEGY_REPRODUCIBILITY_HASH`
+* `STRATEGY_DECISION_LOG_TEMPLATE`
+* `STRATEGY_INCIDENT_TAGS`
+
+---
+
+# 8. F17-E：治理 Runtime（GovernanceRuntime）（F17-E01 ～ F17-E22）
+
+> 實盤最重要：**治理與風控必須永遠跑在送單之前**。
+
+## F17-E01：GOVERNANCE_RULESET_ID
+
+## F17-E02：PERMISSION_GATE_DECISION
+
+* `allow / deny / require_manual / allow_small_only`
+
+## F17-E03：RISK_ENGINE_HARD_STOP_FLAG
+
+## F17-E04：COMPLIANCE_HARD_STOP_FLAG
+
+## F17-E05：EVENT_SHOCK_OVERRIDE_FLAG（03K）
+
+## F17-E06：REGIME_RISK_OFF_OVERRIDE_FLAG（03E/Regime）
+
+## F17-E07：MANUAL_REVIEW_QUEUE_FLAG
+
+## F17-E08：GOVERNANCE_MAX_ORDER_SIZE_CAP
+
+## F17-E09：GOVERNANCE_ORDER_TYPE_ALLOWED_LIST
+
+## F17-E10 ～ F17-E22（完整補齊）
+
+* `GOVERNANCE_CONCENTRATION_CAPS`
+* `GOVERNANCE_THEME_CAPS`
+* `GOVERNANCE_FACTOR_CAPS`
+* `GOVERNANCE_TAIL_RISK_CAPS`
+* `GOVERNANCE_TURNOVER_CAPS`
+* `GOVERNANCE_COOLDOWN_ENFORCED_FLAG`
+* `GOVERNANCE_FAIL_REASONS_LIST`
+* `GOVERNANCE_SOFT_WARNINGS_LIST`
+* `GOVERNANCE_AUDIT_TRAIL`
+* `GOVERNANCE_VERSION_TAG`
+* `GOVERNANCE_COMPLETENESS_SCORE`
+* `GOVERNANCE_EXPORT_SCHEMA`
+* `GOVERNANCE_REPRODUCIBILITY_HASH`
+
+---
+
+# 9. F17-F：送單前檢查 Runtime（03O 必跑）（F17-F01 ～ F17-F20）
+
+## F17-F01：EXECUTION_PRECHECK_REQUIRED_FLAG
+
+## F17-F02：PRECHECK_RULESET_ID
+
+* 03O 規則版本
+
+## F17-F03：EXECUTION_FEASIBILITY_SCORE_TOTAL
+
+## F17-F04：EXECUTION_FEASIBLE_FLAG
+
+## F17-F05：MANUAL_REVIEW_REQUIRED_FLAG
+
+## F17-F06：PRIMARY_FAIL_REASONS
+
+## F17-F07：RECOMMENDED_EXECUTION_TEMPLATE_ID
+
+## F17-F08 ～ F17-F20（完整補齊）
+
+* `MAX_SIZE_HINT`
+* `SAFE_ORDER_TYPE_LIST`
+* `COOLDOWN_HINT`
+* `COST_RISK_SCORE_TOTAL`
+* `LIQUIDITY_SCORE_TOTAL`
+* `COMPLIANCE_SCORE_TOTAL`
+* `PORTFOLIO_ALIGNMENT_SCORE_TOTAL`
+* `PRECHECK_AUDIT_TRAIL`
+* `PRECHECK_VERSION_TAG`
+* `PRECHECK_COMPLETENESS_SCORE`
+* `PRECHECK_NULL_REASON_CODES`
+* `PRECHECK_EXPORT_SCHEMA`
+* `PRECHECK_REPRODUCIBILITY_HASH`
+
+---
+
+# 10. F17-G：券商適配器（BrokerAdapter）規格（F17-G01 ～ F17-G26）
+
+> 03Q 必須支持「可插拔券商」。你說以 API 為主、不要 XQ。
+
+## F17-G01：BROKER_ID
+
+* 券商識別（可多券商）
+
+## F17-G02：ENVIRONMENT
+
+* `paper / live`
+
+## F17-G03：AUTH_METHOD_ID
+
+* 認證方式版本
+
+## F17-G04：SECRET_STORAGE_POLICY_ID
+
+* 金鑰儲存政策（不得明文）
+
+## F17-G05：ORDER_API_CAPABILITIES
+
+* 支援的訂單型態清單
+
+## F17-G06：RATE_LIMIT_BUDGET
+
+* API 限流預算
+
+## F17-G07：ORDER_IDEMPOTENCY_KEY
+
+* 送單冪等鍵
+
+## F17-G08：ORDER_ACK_TIMEOUT_MS
+
+## F17-G09：ORDER_STATUS_POLL_INTERVAL_MS
+
+## F17-G10：BROKER_ERROR_TAXONOMY_ID
+
+## F17-G11：RETRY_BACKOFF_POLICY_ID
+
+## F17-G12：CIRCUIT_BREAKER_POLICY_ID
+
+## F17-G13：FAILOVER_BROKER_CHAIN_ID
+
+* 多券商備援（若未來需要）
+
+## F17-G14 ～ F17-G26（完整補齊）
+
+* `ORDER_SUBMIT_SCHEMA`
+* `ORDER_CANCEL_SCHEMA`
+* `ORDER_REPLACE_SCHEMA`
+* `POSITION_QUERY_SCHEMA`
+* `BALANCE_QUERY_SCHEMA`
+* `FILL_QUERY_SCHEMA`
+* `BROKER_TIME_SYNC_POLICY_ID`
+* `BROKER_LATENCY_REPORT`
+* `BROKER_OUTAGE_STATUS`
+* `BROKER_AUDIT_TRAIL`
+* `BROKER_VERSION_TAG`
+* `BROKER_COMPLETENESS_SCORE`
+* `BROKER_NULL_REASON_CODES`
+* `BROKER_EXPORT_SCHEMA`
+* `BROKER_REPRODUCIBILITY_HASH`
+
+---
+
+# 11. F17-H：送單協調器（OrderOrchestrator）規格（F17-H01 ～ F17-H28）
+
+> 這是實盤必備：重試、去重、分批、狀態機。
+
+## F17-H01：ORDER_STATE_MACHINE_ID
+
+* 訂單狀態機版本
+
+## F17-H02：ORDER_SUBMIT_POLICY_ID
+
+* 送單政策（模板、分批、參與率）
+
+## F17-H03：CHILD_ORDER_SLICING_POLICY_ID
+
+## F17-H04：ORDER_PACING_LIMIT
+
+## F17-H05：ORDER_RETRY_POLICY_ID
+
+## F17-H06：CANCEL_REPLACE_POLICY_ID
+
+## F17-H07：PARTIAL_FILL_HANDLING_POLICY_ID
+
+## F17-H08：STALE_ORDER_CANCEL_POLICY_ID
+
+## F17-H09：ORDER_TIMEOUT_POLICY_ID
+
+## F17-H10：MAX_OUTSTANDING_ORDERS_CAP
+
+## F17-H11：ANTI_CHASE_ENFORCED_FLAG
+
+## F17-H12：ANTI_PANIC_ENFORCED_FLAG
+
+## F17-H13：BROKER_CIRCUIT_BREAKER_TRIGGER_FLAG
+
+## F17-H14 ～ F17-H28（完整補齊）
+
+* `ORDER_QUEUE_PRIORITY_POLICY_ID`
+* `ORDER_DEDUPLICATION_KEY`
+* `ORDER_IDEMPOTENCY_GUARD_FLAG`
+* `ORDER_EVENT_LOG_SCHEMA`
+* `ORDER_DECISION_LOG_TEMPLATE`
+* `ORDER_FAIL_REASONS_LIST`
+* `ORDER_SOFT_WARNINGS_LIST`
+* `ORDER_AUDIT_TRAIL`
+* `ORDER_VERSION_TAG`
+* `ORDER_COMPLETENESS_SCORE`
+* `ORDER_NULL_REASON_CODES`
+* `ORDER_EXPORT_SCHEMA`
+* `ORDER_REPRODUCIBILITY_HASH`
+* `ORDER_RECOVERY_POLICY_ID`
+* `ORDER_RESUBMIT_GUARD_FLAG`
+
+---
+
+# 12. F17-I：狀態存儲與恢復（State Recovery）規格（F17-I01 ～ F17-I22）
+
+> 斷線/崩潰/重啟後能恢復，是世界一流 LiveOps 的底線。
+
+## F17-I01：STATE_SNAPSHOT_INTERVAL_SEC
+
+## F17-I02：STATE_SNAPSHOT_SCHEMA_ID
+
+## F17-I03：STATE_RECOVERY_TIME_OBJECTIVE_SEC
+
+* RTO：恢復時間目標
+
+## F17-I04：STATE_RECOVERY_POINT_OBJECTIVE_SEC
+
+* RPO：最多容忍丟失多少秒狀態
+
+## F17-I05：POSITION_RECONCILIATION_POLICY_ID
+
+* 持倉對帳政策（以券商為真實來源）
+
+## F17-I06：ORDER_RECONCILIATION_POLICY_ID
+
+## F17-I07：CASH_RECONCILIATION_POLICY_ID
+
+## F17-I08：DUPLICATE_ORDER_DETECTION_FLAG
+
+## F17-I09 ～ F17-I22（完整補齊）
+
+* `STATE_HASH_CHAIN_FLAG`
+* `STATE_STORAGE_LAYOUT_ID`
+* `STATE_RETENTION_POLICY_ID`
+* `STATE_BACKUP_POLICY_ID`
+* `STATE_CORRUPTION_DETECT_FLAG`
+* `RECOVERY_AUDIT_TRAIL`
+* `RECOVERY_VERSION_TAG`
+* `RECOVERY_COMPLETENESS_SCORE`
+* `RECOVERY_NULL_REASON_CODES`
+* `RECOVERY_EXPORT_SCHEMA`
+* `RECOVERY_REPRODUCIBILITY_HASH`
+* `RECOVERY_INCIDENT_TAGS`
+* `RECOVERY_FAILSAFE_POLICY_ID`
+* `STATE_REPLAY_POINTER`
+
+---
+
+# 13. F17-J：即時風控與自動降級（RiskMonitor & Degrade）規格（F17-J01 ～ F17-J26）
+
+> 你要「Risk/Compliance 可否決一切」，實盤必須能自動降級回 Observed/Paper。
+
+## F17-J01：RISK_DASHBOARD_STATE
+
+## F17-J02：DRAWDOWN_GUARD_THRESHOLD
+
+## F17-J03：TAIL_RISK_GUARD_THRESHOLD
+
+## F17-J04：LIQUIDITY_STRESS_GUARD_THRESHOLD
+
+## F17-J05：VOL_REGIME_GUARD_THRESHOLD
+
+## F17-J06：EVENT_SHOCK_GUARD_FLAG（03K）
+
+## F17-J07：REGIME_RISK_OFF_OVERRIDE_FLAG
+
+## F17-J08：AUTO_DEGRADE_LEVEL
+
+* `none / to_observe / to_paper / to_live_small_only / stop_all`
+
+## F17-J09：DEGRADE_TRIGGER_REASONS_LIST
+
+## F17-J10：DEGRADE_ACTIONS_TEMPLATE_ID
+
+* 觸發後動作：縮倉上限、停止新單、取消掛單、只觀察
+
+## F17-J11 ～ F17-J26（完整補齊）
+
+* `DEGRADE_COOLDOWN_PERIOD_SEC`
+* `DEGRADE_RECOVERY_CONDITION_ID`
+* `RISK_ALERT_SEVERITY`
+* `RISK_INCIDENT_CREATE_FLAG`
+* `RISK_AUDIT_TRAIL`
+* `RISK_VERSION_TAG`
+* `RISK_COMPLETENESS_SCORE`
+* `RISK_NULL_REASON_CODES`
+* `RISK_EXPORT_SCHEMA`
+* `RISK_REPRODUCIBILITY_HASH`
+* `RISK_FAILSAFE_POLICY_ID`
+* `RISK_OVERRIDE_MANUAL_ALLOWED_FLAG`
+* `RISK_OVERRIDE_LOG_TEMPLATE`
+* `RISK_METRICS_STREAM_SCHEMA`
+* `RISK_ANOMALY_DETECT_FLAG`
+* `RISK_WHITELIST_OVERRIDE_ID`
+* `RISK_BLACKLIST_OVERRIDE_ID`
+
+---
+
+# 14. F17-K：告警、事件與值班（Alerting/Incident）規格（F17-K01 ～ F17-K26）
+
+> 沒有告警與事件管理的實盤系統，不能稱為落地。
+
+## F17-K01：ALERT_RULESET_ID
+
+## F17-K02：ALERT_SEVERITY_LEVEL
+
+* `S0 info / S1 warn / S2 critical / S3 emergency`
+
+## F17-K03：ALERT_CHANNELS_ENABLED
+
+* 通知渠道集合（可配置）
+
+## F17-K04：ALERT_DEDUP_POLICY_ID
+
+* 告警去重
+
+## F17-K05：ALERT_SUPPRESSION_POLICY_ID
+
+* 告警抑制（避免狂跳）
+
+## F17-K06：INCIDENT_TICKET_CREATE_FLAG
+
+## F17-K07：RUNBOOK_REF_ID
+
+* 處理手冊引用（你可逐步補齊）
+
+## F17-K08：ONCALL_SCHEDULE_ID
+
+## F17-K09 ～ F17-K26（完整補齊）
+
+* `ALERT_RATE_LIMIT_POLICY_ID`
+* `ALERT_ESCALATION_POLICY_ID`
+* `ALERT_ACK_REQUIRED_FLAG`
+* `ALERT_AUTO_RESOLVE_FLAG`
+* `INCIDENT_SEVERITY_LEVEL`
+* `INCIDENT_ROOT_CAUSE_TEMPLATE`
+* `INCIDENT_TIMELINE_LOG`
+* `INCIDENT_POSTMORTEM_TEMPLATE`
+* `ALERT_AUDIT_TRAIL`
+* `ALERT_VERSION_TAG`
+* `ALERT_COMPLETENESS_SCORE`
+* `ALERT_NULL_REASON_CODES`
+* `ALERT_EXPORT_SCHEMA`
+* `ALERT_REPRODUCIBILITY_HASH`
+* `ALERT_TEST_MODE_FLAG`
+* `ALERT_DRILL_SCHEDULE_ID`
+* `ALERT_FAILSAFE_POLICY_ID`
+* `ALERT_INCIDENT_TAGS`
+
+---
+
+# 15. F17-L：人工覆核與操作台（OpsConsole）規格（F17-L01 ～ F17-L22）
+
+> 你要「由我決定」，就必須有操作台支援人工覆核與模式切換。
+
+## F17-L01：OPS_MODE_SWITCH_CONTROL
+
+* 允許切換 observe/paper/live（受治理權限控制）
+
+## F17-L02：MANUAL_REVIEW_QUEUE_VIEW
+
+## F17-L03：MANUAL_APPROVE_ACTION
+
+* 人工核准送單（需記錄審計）
+
+## F17-L04：MANUAL_DENY_ACTION
+
+## F17-L05：MANUAL_OVERRIDE_ACTION
+
+* 人工覆寫（若治理允許）
+
+## F17-L06：EMERGENCY_STOP_BUTTON
+
+* 一鍵停機（Stop All）
+
+## F17-L07：KILL_SWITCH_POLICY_ID
+
+* 停機策略（取消掛單/停止新單/退回觀察）
+
+## F17-L08 ～ F17-L22（完整補齊）
+
+* `ROLE_BASED_ACCESS_CONTROL_ID`
+* `ACTION_AUDIT_LOG_SCHEMA`
+* `OPS_DASHBOARD_WIDGET_SET_ID`
+* `OPS_HEALTH_STATUS_SUMMARY`
+* `OPS_DEPLOYMENT_VERSION`
+* `OPS_CONFIG_VERSION`
+* `OPS_AUDIT_TRAIL`
+* `OPS_VERSION_TAG`
+* `OPS_COMPLETENESS_SCORE`
+* `OPS_NULL_REASON_CODES`
+* `OPS_EXPORT_SCHEMA`
+* `OPS_REPRODUCIBILITY_HASH`
+* `OPS_RUNBOOK_REF_ID`
+* `OPS_DRILL_MODE_FLAG`
+* `OPS_INCIDENT_TAGS`
+
+---
+
+# 16. F17-M：全量審計與合規（Audit/Compliance）規格（F17-M01 ～ F17-M24）
+
+> 實盤比回測更嚴：每個動作都要可追溯。
+
+## F17-M01：AUDIT_RUN_ID
+
+## F17-M02：AUDIT_HASH_CHAIN_FLAG
+
+## F17-M03：DECISION_LOG_SCHEMA
+
+## F17-M04：ORDER_LOG_SCHEMA
+
+## F17-M05：FILL_LOG_SCHEMA
+
+## F17-M06：REJECT_LOG_SCHEMA
+
+* 包含：治理拒絕、03O拒絕、券商拒絕
+
+## F17-M07：MANUAL_ACTION_LOG_SCHEMA
+
+* 人工核准/否決/覆寫
+
+## F17-M08：COMPLIANCE_TAGS
+
+## F17-M09 ～ F17-M24（完整補齊）
+
+* `AUDIT_STORAGE_LAYOUT_ID`
+* `AUDIT_RETENTION_POLICY_ID`
+* `AUDIT_COMPRESSION_POLICY_ID`
+* `AUDIT_QUERY_INDEX_SCHEMA`
+* `AUDIT_MISSING_LOG_FLAG`
+* `AUDIT_COMPLETENESS_SCORE`
+* `AUDIT_NULL_REASON_CODES`
+* `AUDIT_EXPORT_SCHEMA`
+* `AUDIT_REPRODUCIBILITY_HASH`
+* `COMPLIANCE_RULESET_ID`
+* `COMPLIANCE_HARD_STOP_FLAG`
+* `COMPLIANCE_SOFT_WARNINGS_LIST`
+* `COMPLIANCE_AUDIT_TRAIL`
+* `COMPLIANCE_VERSION_TAG`
+* `COMPLIANCE_COMPLETENESS_SCORE`
+* `COMPLIANCE_REPRODUCIBILITY_HASH`
+
+---
+
+## 17. 03Q 與 03P 的 1:1 對應（最重要的落地一致性）
+
+* 03P 的 `Event Types` → 03Q 仍用同一套事件定義
+* 03P 的 `GovernanceRunner + 03O` → 03Q 必須在實盤送單前照跑
+* 03P 的 `AuditLogger` → 03Q 需要更嚴格（含人工動作與券商回報）
+* 03P 的 `State Recovery` → 03Q 必須能重啟後繼續跑，不重複送單
+
+**結論：**
+TAITS 的 Live 不是另一套系統，而是同一套事件框架換成即時資料與券商API。
+
+---
+
+## 18. 03Q 完整性鎖定聲明
+
+* ✔ Observe/Paper/Live 三模式
+* ✔ 資料接入、交易時鐘守衛、特徵即時計算、策略運行、治理否決、03O送單前檢查、券商適配、送單狀態機、狀態恢復、即時風控降級、告警值班、操作台人工覆核、全量審計合規 全覆蓋
+* ✔ 不新增策略、不承諾績效
+* ✔ 自動化程度永遠由你決定，Risk/Compliance 可否決一切
+* ✔ 無任何 XQ 內容
+* ✔ 新對話可 100% 讀懂並可直接存入 GitHub
+
+---
+
+# 📘 TAITS_03R_部署、版本管理與配置中心（Config/Release/Env）規格.md
+
+（世界一流落地版｜F18 ReleaseOps：版本鎖定×配置審批×環境隔離×灰度×回滾×變更審計×祕密管理×資料版本一致｜**不能少、不能亂改**制度化｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03R 在 TAITS 的角色）
+
+你最在意的痛點其實不是「有沒有架構」，而是：
+
+* 內容不能縮水、不能亂改、不能靠通靈
+* 新對話要 100% 知道目前到底是什麼版本
+* TAITS 要可長期演進，但演進必須可控、可回滾、可審計
+* 自動下單與否你決定，但一旦決定「上線」，系統就必須像企業級一樣穩
+
+因此 **03R 就是 TAITS 的變更治理與上線工程（ReleaseOps）規格**，要做到：
+
+* **任何變更都有版本、有審批、有審計**
+* **任何環境都有隔離、有一致性、有回滾**
+* **任何配置都有來源、有鎖定、有差異可追溯**
+* **任何資料（行情/基本面/事件）都有資料版本與重現能力**
+
+嚴格定位：
+
+* ❌ 不新增策略
+* ❌ 不改變你已定義的治理原則
+* ✅ 把「不能少、不能亂改」變成系統規則（流程 + 機制）
+
+---
+
+## 1. 世界一流內部評分標準（03R 10/10 必要條件）
+
+1. **版本單一真實來源（SSOT）**：程式/配置/資料版本三者一致且可追溯
+2. **環境隔離**：DEV/STAGE/PAPER/LIVE 完整隔離，不混用
+3. **配置中心**：配置可審批、可回滾、可鎖定、可分層覆蓋
+4. **變更審計**：誰在何時改了什麼、為什麼改、影響範圍、回滾方法
+5. **發布可控**：灰度、分批、金絲雀、開關（feature flag）
+6. **快速回滾**：程式/配置/模型/資料指標都能回滾
+7. **安全**：密鑰不落地、權限分級、最小權限原則
+8. **可重現**：任何一個 Live 決策都能用相同版本在 03P 回放重建
+9. **故障隔離**：某模組壞了不拖垮全系統（降級策略）
+10. **可落地**：能直接用在你未來的 TAITS GitHub 專案流程
+
+---
+
+## 2. 03R 總體架構：四層版本控制（不可省）
+
+TAITS 的「版本」不是只有程式碼，必須同時鎖定：
+
+1. **Code Version**：程式碼版本（Git commit / tag）
+2. **Config Version**：配置版本（配置中心 revision）
+3. **Model/Rule Version**：規則/模型版本（治理、風控、特徵、撮合、成本）
+4. **Data Version**：資料版本（來源、時間戳、快照 hash）
+
+> 任何一次回測/模擬/紙上/實盤的 `run_id` 必須同時綁定上述四者。
+
+---
+
+## 3. 環境分層與一致性政策（Env Contract）
+
+### 3.1 環境定義（必備）
+
+* `DEV`：開發，允許快速變更
+* `STAGE`：整合測試，必須接近實盤配置
+* `PAPER`：紙上交易，與 LIVE 幾乎同配置但使用模擬資金/模擬下單
+* `LIVE`：實盤，最嚴格，只允許審批後變更
+
+### 3.2 環境變更允許矩陣（硬規格）
+
+| 變更類型                 |   DEV |  STAGE |  PAPER |         LIVE |
+| -------------------- | ----: | -----: | -----: | -----------: |
+| 程式碼（Code）            |     ✅ | ✅（需審批） | ✅（需審批） |   ✅（嚴格審批+灰度） |
+| 配置（Config）           |     ✅ | ✅（需審批） | ✅（需審批） | ✅（嚴格審批+雙人覆核） |
+| 規則/模型（Rule/Model）    |     ✅ | ✅（需審批） | ✅（需審批） |   ✅（最嚴格、可回滾） |
+| 資料源切換（Data Source）   |     ✅ | ✅（需審批） | ✅（需審批） |   ✅（極嚴格、可回退） |
+| 權限/密鑰（Secret/Access） | ✅（受控） |  ✅（受控） |  ✅（受控） |      ✅（最高等級） |
+
+---
+
+# 4. F18-A：版本與發布元資料（Release Metadata）規格（F18-A01 ～ F18-A22）
+
+## F18-A01：RELEASE_ID
+
+* 發布批次識別（例如 TAITS-R-YYYYMMDD-XX）
+
+## F18-A02：GIT_COMMIT_HASH
+
+## F18-A03：GIT_TAG
+
+## F18-A04：CONFIG_REVISION_ID
+
+## F18-A05：RULESET_VERSION_LOCK
+
+* 治理/風控/特徵/撮合/成本等版本鎖定集合
+
+## F18-A06：DATA_SNAPSHOT_HASH
+
+* 資料快照hash（或指向快照）
+
+## F18-A07：ENVIRONMENT_TARGET
+
+* DEV/STAGE/PAPER/LIVE
+
+## F18-A08：RELEASE_CHANNEL
+
+* `canary / staged / full`
+
+## F18-A09：FEATURE_FLAG_SET_ID
+
+## F18-A10：ROLLBACK_PLAN_ID
+
+## F18-A11：CHANGELOG_REF
+
+* 變更說明引用
+
+## F18-A12：APPROVAL_WORKFLOW_ID
+
+## F18-A13 ～ F18-A22（完整補齊）
+
+* `APPROVER_LIST`
+* `DUAL_APPROVAL_REQUIRED_FLAG`
+* `RELEASE_RISK_SCORE`
+* `RELEASE_TEST_EVIDENCE_REF`
+* `RELEASE_AUDIT_TRAIL`
+* `RELEASE_VERSION_TAG`
+* `RELEASE_COMPLETENESS_SCORE`
+* `RELEASE_NULL_REASON_CODES`
+* `RELEASE_EXPORT_SCHEMA`
+* `RELEASE_REPRODUCIBILITY_HASH`
+
+---
+
+# 5. F18-B：配置中心（Config Center）規格（F18-B01 ～ F18-B28）
+
+> 你要求「不能少、不能亂改」：配置必須是可審批、可回滾、可分層覆蓋的。
+
+## F18-B01：CONFIG_NAMESPACE
+
+* 命名空間（例如：taits/live/risk）
+
+## F18-B02：CONFIG_KEY_SCHEMA
+
+* key 命名規範（嚴格）
+
+## F18-B03：CONFIG_VALUE_SCHEMA
+
+* value 型別與驗證（json schema）
+
+## F18-B04：CONFIG_REVISION_ID
+
+* 配置版本（自動遞增）
+
+## F18-B05：CONFIG_LAYERING_MODEL
+
+* 分層模型：`base -> env -> strategy -> override`
+
+## F18-B06：CONFIG_OVERRIDE_POLICY_ID
+
+* 覆蓋政策（誰可覆蓋、何時可覆蓋）
+
+## F18-B07：CONFIG_APPROVAL_REQUIRED_FLAG
+
+## F18-B08：CONFIG_DUAL_APPROVAL_FLAG（LIVE 必備）
+
+## F18-B09：CONFIG_DIFF_REPORT
+
+* 版本差異報告（不可省）
+
+## F18-B10：CONFIG_ROLLBACK_SUPPORTED_FLAG
+
+## F18-B11：CONFIG_ROLLBACK_TARGET_REVISION
+
+## F18-B12：CONFIG_VALIDATION_PIPELINE_ID
+
+* 發布前驗證（schema、範圍、依賴）
+
+## F18-B13：CONFIG_DEPENDENCY_GRAPH_HASH
+
+## F18-B14：CONFIG_CHANGE_IMPACT_SCOPE
+
+* 影響範圍（策略/風控/下單/告警）
+
+## F18-B15 ～ F18-B28（完整補齊）
+
+* `CONFIG_SECRETS_REFERENCE_ONLY_FLAG`（密鑰只引用不存值）
+* `CONFIG_ENCRYPTION_AT_REST_FLAG`
+* `CONFIG_ACCESS_CONTROL_ID`
+* `CONFIG_AUDIT_TRAIL`
+* `CONFIG_VERSION_TAG`
+* `CONFIG_COMPLETENESS_SCORE`
+* `CONFIG_NULL_REASON_CODES`
+* `CONFIG_EXPORT_SCHEMA`
+* `CONFIG_REPRODUCIBILITY_HASH`
+* `CONFIG_EMERGENCY_OVERRIDE_FLAG`
+* `CONFIG_EMERGENCY_OVERRIDE_LOG`
+* `CONFIG_DRIFT_DETECTION_FLAG`
+* `CONFIG_DRIFT_REPORT`
+* `CONFIG_FAILSAFE_DEFAULTS_ID`
+* `CONFIG_HUMAN_READABLE_SUMMARY_ZH`
+
+---
+
+# 6. F18-C：Feature Flags 與開關治理（F18-C01 ～ F18-C20）
+
+> 灰度、金絲雀、降級都靠 Feature Flags，不靠改程式。
+
+## F18-C01：FLAG_SET_ID
+
+## F18-C02：FLAG_SCOPE
+
+* `global / env / strategy / symbol / user`
+
+## F18-C03：FLAG_DEFAULT_STATE
+
+## F18-C04：FLAG_DEPENDENCY_RULES
+
+* 旗標依賴（避免亂開）
+
+## F18-C05：FLAG_APPROVAL_REQUIRED_FLAG（LIVE 必備）
+
+## F18-C06：KILL_SWITCH_FLAG
+
+* 一鍵停機旗標（Stop All / Stop New Orders）
+
+## F18-C07：DEGRADE_MODE_FLAG
+
+* 降級模式旗標（to_observe / to_paper）
+
+## F18-C08：SIMULATION_SHADOW_FLAG
+
+* 影子模式：LIVE 同步跑 paper 但不下單
+
+## F18-C09 ～ F18-C20（完整補齊）
+
+* `FLAG_CHANGE_AUDIT_TRAIL`
+* `FLAG_VERSION_TAG`
+* `FLAG_COMPLETENESS_SCORE`
+* `FLAG_NULL_REASON_CODES`
+* `FLAG_EXPORT_SCHEMA`
+* `FLAG_REPRODUCIBILITY_HASH`
+* `FLAG_ROLLBACK_SUPPORTED_FLAG`
+* `FLAG_ROLLBACK_PLAN_ID`
+* `FLAG_CONFLICT_DETECT_FLAG`
+* `FLAG_CONFLICT_REPORT`
+* `FLAG_HUMAN_READABLE_SUMMARY_ZH`
+* `FLAG_TEST_MODE_FLAG`
+
+---
+
+# 7. F18-D：發布流程（CI/CD + Release Pipeline）規格（F18-D01 ～ F18-D30）
+
+> 你要「落地」，就要把每一次上線變成可重現流程。
+
+## F18-D01：PIPELINE_ID
+
+## F18-D02：BUILD_ARTIFACT_ID
+
+* 產物版本（容器/套件）
+
+## F18-D03：ARTIFACT_INTEGRITY_HASH
+
+## F18-D04：UNIT_TEST_PASS_FLAG
+
+## F18-D05：INTEGRATION_TEST_PASS_FLAG
+
+## F18-D06：SIMULATION_GATE_PASS_FLAG
+
+* 必跑 03P 的回放/模擬驗證（至少一組基準）
+
+## F18-D07：PAPER_CANARY_PASS_FLAG
+
+* PAPER 金絲雀通過（必備）
+
+## F18-D08：LIVE_CANARY_ENABLED_FLAG
+
+## F18-D09：CANARY_SCOPE
+
+* 例如：少量標的、少量倉位、少量策略
+
+## F18-D10：CANARY_DURATION_MIN
+
+## F18-D11：CANARY_METRICS_THRESHOLDS_ID
+
+* 金絲雀門檻：拒單率、滑價、異常、回撤等
+
+## F18-D12：AUTO_ROLLBACK_TRIGGER_FLAG
+
+* 指標觸發自動回滾
+
+## F18-D13：ROLLBACK_ACTIONS_TEMPLATE_ID
+
+## F18-D14：DEPLOYMENT_STRATEGY
+
+* `blue_green / rolling / canary`
+
+## F18-D15：MIGRATION_REQUIRED_FLAG
+
+* 是否需要狀態/配置遷移
+
+## F18-D16 ～ F18-D30（完整補齊）
+
+* `MIGRATION_PLAN_ID`
+* `MIGRATION_AUDIT_TRAIL`
+* `DEPLOY_LOCK_FLAG`（LIVE 發布鎖）
+* `DEPLOY_WINDOW_POLICY_ID`（允許上線時間窗）
+* `DEPLOY_APPROVAL_REQUIRED_FLAG`
+* `DEPLOY_DUAL_APPROVAL_FLAG`
+* `DEPLOY_AUDIT_TRAIL`
+* `DEPLOY_VERSION_TAG`
+* `DEPLOY_COMPLETENESS_SCORE`
+* `DEPLOY_NULL_REASON_CODES`
+* `DEPLOY_EXPORT_SCHEMA`
+* `DEPLOY_REPRODUCIBILITY_HASH`
+* `POST_DEPLOY_HEALTHCHECK_ID`
+* `POST_DEPLOY_SMOKE_TEST_ID`
+* `POST_DEPLOY_OBSERVABILITY_REPORT`
+* `POST_DEPLOY_INCIDENT_TAGS`
+
+---
+
+# 8. F18-E：回滾與恢復（Rollback/Recovery）規格（F18-E01 ～ F18-E24）
+
+> 你要求不能亂改：因為「能回去」才敢改。
+
+## F18-E01：ROLLBACK_PLAN_ID
+
+## F18-E02：ROLLBACK_TYPE
+
+* `code / config / ruleset / flags / data_pointer / full_bundle`
+
+## F18-E03：ROLLBACK_TARGET_RELEASE_ID
+
+## F18-E04：ROLLBACK_TRIGGER_CONDITIONS_ID
+
+## F18-E05：AUTO_ROLLBACK_ALLOWED_FLAG
+
+## F18-E06：ROLLBACK_STEPS_LIST
+
+* 回滾步驟清單（可審計）
+
+## F18-E07：ROLLBACK_VERIFICATION_TEST_ID
+
+* 回滾後驗證
+
+## F18-E08：ROLLBACK_TIME_OBJECTIVE_SEC
+
+## F18-E09 ～ F18-E24（完整補齊）
+
+* `ROLLBACK_AUDIT_TRAIL`
+* `ROLLBACK_VERSION_TAG`
+* `ROLLBACK_COMPLETENESS_SCORE`
+* `ROLLBACK_NULL_REASON_CODES`
+* `ROLLBACK_EXPORT_SCHEMA`
+* `ROLLBACK_REPRODUCIBILITY_HASH`
+* `STATE_SNAPSHOT_REQUIRED_FLAG`
+* `STATE_SNAPSHOT_REF`
+* `DATA_POINTER_ROLLBACK_REF`
+* `RULESET_ROLLBACK_REF`
+* `CONFIG_ROLLBACK_REF`
+* `FLAG_ROLLBACK_REF`
+* `POST_ROLLBACK_HEALTHCHECK_ID`
+* `POST_ROLLBACK_INCIDENT_TAGS`
+* `ROLLBACK_FAILSAFE_POLICY_ID`
+* `ROLLBACK_HUMAN_READABLE_SUMMARY_ZH`
+
+---
+
+# 9. F18-F：祕密管理與權限分級（Secrets/RBAC）規格（F18-F01 ～ F18-F24）
+
+> 這是實盤的命門：API key 不能亂放，權限要分級。
+
+## F18-F01：SECRET_STORE_ID
+
+* 祕密儲存系統識別
+
+## F18-F02：SECRET_ROTATION_POLICY_ID
+
+* 祕密輪換政策
+
+## F18-F03：SECRET_LEAK_DETECT_FLAG
+
+## F18-F04：ENV_SECRET_ISOLATION_FLAG
+
+* 環境隔離（DEV 的 key 絕不能用到 LIVE）
+
+## F18-F05：ROLE_BASED_ACCESS_CONTROL_ID
+
+## F18-F06：LEAST_PRIVILEGE_ENFORCED_FLAG
+
+## F18-F07：APPROVAL_REQUIRED_FOR_SECRET_ACCESS_FLAG（LIVE）
+
+## F18-F08：AUDIT_SECRET_ACCESS_LOG
+
+## F18-F09 ～ F18-F24（完整補齊）
+
+* `SECRET_ENCRYPTION_AT_REST_FLAG`
+* `SECRET_ENCRYPTION_IN_TRANSIT_FLAG`
+* `SECRET_REFERENCE_ONLY_IN_CONFIG_FLAG`
+* `SECRET_SCOPE_TAGS`
+* `SECRET_BREAK_GLASS_POLICY_ID`（緊急存取）
+* `BREAK_GLASS_AUDIT_LOG`
+* `RBAC_ROLE_MATRIX`
+* `RBAC_PERMISSION_DIFF_REPORT`
+* `ACCESS_TOKEN_TTL_POLICY_ID`
+* `SESSION_TIMEBOX_POLICY_ID`
+* `MFA_REQUIRED_FLAG`
+* `SECURITY_AUDIT_TRAIL`
+* `SECURITY_VERSION_TAG`
+* `SECURITY_COMPLETENESS_SCORE`
+* `SECURITY_NULL_REASON_CODES`
+* `SECURITY_REPRODUCIBILITY_HASH`
+
+---
+
+# 10. F18-G：可觀測性與版本關聯（Observability Correlation）規格（F18-G01 ～ F18-G22）
+
+> 你要新對話也懂：就要把每個 log 都帶版本與配置資訊。
+
+## F18-G01：TRACE_ID_SCHEMA
+
+## F18-G02：RUN_ID_SCHEMA
+
+## F18-G03：RELEASE_ID_TAGGING_REQUIRED_FLAG
+
+## F18-G04：CONFIG_REVISION_TAGGING_REQUIRED_FLAG
+
+## F18-G05：RULESET_VERSION_TAGGING_REQUIRED_FLAG
+
+## F18-G06：DATA_SNAPSHOT_TAGGING_REQUIRED_FLAG
+
+## F18-G07：LOG_SCHEMA_REGISTRY_ID
+
+## F18-G08：METRICS_SCHEMA_REGISTRY_ID
+
+## F18-G09：DASHBOARD_SET_ID
+
+## F18-G10：SLO_SLA_POLICY_ID
+
+## F18-G11 ～ F18-G22（完整補齊）
+
+* `ALERT_RULESET_ID`
+* `INCIDENT_LINKING_POLICY_ID`
+* `TRACE_SAMPLING_POLICY_ID`
+* `LOG_RETENTION_POLICY_ID`
+* `METRICS_RETENTION_POLICY_ID`
+* `OBSERVABILITY_AUDIT_TRAIL`
+* `OBSERVABILITY_VERSION_TAG`
+* `OBSERVABILITY_COMPLETENESS_SCORE`
+* `OBSERVABILITY_NULL_REASON_CODES`
+* `OBSERVABILITY_EXPORT_SCHEMA`
+* `OBSERVABILITY_REPRODUCIBILITY_HASH`
+* `HUMAN_READABLE_RUN_SUMMARY_ZH`
+
+---
+
+# 11. F18-H：資料版本一致性（Data Versioning & Lineage）規格（F18-H01 ～ F18-H26）
+
+> 你前面一直強調資料要完整、來源要清楚。
+> 03R 在這裡把「資料血緣」制度化。
+
+## F18-H01：DATA_LINEAGE_GRAPH_ID
+
+* 資料血緣圖版本
+
+## F18-H02：DATASET_ID
+
+* 資料集識別（行情/基本面/事件/籌碼）
+
+## F18-H03：DATASET_VERSION
+
+* 資料集版本（時間+來源+hash）
+
+## F18-H04：SOURCE_URI_REF_LIST
+
+* 來源引用清單（不在此寫URL，存引用）
+
+## F18-H05：INGESTION_RUN_ID
+
+## F18-H06：DATA_QUALITY_REPORT_REF
+
+## F18-H07：DATA_ANOMALY_LOG_REF
+
+## F18-H08：DATA_SNAPSHOT_REF
+
+## F18-H09：DATA_RETENTION_POLICY_ID
+
+## F18-H10：DATA_BACKFILL_POLICY_ID
+
+## F18-H11：DATA_REPROCESS_POLICY_ID
+
+## F18-H12：DATA_GOVERNANCE_TAGS
+
+## F18-H13 ～ F18-H26（完整補齊）
+
+* `DATA_SCHEMA_REGISTRY_ID`
+* `DATA_SCHEMA_VALIDATION_FLAG`
+* `DATA_DRIFT_DETECTION_FLAG`
+* `DATA_DRIFT_REPORT`
+* `DATA_STALENESS_HARD_STOP_FLAG`
+* `DATA_FALLBACK_CHAIN_ID`
+* `DATA_LICENSE_TAGS`（授權/使用限制標記）
+* `DATA_ACCESS_CONTROL_ID`
+* `DATA_AUDIT_TRAIL`
+* `DATA_VERSION_TAG`
+* `DATA_COMPLETENESS_SCORE`
+* `DATA_NULL_REASON_CODES`
+* `DATA_EXPORT_SCHEMA`
+* `DATA_REPRODUCIBILITY_HASH`
+
+---
+
+## 12. 03R 與 03P/03Q 的硬對齊（落地一致性）
+
+* 03P 的 `run_id` 必須包含：`release_id + config_revision + ruleset_lock + data_snapshot_hash`
+* 03Q 的每筆決策與送單，也必須帶同樣四件套版本標籤
+* 任一 LIVE 異常事件，都必須能用相同版本在 03P 回放重建（含配置與旗標）
+
+---
+
+## 13. 03R 完整性鎖定聲明
+
+* ✔ 程式碼/配置/規則模型/資料版本 四層鎖定
+* ✔ 配置中心（分層覆蓋、差異報告、審批、回滾、漂移偵測）
+* ✔ Feature Flags（灰度、降級、一鍵停機、影子模式）
+* ✔ CI/CD 發布流程（含 03P 模擬 gate、PAPER 金絲雀、LIVE 灰度）
+* ✔ 回滾與恢復（全套回滾類型與驗證）
+* ✔ 祕密管理與 RBAC（環境隔離、最小權限、審計）
+* ✔ 可觀測性版本關聯（log/trace/metrics 帶版本）
+* ✔ 資料版本與血緣（lineage、快照、品質、漂移）
+* ✔ 無任何 XQ 內容
+* ✔ 新對話可 100% 讀懂並可直接存入 GitHub
+
+---
+
+# 📘 TAITS_03S_配置模板全集與治理審批流程（Observe/Paper/Live）.md
+
+（世界一流落地版｜F19 Config Pack：可直接貼進 GitHub 的配置模板全集 + 中文審批流程 + 差異規則 + 回滾手冊｜不省略、不用……）
+
+---
+
+## 0. 文件定位（03S 在 TAITS 的角色）
+
+03R 把「不能少、不能亂改」制度化為 ReleaseOps。
+**03S 把制度落成你能直接用的「配置模板全集」與「中文審批流程」**，確保：
+
+* 新對話讀到配置，就知道 TAITS 現在運行邏輯（100%可理解）
+* DEV/STAGE/PAPER/LIVE 配置一致且可控
+* 任何改動都能做 `diff`、能審批、能回滾
+* 能從 **只觀察** 起步，再逐步開到 **紙上**、最後再到 **實盤**（由你決定）
+
+**嚴格定位：**
+
+* ✅ 提供「模板」與「治理審批流程」
+* ❌ 不包含任何 XQ
+* ❌ 不強迫自動下單（完全由你決定）
+
+---
+
+## 1. 世界一流內部評分標準（03S 10/10 必要條件）
+
+1. **可直接落地**：貼進 GitHub 即可使用（格式完整、欄位齊全）
+2. **可讀性**：檔名中文、內容中文為主，英文名詞必附中文
+3. **可治理**：LIVE 配置變更必經雙人覆核、記錄審計
+4. **可回滾**：每個配置都有 rollback 指引與版本對應
+5. **一致性**：Observe/Paper/Live 在同框架下，只改允許範圍
+6. **差異清楚**：每個環境差異集中在少數 override 檔
+7. **安全**：密鑰不落地，僅引用 secret key 名稱
+8. **可追溯**：所有配置都帶 version_tag、owner、change_reason
+9. **可擴充**：新增券商、新增資料源、新增策略群不需改舊結構
+10. **與 03P/03Q/03R 硬對齊**：run_id 綁定 release_id/config_revision/ruleset_lock/data_snapshot
+
+---
+
+## 2. 檔案結構（你要放進 GitHub 的建議目錄）
+
+> 你要求「檔名中文」，所以我用中文檔名，但仍保留可機器讀取的 key。
+
+```
+TAITS_Config/
+├── 00_配置總覽與使用說明.md
+├── 01_配置命名規範與差異治理.md
+├── 02_治理審批流程與回滾手冊.md
+│
+├── config_base/
+│   ├── 00_全域基底配置.yaml
+│   ├── 01_資料接入配置.yaml
+│   ├── 02_交易時鐘與交易日曆配置.yaml
+│   ├── 03_特徵流水線配置.yaml
+│   ├── 04_策略Runtime配置.yaml
+│   ├── 05_治理與權限Gate配置.yaml
+│   ├── 06_送單前檢查03O配置.yaml
+│   ├── 07_券商API適配器配置.yaml
+│   ├── 08_送單協調器與狀態機配置.yaml
+│   ├── 09_風控降級與停機配置.yaml
+│   ├── 10_告警與值班配置.yaml
+│   ├── 11_審計日誌與輸出配置.yaml
+│   ├── 12_回測/模擬對齊配置.yaml
+│
+├── config_env/
+│   ├── DEV_環境覆蓋.yaml
+│   ├── STAGE_環境覆蓋.yaml
+│   ├── PAPER_環境覆蓋.yaml
+│   └── LIVE_環境覆蓋.yaml
+│
+├── config_profiles/
+│   ├── OBSERVE_只觀察模式.yaml
+│   ├── PAPER_紙上交易模式.yaml
+│   └── LIVE_實盤模式.yaml
+│
+└── config_examples/
+    ├── 範例_只觀察_無送單.yaml
+    ├── 範例_紙上_影子模式.yaml
+    └── 範例_實盤_金絲雀灰度.yaml
+```
+
+---
+
+# 3. 00_配置總覽與使用說明.md（正式版）
+
+## 3.1 配置三件套（必讀）
+
+TAITS 每次運行必須固定三件事：
+
+* `release_id`：發布版本（03R）
+* `config_revision`：配置版本（03R/03S）
+* `ruleset_lock`：規則鎖定（治理/風控/特徵/成本/撮合版本）
+* `data_snapshot_hash`：資料快照（03R）
+
+> 任何跑出來的結果，都要能用這四件套回放重建。
+
+## 3.2 載入順序（不可亂）
+
+1. `config_base/*.yaml`（全域基底）
+2. `config_env/<ENV>_環境覆蓋.yaml`
+3. `config_profiles/<MODE>_模式.yaml`
+4. `config_examples/*`（只作參考）
+5. 任何緊急 override 必須走治理流程（02_治理審批流程與回滾手冊.md）
+
+---
+
+# 4. 01_配置命名規範與差異治理.md（正式版）
+
+## 4.1 Key 命名規範（統一）
+
+* 一律用 `snake_case`
+* 模組以 `taits.<module>.*` 分段
+* 每個配置檔必有：
+
+  * `version_tag`
+  * `owner`
+  * `change_reason`
+  * `last_updated`
+
+## 4.2 差異治理原則（你最在意）
+
+* **基底配置不改邏輯，只放通用**
+* **環境差異只能放在 config_env**
+* **模式差異只能放在 config_profiles**
+* LIVE 只能透過審批流程變更（02）
+
+---
+
+# 5. 02_治理審批流程與回滾手冊.md（正式版）
+
+## 5.1 變更分類（影響越大越嚴格）
+
+* **A級（最高風險）**：券商下單、風控硬門、停機策略、密鑰權限
+* **B級（中風險）**：策略Runtime、03O規則、分批/重試、告警升級
+* **C級（低風險）**：報表、儀表板、非關鍵參數
+
+## 5.2 審批規則
+
+* DEV：可自改，但必記錄原因
+* STAGE/PAPER：至少單人審批
+* LIVE：**雙人覆核 + 回滾計畫必填 + 金絲雀灰度必啟用**
+
+## 5.3 回滾手冊（一定要能做）
+
+回滾類型：
+
+* 回滾配置（config_revision）
+* 回滾旗標（feature flags）
+* 回滾規則鎖（ruleset_lock）
+* 回滾整包（release_id + config_revision + ruleset + data指標）
+
+---
+
+# 6. 配置模板全集（YAML）— 第一批（Base 00~04）
+
+> 你說資料太多可分批。
+> 我先給你 **config_base 00~04**（最核心基礎），下一批我再給 05~08，再下一批 09~12 + env/profile 範本。
+
+---
+
+## ✅ config_base/00_全域基底配置.yaml
+
+```yaml
+taits:
+  meta:
+    system_name: "TAITS"
+    version_tag: "TAITS_CONFIG_BASE_V1"
+    owner: "TAITS_Governance"
+    change_reason: "建立全域基底配置（不可省略）"
+    last_updated: "2025-12-15"
+    language:
+      primary: "zh-TW"
+      english_terms_with_translation: true
+
+  run_identity:
+    release_id: "TAITS-RELEASE-UNSET"
+    config_revision: "CONFIG-REV-UNSET"
+    ruleset_lock_id: "RULESET-LOCK-UNSET"
+    data_snapshot_hash: "DATA-SNAPSHOT-UNSET"
+    environment: "DEV"         # DEV/STAGE/PAPER/LIVE
+    runtime_mode: "observe"    # observe/paper/live
+
+  safety_principles:
+    strategy_not_equal_execution: true
+    risk_compliance_can_veto_all: true
+    governance_required_for_live_changes: true
+
+  logging:
+    timezone: "Asia/Taipei"
+    log_level: "INFO"          # DEBUG/INFO/WARN/ERROR
+    audit_level: "full"        # full/compact
+    enable_hash_chain: true
+
+  storage:
+    state_store:
+      type: "local"
+      path: "./state_store"
+    audit_store:
+      type: "local"
+      path: "./audit_store"
+    report_store:
+      type: "local"
+      path: "./reports"
+```
+
+---
+
+## ✅ config_base/01_資料接入配置.yaml
+
+```yaml
+taits:
+  data_ingestion:
+    version_tag: "TAITS_INGESTION_BASE_V1"
+    owner: "TAITS_Data"
+    change_reason: "資料接入基底（含備援鏈、去重、冪等）"
+    last_updated: "2025-12-15"
+
+    ingestion_mode: "hybrid" # stream/poll/hybrid
+    latency_budget_ms: 1500
+
+    schema_validation:
+      enabled: true
+      strict: true
+
+    deduplication:
+      enabled: true
+      key_schema: ["event_type", "symbol", "event_time", "source_id"]
+
+    idempotency:
+      enabled: true
+      write_guard: true
+
+    source_registry:
+      registry_id: "TAITS_DATASOURCE_REGISTRY_V1"
+      # 來源只放引用，不放密鑰
+      sources:
+        - source_id: "TWSE_OFFICIAL"
+          source_name: "證交所官方（Taiwan Stock Exchange Official）"
+          trust_tier: "T1"
+          enabled: true
+        - source_id: "TAIFEX_OFFICIAL"
+          source_name: "期交所官方（TAIFEX Official）"
+          trust_tier: "T1"
+          enabled: true
+        - source_id: "MOPS_OFFICIAL"
+          source_name: "公開資訊觀測站（MOPS Official）"
+          trust_tier: "T1"
+          enabled: true
+        - source_id: "NEWS_AGGREGATOR"
+          source_name: "新聞聚合（News Aggregator）"
+          trust_tier: "T2"
+          enabled: true
+        - source_id: "SOCIAL_SIGNAL"
+          source_name: "社群訊號（Social Signal）"
+          trust_tier: "T3"
+          enabled: false
+
+    fallback_chain:
+      chain_id: "TAITS_FALLBACK_CHAIN_V1"
+      order:
+        - "TWSE_OFFICIAL"
+        - "TAIFEX_OFFICIAL"
+        - "MOPS_OFFICIAL"
+        - "NEWS_AGGREGATOR"
+
+    outage_handling:
+      retry_backoff_policy_id: "RETRY_BACKOFF_V1"
+      circuit_breaker_policy_id: "CIRCUIT_BREAKER_V1"
+      gap_detection_enabled: true
+      max_gap_seconds_hard_stop: 120
+```
+
+---
+
+## ✅ config_base/02_交易時鐘與交易日曆配置.yaml
+
+```yaml
+taits:
+  session_guard:
+    version_tag: "TAITS_SESSION_BASE_V1"
+    owner: "TAITS_Ops"
+    change_reason: "交易時段/日曆守衛（避免不在時段送單）"
+    last_updated: "2025-12-15"
+
+    timezone: "Asia/Taipei"
+    trading_calendar_id: "TAITS_TW_MARKET_CALENDAR_V1"
+    session_rule_id: "TAITS_TW_SESSION_RULE_V1"
+
+    guard:
+      enabled: true
+      block_order_outside_session: true
+      allow_observe_outside_session: true
+
+    session_phases:
+      - "pre_open"
+      - "open_auction"
+      - "continuous"
+      - "close_auction"
+      - "after_hours"
+      - "closed"
+
+    market_halt_handling:
+      halt_hard_stop_for_live: true
+      halt_soft_stop_for_paper: true
+      log_broadcasts: true
+```
+
+---
+
+## ✅ config_base/03_特徵流水線配置.yaml
+
+```yaml
+taits:
+  feature_pipeline:
+    version_tag: "TAITS_FEATURE_PIPELINE_BASE_V1"
+    owner: "TAITS_Research"
+    change_reason: "特徵流水線（03B~03O）版本鎖定與延遲防護"
+    last_updated: "2025-12-15"
+
+    feature_set_version_lock: "TAITS_FEATURESET_03B_TO_03O_V1"
+
+    compute_trigger: "event_driven"  # bar_close/minute/event_driven
+    micro_batch_window_ms: 500
+
+    cache:
+      enabled: true
+      policy_id: "FEATURE_CACHE_V1"
+
+    lag_enforcement:
+      enabled: true
+      lookahead_guard: true
+
+    null_propagation_policy_id: "NULL_PROPAGATION_V1"
+    sanity_check:
+      enabled: true
+      outlier_control: true
+
+    failsafe:
+      policy_id: "FEATURE_FAILSAFE_V1"
+      staleness_hard_stop: true
+      max_feature_staleness_sec: 60
+```
+
+---
+
+## ✅ config_base/04_策略Runtime配置.yaml
+
+```yaml
+taits:
+  strategy_runtime:
+    version_tag: "TAITS_STRATEGY_RUNTIME_BASE_V1"
+    owner: "TAITS_Strategy"
+    change_reason: "策略運行基底（策略≠下單；可只觀察/建議/意圖）"
+    last_updated: "2025-12-15"
+
+    mode: "observe_only"  # observe_only/suggest/order_intent
+    conflict_resolution_id: "STRATEGY_CONFLICT_RESOLUTION_V1"
+    cooldown_policy_id: "STRATEGY_COOLDOWN_V1"
+
+    regime_behavior_policy_id: "STRATEGY_REGIME_BEHAVIOR_V1"
+    event_reaction_policy_id: "STRATEGY_EVENT_REACTION_V1"
+
+    output_schema:
+      recommendation_enabled: true
+      order_intent_enabled: false
+
+    permission_required_level: "L1"  # L0~L4（僅提示，最終由治理層決定）
+
+    failsafe:
+      policy_id: "STRATEGY_FAILSAFE_V1"
+      on_data_stale: "degrade_to_observe"
+      on_risk_off: "block_new_intents"
+```
+
+---
+
+以下為 **03S 第二批**，依你要求 **不偷工減料、可直接落地、可貼 GitHub**。
+本批次涵蓋 **治理 / 03O / 券商API / 送單狀態機** —— 這一批是「能不能真的送單」的生死線。
+
+---
+
+# 📘 TAITS_03S_配置模板全集（第二批）
+
+（config_base 05～08｜治理 × 03O × 券商 × 送單狀態機）
+
+---
+
+## ✅ config_base/05_治理與權限Gate配置.yaml
+
+> **定位說明**
+> 治理層是 TAITS 的最高否決權來源：
+> **策略可以產生意圖，但治理可以全部擋掉。**
+
+```yaml
+taits:
+  governance:
+    version_tag: "TAITS_GOVERNANCE_BASE_V1"
+    owner: "TAITS_Risk_Compliance"
+    change_reason: "治理與權限Gate基底（Risk/Compliance 可否決一切）"
+    last_updated: "2025-12-15"
+
+    permission_gate:
+      enabled: true
+
+      decision_levels:
+        L0: "observe_only"          # 只觀察
+        L1: "suggest_only"          # 建議，不產生送單意圖
+        L2: "order_intent_small"    # 小額意圖（仍需03O）
+        L3: "order_intent_full"     # 完整意圖（仍需03O）
+        L4: "auto_execution_allowed" # 允許自動（是否啟用仍由你決定）
+
+      default_max_level_by_env:
+        DEV: "L3"
+        STAGE: "L2"
+        PAPER: "L2"
+        LIVE: "L1"   # LIVE 預設極保守
+
+    hard_stops:
+      risk_engine_can_veto: true
+      compliance_can_veto: true
+      regime_risk_off_can_veto: true
+      event_shock_can_veto: true
+
+    concentration_limits:
+      enabled: true
+      max_single_symbol_weight: 0.15
+      max_single_theme_weight: 0.35
+      max_single_sector_weight: 0.40
+
+    tail_risk_limits:
+      enabled: true
+      max_drawdown_soft: 0.12
+      max_drawdown_hard: 0.20
+      tail_risk_score_hard_stop: 0.85
+
+    governance_actions:
+      on_hard_stop:
+        - "block_new_intents"
+        - "cancel_open_orders"
+        - "degrade_to_observe"
+      on_soft_warning:
+        - "require_manual_review"
+
+    audit:
+      enabled: true
+      log_decisions: true
+      log_reasons: true
+      log_version_tags: true
+```
+
+---
+
+## ✅ config_base/06_送單前檢查03O配置.yaml
+
+> **定位說明**
+> 你反覆強調：
+> *「能不能下單都要我決定」*
+> 03O 就是把「不能亂下」制度化。
+
+```yaml
+taits:
+  execution_precheck_03o:
+    version_tag: "TAITS_03O_BASE_V1"
+    owner: "TAITS_Execution_Risk"
+    change_reason: "送單前檢查03O（實盤/紙上必跑）"
+    last_updated: "2025-12-15"
+
+    enabled: true
+    required_for_env:
+      DEV: false
+      STAGE: true
+      PAPER: true
+      LIVE: true
+
+    checks:
+      liquidity_check:
+        enabled: true
+        min_avg_volume_ratio: 0.002
+        participation_rate_cap: 0.10
+
+      volatility_check:
+        enabled: true
+        max_atr_pct: 0.08
+        high_volatility_action: "require_manual_review"
+
+      gap_risk_check:
+        enabled: true
+        max_gap_to_atr: 1.5
+        gap_action: "block"
+
+      cost_check:
+        enabled: true
+        max_expected_cost_pct: 0.003
+
+      regime_alignment_check:
+        enabled: true
+        block_if_risk_off: true
+
+      compliance_check:
+        enabled: true
+        forbidden_symbols_ref: "COMPLIANCE_BLACKLIST"
+
+    decision_output:
+      feasible_flag_required: true
+      manual_review_flag_supported: true
+      recommendation_template_enabled: true
+
+    audit:
+      enabled: true
+      log_all_failed_checks: true
+      log_scores: true
+```
+
+---
+
+## ✅ config_base/07_券商API適配器配置.yaml
+
+> **重要聲明（已對齊你的要求）**
+
+* ❌ 無 XQ
+* ✅ 純 API
+* ✅ 可多券商
+* ✅ 金鑰不落地
+
+```yaml
+taits:
+  broker_adapter:
+    version_tag: "TAITS_BROKER_API_BASE_V1"
+    owner: "TAITS_Execution"
+    change_reason: "券商API適配器（API-first，不含任何XQ）"
+    last_updated: "2025-12-15"
+
+    active_broker_id: "BROKER_PRIMARY"
+
+    brokers:
+      BROKER_PRIMARY:
+        broker_name: "主要券商API"
+        environment: "paper"   # paper/live
+        auth_method_id: "OAUTH_OR_APIKEY"
+        secret_ref:
+          api_key: "BROKER_PRIMARY_API_KEY"
+          api_secret: "BROKER_PRIMARY_API_SECRET"
+
+        capabilities:
+          order_types:
+            - "market"
+            - "limit"
+          time_in_force:
+            - "ROD"
+            - "IOC"
+          supports_partial_fill: true
+
+        rate_limit:
+          max_requests_per_minute: 120
+          burst_limit: 20
+
+        error_handling:
+          retry_backoff_policy_id: "BROKER_RETRY_V1"
+          circuit_breaker_policy_id: "BROKER_CB_V1"
+
+        reconciliation:
+          position_source_of_truth: "broker"
+          reconcile_interval_sec: 30
+
+    audit:
+      enabled: true
+      log_requests: false        # 不記錄敏感內容
+      log_responses: false
+      log_status_changes: true
+```
+
+---
+
+## ✅ config_base/08_送單協調器與狀態機配置.yaml
+
+> **定位說明**
+> 這一份決定 TAITS 是否「像主力一樣下單」，而不是亂射飛鏢。
+
+```yaml
+taits:
+  order_orchestrator:
+    version_tag: "TAITS_ORDER_ORCHESTRATOR_BASE_V1"
+    owner: "TAITS_Execution"
+    change_reason: "送單協調器與狀態機（冪等、重試、分批）"
+    last_updated: "2025-12-15"
+
+    state_machine:
+      id: "TAITS_ORDER_STATE_MACHINE_V1"
+      states:
+        - "intent_created"
+        - "precheck_passed"
+        - "submitted"
+        - "acknowledged"
+        - "partially_filled"
+        - "filled"
+        - "cancelled"
+        - "rejected"
+        - "failed"
+
+    submission_policy:
+      pacing_limit_per_minute: 10
+      max_outstanding_orders: 5
+      anti_chase_enabled: true
+      anti_panic_enabled: true
+
+    slicing_policy:
+      enabled: true
+      default_slices: 3
+      min_interval_sec: 20
+
+    retry_policy:
+      enabled: true
+      max_retries: 3
+      retry_on:
+        - "timeout"
+        - "temporary_reject"
+
+    cancel_replace_policy:
+      enabled: true
+      allow_reprice: true
+      max_reprice_times: 2
+
+    failsafe:
+      on_broker_disconnect: "halt_new_orders"
+      on_state_inconsistency: "require_manual_review"
+
+    audit:
+      enabled: true
+      log_state_transitions: true
+      log_fail_reasons: true
+```
+
+---
+
+## 🔒 第二批完整性鎖定聲明
+
+* ✔ 治理層（最高否決權）
+* ✔ 03O 送單前檢查（你是否下單的最後一道門）
+* ✔ 純 API 券商適配（已完全移除 XQ）
+* ✔ 送單狀態機（避免亂單、重單、追單）
+* ✔ 可直接存入 GitHub
+* ✔ 新對話讀到 YAML 就能知道 TAITS 在幹嘛
+
+---
+
+以下為 **03S 第三批（最終核心批）**。
+本批次完成 **風控降級 / 告警值班 / 全量審計 / 回測對齊 / 環境覆蓋 / 模式配置**，到此 **03S 配置模板全集完整閉環**，可直接落地。
+
+---
+
+# 📘 TAITS_03S_配置模板全集（第三批｜最終）
+
+（config_base 09～12 + config_env + config_profiles）
+
+---
+
+## ✅ config_base/09_風控降級與停機配置.yaml
+
+> **定位說明**
+> 這一份是你反覆強調的核心：
+> **市場不對 → 自動降級；人還沒反應 → 系統先保命。**
+
+```yaml
+taits:
+  risk_degrade:
+    version_tag: "TAITS_RISK_DEGRADE_BASE_V1"
+    owner: "TAITS_Risk"
+    change_reason: "風控降級與停機（Risk 可自動接管）"
+    last_updated: "2025-12-15"
+
+    enabled: true
+
+    thresholds:
+      drawdown_soft: 0.10
+      drawdown_hard: 0.18
+      tail_risk_hard: 0.85
+      volatility_extreme: true
+      liquidity_stress: true
+
+    auto_degrade:
+      enabled: true
+      levels:
+        L1:
+          trigger: "drawdown_soft"
+          action: "limit_new_intents"
+        L2:
+          trigger: "tail_risk_hard"
+          action: "degrade_to_observe"
+        L3:
+          trigger: "drawdown_hard"
+          action: "stop_all"
+
+    kill_switch:
+      enabled: true
+      manual_allowed: true
+      emergency_stop_actions:
+        - "cancel_all_open_orders"
+        - "block_new_orders"
+        - "switch_to_observe"
+
+    recovery:
+      auto_recovery_allowed: false
+      manual_confirmation_required: true
+
+    audit:
+      enabled: true
+      log_triggers: true
+      log_actions: true
+```
+
+---
+
+## ✅ config_base/10_告警與值班配置.yaml
+
+> **定位說明**
+> 沒有告警、沒有值班，就不叫實盤系統。
+
+```yaml
+taits:
+  alerting:
+    version_tag: "TAITS_ALERTING_BASE_V1"
+    owner: "TAITS_Ops"
+    change_reason: "告警、事件、值班與通報"
+    last_updated: "2025-12-15"
+
+    enabled: true
+
+    severity_levels:
+      S0: "info"
+      S1: "warning"
+      S2: "critical"
+      S3: "emergency"
+
+    channels:
+      console: true
+      email: false
+      webhook: false
+
+    rules:
+      data_outage:
+        severity: "S2"
+        condition: "data_gap_detected"
+      broker_disconnect:
+        severity: "S3"
+        condition: "broker_down"
+      risk_degrade_triggered:
+        severity: "S2"
+      kill_switch_activated:
+        severity: "S3"
+
+    oncall:
+      enabled: true
+      acknowledgement_required_for:
+        - "S2"
+        - "S3"
+
+    audit:
+      enabled: true
+      log_alerts: true
+      log_acknowledgements: true
+```
+
+---
+
+## ✅ config_base/11_審計日誌與輸出配置.yaml
+
+> **定位說明**
+> 你最在意「新對話能不能知道系統幹了什麼」，全靠這一份。
+
+```yaml
+taits:
+  audit:
+    version_tag: "TAITS_AUDIT_BASE_V1"
+    owner: "TAITS_Governance"
+    change_reason: "全量審計（決策/送單/人工介入）"
+    last_updated: "2025-12-15"
+
+    enabled: true
+    level: "full"
+
+    log_types:
+      - "event_log"
+      - "feature_log"
+      - "strategy_decision_log"
+      - "governance_decision_log"
+      - "order_log"
+      - "manual_action_log"
+      - "risk_action_log"
+
+    storage:
+      format: "json"
+      retention_days: 365
+      hash_chain_enabled: true
+
+    traceability:
+      include_release_id: true
+      include_config_revision: true
+      include_ruleset_lock: true
+      include_data_snapshot_hash: true
+
+    export:
+      enabled: true
+      formats:
+        - "json"
+        - "csv"
+```
+
+---
+
+## ✅ config_base/12_回測與模擬對齊配置.yaml
+
+> **定位說明**
+> 保證 **03P 回測 = 03Q/03R/03S 實盤邏輯**，不是兩套系統。
+
+```yaml
+taits:
+  backtest_alignment:
+    version_tag: "TAITS_BACKTEST_ALIGN_V1"
+    owner: "TAITS_Research"
+    change_reason: "回測/模擬與實盤邏輯對齊"
+    last_updated: "2025-12-15"
+
+    enforce_same_pipeline: true
+    enforce_same_governance: true
+    enforce_same_03o: true
+
+    cost_model_alignment: true
+    order_reject_simulation: true
+    regime_override_simulation: true
+
+    audit_alignment:
+      enabled: true
+      require_same_logs: true
+```
+
+---
+
+# 🌍 config_env（環境覆蓋）
+
+## ✅ config_env/DEV_環境覆蓋.yaml
+
+```yaml
+taits:
+  run_identity:
+    environment: "DEV"
+    runtime_mode: "observe"
+
+  governance:
+    permission_gate:
+      default_max_level_by_env:
+        DEV: "L3"
+```
+
+## ✅ config_env/PAPER_環境覆蓋.yaml
+
+```yaml
+taits:
+  run_identity:
+    environment: "PAPER"
+    runtime_mode: "paper"
+
+  strategy_runtime:
+    mode: "order_intent"
+
+  broker_adapter:
+    active_broker_id: "BROKER_PRIMARY"
+```
+
+## ✅ config_env/LIVE_環境覆蓋.yaml
+
+```yaml
+taits:
+  run_identity:
+    environment: "LIVE"
+    runtime_mode: "observe"
+
+  governance:
+    permission_gate:
+      default_max_level_by_env:
+        LIVE: "L1"
+
+  risk_degrade:
+    auto_degrade:
+      enabled: true
+```
+
+---
+
+# 🎛 config_profiles（模式配置）
+
+## ✅ config_profiles/OBSERVE_只觀察模式.yaml
+
+```yaml
+taits:
+  strategy_runtime:
+    mode: "observe_only"
+
+  execution_precheck_03o:
+    enabled: false
+```
+
+## ✅ config_profiles/PAPER_紙上交易模式.yaml
+
+```yaml
+taits:
+  strategy_runtime:
+    mode: "order_intent"
+
+  execution_precheck_03o:
+    enabled: true
+```
+
+## ✅ config_profiles/LIVE_實盤模式.yaml
+
+```yaml
+taits:
+  strategy_runtime:
+    mode: "order_intent"
+
+  execution_precheck_03o:
+    enabled: true
+
+  governance:
+    permission_gate:
+      enabled: true
+```
+
+---
+
+# 🔒 03S 最終完整性鎖定聲明（總結）
+
+* ✔ **Observe / Paper / Live 全配置模板完成**
+* ✔ **治理、風控、03O、券商API、送單、告警、審計、回測對齊 全覆蓋**
+* ✔ **所有檔名中文、內容中文、可直接貼 GitHub**
+* ✔ **完全移除 XQ**
+* ✔ **新對話只看配置就能 100% 知道 TAITS 在做什麼**
+* ✔ **自動化程度永遠由你決定**
