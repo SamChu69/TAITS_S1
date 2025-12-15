@@ -1,213 +1,443 @@
-# TAITS_Architecture_and_Flow.md
-（TAITS 架構與流程細節｜Data Flow × Decision Flow × Event Flow｜完整運作說明）
+# TAITS — 統一總架構與全流程（基於 V3.1 Spec）
 
-> 文件定位：全流程說明（End-to-End Flow）
-> 目的：回答「TAITS 到底怎麼運作？」並提供工程落地所需的流程與事件規格。
-
----
-
-## 0. 名詞中譯
-
-- Data Flow：資料流
-- Decision Flow：決策流
-- Event Flow：事件流
-- Snapshot：快照（可回放）
-- Gate：閘門（可阻擋）
-- Observe-only：僅觀察（不送單）
-- Evidence Bundle：證據包（可審計依據）
+> **系統名稱（對外）：** TAITS（台灣阿爾法智能交易系統）  
+> **內部規格依據：** V3.1 Spec / TradingAgents Spec / 285 策略全集  
+> **架構風格：** 五層架構 + 雙腦（Fast/Slow Brain）+ Lean 五模組 + 多智能體 + 熔斷
 
 ---
 
-## 1. TAITS 的三條主流程（總覽）
+## 0. TAITS 全域總架構（總覽）
 
-TAITS 同時運行三條流程，缺一不可：
+整體分層如下：
 
-1) **資料流（Data Flow）**：把市場變成可用資料  
-2) **決策流（Decision Flow）**：把資料變成可治理的策略建議  
-3) **事件流（Event Flow）**：把所有決策可回放、可追蹤、可告警
+```text
+Layer 0 ─ Infra Layer
+Layer 1 ─ Data Layer
+Layer 2 ─ Model Layer（Slow Brain + Fast Brain）
+Layer 3 ─ Strategy Layer（Lean 5 Modules）
+Layer 4 ─ Execution Layer（Modes + Circuit Breaker）
+Layer 5 ─ UI / Monitoring Layer
 
----
-
-## 2. 資料流（Data Flow）— 從來源到快照
-
-### 2.1 資料來源分類（高層）
-- 官方交易資料：TWSE/TPEX/TAIFEX
-- 公司公告：MOPS
-- 宏觀/利率/匯率：央行、主計總處、國際來源
-- 新聞/社群/情緒：多來源（需可靠度標註）
-- 觀察型衍生品：期貨/選擇權（只觀察）
-- 融資融券：只觀察資金槓桿與風險
-
-### 2.2 標準化流程（必做）
-- 欄位統一（Field Mapping）
-- 時間對齊（Time Alignment）
-- 缺值策略（Missing Policy）
-- 異常偵測（Anomaly Flag）
-- 產出 `MarketSnapshot`
-
-### 2.3 快照策略（Replayable Snapshot）
-- 每次決策都引用「同一份快照」
-- 快照需附：
-  - snapshot_id
-  - timestamp
-  - data_quality（缺哪些資料、哪些異常）
+      ↑
+ Orchestrator / Scheduler 統一調度
+```
 
 ---
 
-## 3. 特徵流（Feature Flow）— 指標與方法論被工程化
+## 🟥 Layer 0 — Infra Layer（基礎設施層）
 
-### 3.1 Feature Factory 產出內容（對齊 03）
-- 技術指標：均線、量能、波動、趨勢、動能等
-- 結構方法論特徵：
-  - GMMA（顧比均線組）— 趨勢群組與擴散/收斂
-  - CBL（顧比倒數線）— 節奏/倒數/轉折壓力（以你定義為準）
-  - Wyckoff（威科夫）— 吸籌/派發/彈升/回落等階段證據（方法論中譯必備）
-  - Bodick ChanLun（鮑迪克纏論）— 結構段落/背離/資金流向（方法論中譯必備）
+這層讓 TAITS 從「一堆 Python 檔」變成「穩定的交易系統」。
 
-> 注意：方法論不是「單一訊號」，是「多特徵證據組」。
+### 元件與功能
 
----
+- **TimescaleDB**  
+  - 儲存：K 線、籌碼、新聞向量、Kronos 預測、策略信號  
+  - 用途：回測、研究、統計分析  
 
-## 4. Regime 決策流（Regime-First）
+- **Redis**  
+  - 盤中快取：Tick、Fast Brain 預測、Slow Brain 結論、熔斷標記  
+  - 提供毫秒級讀取，減少 DB 壓力  
 
-### 4.1 Regime Engine 輸入
-- MarketSnapshot
-- FeatureVector
-- 觀察型證據（期貨/選擇權/融資融券）
+- **EventBus（Async）**  
+  - 將行情事件、預測事件、風控事件，分發給：  
+    - Fast Brain  
+    - 策略層  
+    - Risk Manager / 熔斷機制  
+    - UI 監控層  
 
-### 4.2 Regime Engine 輸出（RegimeResult）
-- regime_id（R1–R10）
-- confidence（置信度）
-- evidence_bundle（證據包）
-- override_applied（是否被高層覆蓋）
-- data_quality_notes（資料不足則走 R10）
+- **Docker**  
+  - 封裝整套 TAITS 運行環境，避免系統依賴衝突  
 
-### 4.3 R10（資料不足/不判斷）
-- 若關鍵資料缺失或異常：
-  - regime = R10
-  - 系統強制 Observe-only 或限制策略集合
+- **Logger + Audit Trail**  
+  - 所有訊號、下單、熔斷事件皆記錄  
+  - 便於日後稽核、除錯與策略回溯
+
+> ✅ 這層讓 TAITS 從「程式集合」升級成「交易平台」。
 
 ---
 
-## 5. 策略訊號流（Strategy Signals，但不下單）
+## 🟦 Layer 1 — Data Layer（資料層）
 
-### 5.1 策略訊號輸入
-- FeatureVector
-- RegimeResult
-- Universe（標的池）與流動性/風險約束
+融合 Spec 中的 FinMind / Cnyes / Yahoo / TWSE 等資料源，統一進入資料層。
 
-### 5.2 策略訊號輸出
-- StrategySignals（334 策略的成立/不成立、強度、證據）
-- 每條策略的輸出不得包含「直接送單」
+### 資料來源與用途
 
----
+| 資料來源         | 內容             | 用途                         |
+|------------------|------------------|------------------------------|
+| FinMind          | K 線、法人、融資券 | 技術指標、籌碼 Agent         |
+| Cnyes（鉅亨）     | 新聞、事件、情緒   | News Agent、情緒分析         |
+| TWSE / TPEX      | 公告、日成交、財報 | 基本面 / 財報 / 個股資訊     |
+| Yahoo / 國際指數 | 匯率、美股、SOX 等 | Macro Agent（宏觀）         |
+| WebSocket 行情   | Tick / 逐筆成交   | Fast Brain、Execution 使用   |
 
-## 6. 融合（Fusion）與建議權重（Weighting）
+### 資料流程
 
-融合引擎輸入：
-- StrategySignals
-- RegimeResult
-- 代理證據（技術/基本面/消息/情緒/宏觀/事件）
-- 風控指標（波動/滑價/流動性）
+```text
+外部資料源
+    ↓（API / 抓取）
+清洗 / 對齊 / 缺值處理
+    ↓
+寫入 TimescaleDB（歷史資料庫）
+    ↓
+Redis 快取（盤中最新狀態）
+```
 
-融合引擎輸出：
-- CandidateStrategySet（候選策略集合）
-- CandidateWeights（候選權重）
-- Explanation（可解釋摘要）
-
----
-
-## 7. 策略治理閘門（Governance Permission Gate）
-
-### 7.1 Governance Gate 輸入
-- CandidateStrategySet
-- RegimeResult
-- Governance Rules（06）
-
-### 7.2 Governance Gate 輸出
-- PASS（允許）
-- DOWNGRADE（降級：降低權重/縮小標的/縮短持有）
-- MANUAL_REVIEW（需人工覆核）
-- BLOCK（禁止）
-
-> Governance 是「策略能不能用」的制度化答案。
+> ✅ 這層是 TAITS 的「資料心臟」。
 
 ---
 
-## 8. 風控合規閘門（Risk/Compliance Gate + KillSwitch）
+## 🟨 Layer 2 — Model Layer（雙腦架構：Slow Brain + Fast Brain）
 
-### 8.1 Risk Gate 輸入
-- GovernanceDecision
-- Portfolio / Exposure
-- Volatility / Liquidity / Slippage
-- Event Flags（重大事件/極端情境）
-
-### 8.2 Risk Gate 輸出
-- PASS：可繼續
-- SOFT_BLOCK：只允許低風險模式（Observe/小倉/不追價）
-- HARD_BLOCK：全面禁止執行
-- KILL_SWITCH：立即停止所有送單（仍可觀察）
+這一層把「多智能體 TradingAgents」與「Kronos K 線預測」整合成 **雙腦系統**。
 
 ---
 
-## 9. 執行層（Execution）— 只有在你決定「允許送單」才會啟動
+### 🧠 Slow Brain（慢軌，約每 1 分鐘）
 
-> Execution 屬於 13+（Implementation）：
-> - Execution Planner：把「意圖」轉為拆單計畫
-> - Broker Adapter：券商格式轉換（不做判斷）
-> - Order State：追蹤生命週期
-> - Audit Store：寫入可回放資料
+- 實作：TradingAgents（Technical / Chip / Fundamental / News / Macro / Pattern / AI / Sector）  
+- 任務：  
+  - 看大盤趨勢  
+  - 追蹤族群輪動  
+  - 分析籌碼變化（外資 / 投信 / 自營）  
+  - 判讀新聞與事件  
+  - 給出「今天 / 這幾根 K」的大方向與理由  
 
-TAITS 的規範是：
-- 沒有 Governance + Risk 雙簽章，Execution 不得送單
-- 若你選擇「不自動下單」，Execution 僅提供計畫與模擬
+#### Slow Brain 輸出範例
 
----
-
-## 10. 事件流（Event Flow）— 可觀測、可審計、可回放
-
-最小事件集合（不得省略）：
-- MARKET_SNAPSHOT_READY
-- FEATURE_VECTOR_READY
-- REGIME_EVALUATED
-- STRATEGY_SIGNAL_SET_READY
-- FUSED_SIGNAL_READY
-- GOVERNANCE_DECISION_READY
-- RISK_DECISION_READY
-- EXECUTION_PLAN_READY（如啟動執行）
-- ORDER_STATUS_UPDATE（如送單）
-- AUDIT_LOG_WRITTEN
-
-每個事件必須帶：
-- timestamp
-- snapshot_id
-- decision_id（若有）
-- version_manifest
-- evidence_reference（可追溯）
+```json
+{
+  "slow_direction": "多",            // 多 / 空 / 盤整
+  "slow_confidence": 0.82,
+  "time_horizon": "短波段",
+  "slow_reason": "外資連3買 + 電子權值領漲 + 新聞偏多"
+}
+```
 
 ---
 
-## 11. 失效與降級（Failure & Degradation）
+### ⚡ Fast Brain（快軌，每 ~5 秒）
 
-任何以下狀態，系統必須降級：
-- 行情延遲/異常
-- 來源缺失（官方 API 掛）
-- 重大事件旗標觸發
-- Regime 置信度不足
-- 滑價/流動性惡化
+- 實作：Kronos K 線未來預測  
+- 任務：  
+  - 讀入最近 N 根 K（例如 60~240 根）  
+  - 預測未來 5~10 根 K 的走勢  
+  - 判斷目前是否為短線「擊球點」  
 
-降級結果：
-- 強制 R10 或 Observe-only
-- 禁止追價策略
-- 降低倉位上限
+#### Fast Brain 輸出範例
+
+```json
+{
+  "up_prob": 0.71,
+  "down_prob": 0.16,
+  "flat_prob": 0.13,
+  "volatility": 0.24,
+  "pattern_type": "箱體突破"
+}
+```
 
 ---
 
-## 12. 交叉引用（你要找的都在這）
+### 🔀 Signal Fusion（訊號融合器）
 
-- 系統憲章：TAITS_MASTER_ARCHITECTURE.md
-- 全系統分層：TAITS_Full_System_Architecture.md
-- 資料來源：TAITS_DataSources_Universe.md
-- 策略宇宙：TAITS_Strategy_Universe_Complete.md
-- 風控合規：TAITS_Risk_and_Compliance.md
-- 導覽索引：TAITS_Document_Index.md
+融合 Slow Brain（大方向）與 Fast Brain（短線位置），做出「這一檔、現在這個價位、該怎麼做」的結論。
+
+#### 範例決策矩陣
+
+| Slow Brain | Fast Brain | 行為                                   |
+|------------|------------|----------------------------------------|
+| 多         | 多         | 可積極做多（Full Size）               |
+| 多         | 空         | 等回檔（Buy the Dip），掛好買點       |
+| 空         | 多         | 不追，保留現金，或找避險               |
+| 空         | 空         | 可考慮放空或減碼持股（若可融券）      |
+
+#### 融合輸出（交給策略與資金配置）
+
+```json
+{
+  "final_direction": "多",
+  "entry_mode": "等回檔",
+  "entry_hint": "靠近前一根低點附近佈局",
+  "stop_loss": "ATR*2",
+  "take_profit": "RR 2:1",
+  "fusion_confidence": 0.78
+}
+```
+
+> ✅ 此層為 TAITS 的核心智慧大腦。
+
+---
+
+## 🟩 Layer 3 — Strategy Layer（Lean 5 模組 × 285 策略）
+
+在這一層，將 **285 策略 + 多智能體 + 雙腦輸出** 全部放進 **標準化 Lean 管線**。
+
+---
+
+### ① Universe Selection（選股池）
+
+依據：
+
+- 流動性條件（成交量、市值）  
+- 族群與題材（電子、軍工、航運等）  
+- 法人籌碼（外資、投信、自營）  
+- 新聞強度（多空事件）  
+
+輸出：
+
+```python
+universe = ["2330", "2603", "3035", "6531", ...]
+```
+
+---
+
+### ② Alpha Model（策略整合器）
+
+整合來源：
+
+- 285 個策略信號（技術 / 籌碼 / 價值 / AI …）  
+- Slow Brain 結論  
+- Fast Brain（Kronos）預測  
+- 市場 regime（趨勢 / 盤整 / 高波動）  
+
+為每檔股票輸出：
+
+```json
+{
+  "symbol": "2330",
+  "alpha_signal": "BUY",        // BUY / HOLD / SELL
+  "alpha_score": 0.81,
+  "alpha_reason": "GMMA 多頭 + 投信連買 + Kronos 漲機率 0.7"
+}
+```
+
+---
+
+### ③ Portfolio Construction（部位配置）
+
+考量：
+
+- Alpha 分數  
+- Slow/Fast Brain confidence  
+- 波動（Fast Brain volatility）  
+- 風險偏好（保守 / 中性 / 積極）  
+
+計算：
+
+- 每檔部位權重（%）  
+- 總曝險上限  
+- 單檔最大權重（例如 25%）  
+
+輸出：
+
+```json
+{
+  "symbol": "2330",
+  "target_weight": 0.18   // 資金的 18%
+}
+```
+
+---
+
+### ④ Risk Management（風控 + 熔斷）
+
+整合：
+
+- 原 TAITS Risk Manager：  
+  - 最大回撤  
+  - 單筆虧損  
+  - 單股曝險  
+
+- 新增：**熔斷機制（Circuit Breaker）**  
+  - 大盤急殺  
+  - API 斷線 / 延遲  
+  - 資料延遲（Data Lag）  
+  - 回撤過大  
+  - 單股異常波動（由 Fast Brain 通報）  
+
+當熔斷觸發時：
+
+```python
+circuit_breaker.status = "ACTIVE"
+# → 阻止所有新建部位，只允許減倉 / 平倉
+```
+
+> ✅ Risk Manager = 最終守門員。
+
+---
+
+### ⑤ Execution Model（下單執行）
+
+基於富邦 API 的執行邏輯：
+
+- ROD / IOC / FOK 支援  
+- 自動調價（根據滑價限制）  
+- 分批執行（模擬 TWAP / VWAP 行為）  
+- 零股與整股整合下單  
+- 斷線自動重試  
+
+只有在：
+
+- Universe 決定完成  
+- Alpha 給出方向  
+- Portfolio 計算完部位  
+- Risk Manager & 熔斷皆通過  
+
+的情況下，才會呼叫：
+
+```python
+fubon_api.place_order(...)
+```
+
+---
+
+## 🟪 Layer 4 — Execution Layer（運行模式 + 熔斷總開關）
+
+TAITS 的「運行模式」設計如下：
+
+### 運行模式
+
+- **Ignore**：只分析，不送單  
+- **Backtest**：歷史資料回測（使用 Backtest Engine）  
+- **Sandbox**：新策略 / 新 Agent 的隔離測試區  
+- **Paper**：模擬交易（包含滑價、成交機率模型）  
+- **Semi-Auto**：系統出訊號 → 你按「確認」才下單  
+- **Auto**：全自動實盤（風控 & 熔斷通過才執行）  
+
+### 熔斷總開關（系統級）
+
+```python
+if circuit_breaker.is_active():
+    block_all_new_orders()
+    only_allow_closing_positions()
+```
+
+> ✅ 確保在異常市場狀態下，TAITS 會自動進入防禦模式。
+
+---
+
+## 🟧 Layer 5 — UI / Monitoring Layer（前端監控）
+
+核心畫面與功能：
+
+### 市場總覽
+
+- 大盤走勢  
+- Slow Brain 判斷（多 / 空 / 盤整）  
+- 國際指數與匯率概況  
+
+### 個股詳情頁
+
+- 現價 K 線  
+- Kronos 預測未來 K 線（Fast Brain）  
+- 各 Agent 評分（技術 / 籌碼 / 基本面 / 新聞 / 宏觀）  
+- 285 策略中哪些策略亮燈  
+
+### 交易控制面板
+
+- 運行模式切換：Ignore / Backtest / Sandbox / Paper / Semi-Auto / Auto  
+- 熔斷 & 風控燈號（API 狀態、Data Lag、Drawdown、Volatility）  
+
+### 持倉與損益
+
+- 持倉列表  
+- 即時損益（PnL）  
+- 風險指標（曝險、集中度、最大回撤追蹤）
+
+---
+
+## 🌀 TAITS 一天的完整流程（Pre / In / Post）
+
+### 🟦 開盤前（Pre-Market）
+
+1. 更新所有資料（FinMind / Cnyes / TWSE / Yahoo）。  
+2. 更新指標 / 族群熱度。  
+3. 執行 Slow Brain，產生日內偏多 / 偏空 / 盤整判斷。  
+4. 建立當日 Universe（納入族群輪動、籌碼條件）。  
+5. 執行 Kronos 初始預測（預估開盤後一小時結構）。  
+
+> 輸出：**今日方向評估 + 當日監控標的池**
+
+---
+
+### 🟩 盤中（In-Market）
+
+#### 慢軌（每 1 分鐘：Slow Brain）
+
+- 更新法人籌碼（外資 / 投信 / 自營）。  
+- 更新新聞與事件（Cnyes）。  
+- 檢查大盤 regime 變化（趨勢 / 盤整 / 高波動）。  
+- 更新族群輪動情況。  
+- Slow Brain 更新市場方向與信心。
+
+#### 快軌（每 5 秒：Fast Brain）
+
+- 讀取最新 K 線窗格（如 60 根）。  
+- 預測未來 5~10 根 K 線走勢。  
+- 偵測短線反轉點與異常波動。
+
+#### 訊號融合與部位建議
+
+- Signal Fusion：Slow + Fast → Entry / Exit / Position Size。  
+- Strategy & Portfolio：  
+  - 若訊號有效且通過風控 → 產生具體部位調整建議。  
+
+#### 風控與熔斷
+
+- Risk Manager 檢查：曝險 / 單筆風險 / 回撤。  
+- 熔斷條件檢查：大盤急殺、API 延遲、資料延遲等。  
+- 若熔斷觸發 → 所有模式強制退到「Ignore / 只許平倉」。
+
+#### 執行
+
+- 根據當前運行模式：Paper / Semi-Auto / Auto。  
+- Semi-Auto 下，由你確認後才送單。
+
+---
+
+### 🟥 收盤後（Post-Market）
+
+1. 寫入當日所有 Log & Trade 到資料庫與檔案。  
+2. 更新 Kronos 訓練資料庫（新增今日 K 線與結果）。  
+3. 對今日策略變動進行回測或事後分析。  
+4. 產生日報（以 Slow Brain 邏輯撰寫的 AI 日評）。  
+5. 更新明日預備 Universe / 監控清單。  
+
+---
+
+## ✅ 最終總結（一次整合結果）
+
+目前的 **TAITS**：
+
+- ✅ 完全保留原 Spec 精神（多指標、多策略、多智能體）。  
+- ✅ 完整融合五層架構（Infra → Data → Model → Strategy → Execution → UI）。  
+- ✅ 完整具備 Fast/Slow Brain 雙軌（台股分析師視角 + AI 技術預測）。  
+- ✅ 完整導入 Lean 五模組（Universe / Alpha / Portfolio / Risk / Execution）。  
+- ✅ 支援多種交易模式（Ignore / Backtest / Sandbox / Paper / Semi-Auto / Auto），並內建熔斷機制。  
+- ✅ 支援 Pre / In / Post 全生命週期流程。  
+
+這份文件可作為：
+
+- `TAITS_Architecture_and_Flow.md`  
+- 或專案主要 README 的核心架構章節。
+
+---
+
+# 【Only-Add Appendix｜流程補齊區】（本段為追加）
+
+## C1. 明確補回「消息面」在流程中的位置（不可消失）
+- News/Sentiment 不得作為唯一交易依據，但必須在流程中存在：
+  1) 事件旗標（Event Flag）
+  2) 題材敘事證據（Narrative Evidence）
+  3) 假消息/過熱風險（Risk Flag）
+- 流程掛點：
+  - Data → Normalize → Snapshot → EventFlagger → RegimeEvidence/RiskFlag → Strategy Filter/Weight → Governance/Risk Gate
+
+## C2. 期貨/選擇權/融資融券「只觀察」在流程中的硬掛點
+- 必須在 FeatureFactory 產生以下 Evidence Features：
+  - Futures：方向/波動/期現價差（Basis）/領先轉折
+  - Options：OI Wall、Gamma/Vol Risk、Pinning Risk
+  - Credit：Credit Heat、踩踏風險、追價降級旗標
+- 這些 Evidence Features 會進入：
+  - Regime Engine（Evidence）
+  - Risk Engine（Override）
+  - Strategy Engine（Filter/Weight）
