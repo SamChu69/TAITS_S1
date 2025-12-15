@@ -527,4 +527,214 @@ FusionDecision = {
 
 （EOF）
 
-```
+---
+
+# 【TAITS 主架構差異補齊（D01–D12）｜母體級正式規格】
+## 版本：v2025-12-16
+## 性質：Only-Add（追加，不覆蓋既有內容）
+
+本章節用於補齊「原專案中未顯性化、但實際已被 TAITS 使用或你已明確要求的核心能力」。
+本章節不取代、不否定任何既有段落，而是作為 **母體級補齊與差異說明**。
+
+---
+
+## D01｜證據包中樞（Evidence Bundler）【對應層級：L5】
+
+### 定位
+Evidence Bundler 是 TAITS 的 **解釋與審計中樞**，負責把所有判斷依據封裝成可引用、可回放的證據包。
+
+### 為什麼需要
+原架構中存在「策略有結果，但理由分散在各模組」的問題，導致：
+- 新對話無法重建判斷依據
+- 風控/否決難以追溯
+- UI 只能顯示結果，無法顯示原因
+
+### 固定輸出格式（缺一不可，缺則標示缺失）
+- snapshot_ref
+- trigger_rules[]
+- technical_summary
+- event_flags[]
+- narrative_evidence[]
+- heat_score
+- rumor_risk_tags[]
+- wyckoff_bundle
+- bodick_bundle
+- cross_market_flags
+- cross_market_risk_tags[]
+
+### 使用範圍
+Evidence Bundle 為以下層級的**唯一證據來源**：
+- L6 Market Regime
+- L7 Risk / Compliance
+- L8 Strategy Engine
+- L9 Governance Gate
+- L10 UI / Report
+
+---
+
+## D02｜威科夫（Wyckoff）工程化規格【L4 / L5 / L8 / L10】
+
+### 定位
+威科夫在 TAITS 中 **不是策略本身**，而是「主力行為與階段判斷的證據來源」。
+
+### wyckoff_bundle 固定欄位
+- wyckoff_stage（吸籌 / 推升 / 派發 / 下跌）
+- wyckoff_events[]
+- wyckoff_volume_price_alignment
+- wyckoff_confidence（0–100）
+- wyckoff_risk_tags[]
+- wyckoff_notes（中文說明）
+
+### 使用限制
+- 不得直接觸發下單
+- 僅可作為 Filter / Weight Adjuster / Exit Priority / Risk Tag
+
+---
+
+## D03｜鮑迪克纏論工程化規格【L4 / L5 / L8 / L10】
+
+### 定位
+鮑迪克纏論用於 **提高勝率與結構確認**，負責判斷：
+- 結構段落位置
+- 背離真偽
+- 多級別一致性
+
+### bodick_bundle 固定欄位
+- bodick_structure_state（推進 / 回撤 / 整理 / 轉折）
+- bodick_divergence_type
+- bodick_segment_strength（0–100）
+- bodick_consistency_score（0–100）
+- bodick_resonance
+- bodick_risk_tags[]
+- bodick_notes（中文說明）
+
+---
+
+## D04｜Observe-only 跨市場資料硬規格【L1 / L4 / L6 / L7 / L8 / L9 / L10】
+
+### 覆蓋資料
+- 期貨（Futures）
+- 選擇權（Options）
+- 融資融券（Credit）
+
+### 硬規則（母體級）
+- 僅可影響股票策略
+- 禁止對其商品下單
+- 僅能作為：
+  - Regime Evidence
+  - Risk Override
+  - Weight Adjuster
+  - Exit Priority Modifier
+
+### 固定輸出
+- futures_regime_flags[]
+- options_pressure_flags[]
+- credit_heat_flags[]
+- cross_market_risk_tags[]
+- weight_multiplier
+- forbidden_strategy_list[]
+
+---
+
+## D05｜消息 / 社群 / 題材輪動顯性化【L1 / L4 / L5 / L8 / L10】
+
+### 必備輸出欄位
+- event_flags[]
+- narrative_evidence[]
+- heat_score（0–100）
+- diffusion_chain[]
+- rumor_risk_tags[]
+
+### 核心原則
+TAITS **不得因「難以量化」而忽略題材與消息**，
+只能顯示證據強弱與風險，最終決定權在你。
+
+---
+
+## D06｜官方 OpenAPI 來源白名單【L1 / L3】
+
+### 必列官方來源
+- TWSE OpenAPI：https://openapi.twse.com.tw/
+- TPEx OpenAPI：https://www.tpex.org.tw/openapi/
+- TAIFEX OpenAPI：https://openapi.taifex.com.tw
+- MOPS：https://mopsov.twse.com.tw/mops/web/index
+
+### 要求
+- 每筆資料必須可回查 source_ref + captured_at + batch_id
+- Snapshot Manifest 必須列出使用的官方來源
+
+---
+
+## D07｜Snapshot / Replay 強制制度【L3 → 全層】
+
+### 硬規則
+凡影響以下行為者，必須綁定 snapshot_ref：
+- Regime 判定
+- Risk 否決
+- Strategy 啟用 / 停用
+- Gate 決策
+
+無 snapshot_ref → 判定無效。
+
+---
+
+## D08｜Regime-first 證據引用規格【L6】
+
+### 固定輸出
+- regime_state
+- regime_confidence
+- regime_snapshot_ref
+- regime_evidence_refs[]
+
+---
+
+## D09｜Risk / Compliance 否決審計包【L7】
+
+### Risk Audit Bundle
+- risk_trigger_rules[]
+- risk_snapshot_ref
+- risk_evidence_refs[]
+- blocked_actions[]
+- weight_adjustments
+- exit_priority_changes
+
+---
+
+## D10｜Universe 三池硬規則【L8】
+
+### 三池必須同時存在
+1. 穩定池（權值 / 高流動）
+2. 輪動池（題材主線 / 次主線）
+3. 爆發池（中小型 / 供應鏈尾端）
+
+### 禁止行為
+- 任何條件不得直接刪除爆發池
+- 只能降權或標註風險
+
+---
+
+## D11｜治理層 Gate 與修改授權模型【L9】
+
+### 修改等級
+- Append：允許
+- Modify：需你授權
+- Refactor：需你主動要求
+
+### Gate 輸出
+- permission_state
+- gate_reason
+- gate_snapshot_ref
+
+---
+
+## D12｜UI / 報告必須顯示「為什麼」【L10】
+
+### UI 強制顯示
+- Evidence Bundle 全欄位
+- Regime / Risk / Gate 的證據引用
+- snapshot_ref
+
+---
+
+# 【End of TAITS_MASTER_ARCHITECTURE 差異補齊】
+
