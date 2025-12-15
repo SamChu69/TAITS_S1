@@ -341,3 +341,216 @@ TWSE → FinMind → Yahoo → Cache
 - 系統能長期擴充而不崩
 
 ---
+
+# 【TAITS 資料來源全量補齊與用途定位】
+## 版本：v2025-12-16
+## 性質：Only-Add（追加，不覆蓋既有內容）
+
+本章節用於「一次性說清楚」TAITS **所有資料從哪來、用來幹嘛、在哪一層使用、是否可交易**，
+避免新對話或未來擴充時出現「來源不明 / 用途混亂 / 誤用下單」的風險。
+
+---
+
+## 一、資料用途總則（母體硬規則）
+
+### 1. 資料用途分類（四選一或多選）
+所有資料在 TAITS 中必須被標註以下用途之一：
+- Market Regime Evidence（市場狀態證據）
+- Cross-Market Filter（跨市場濾網）
+- Weight Adjuster（權重調整）
+- Risk Override（風險覆蓋）
+
+### 2. Observe-only 硬規則（你反覆要求）
+以下資料 **僅能觀察，不得成為下單標的**：
+- 期貨（Futures）
+- 選擇權（Options）
+- 融資融券（Credit）
+
+任何未來若要交易上述商品，**必須新增獨立授權與合規章節**。
+
+---
+
+## 二、官方市場資料來源（Primary / 官方）
+
+### 2.1 TWSE（台灣證券交易所）
+- 名稱：TWSE OpenAPI
+- 官方入口：https://openapi.twse.com.tw/
+- 資料類型：
+  - 股票日資料（OHLCV）
+  - 指數資料
+  - 成交量/成交額
+  - 證交所公告
+- 用途定位：
+  - Market Regime Evidence
+  - Strategy Input
+- 使用層級：
+  - L1（接入）
+  - L2（正規化）
+  - L3（快照）
+  - L4（特徵）
+- 驗收：
+  - 任一日資料可回查官方端點 + 日期
+
+---
+
+### 2.2 TPEx（櫃買中心）
+- 名稱：TPEx OpenAPI
+- 官方入口：https://www.tpex.org.tw/openapi/
+- 資料類型：
+  - 上櫃股票資料
+  - 產業分類
+- 用途定位：
+  - Strategy Input
+  - Universe 建立
+- 使用層級：
+  - L1 / L2 / L3 / L4
+- 驗收：
+  - 上櫃標的與上市標的欄位一致
+
+---
+
+### 2.3 TAIFEX（台灣期貨交易所）
+- 名稱：TAIFEX OpenAPI
+- 官方入口：https://openapi.taifex.com.tw
+- 資料類型（Observe-only）：
+  - 指數期貨
+  - 個股期貨（若可得）
+  - 選擇權成交量 / OI
+- 用途定位：
+  - Market Regime Evidence
+  - Risk Override
+- 使用層級：
+  - L1（接入）
+  - L4（Observe-only 特徵）
+  - L6（Regime 輔助）
+  - L7（風控覆蓋）
+- 硬限制：
+  - ❌ 不得觸發期貨/選擇權下單
+- 驗收：
+  - 任一風險覆蓋可回查 TAIFEX 來源
+
+---
+
+### 2.4 MOPS（公開資訊觀測站）
+- 名稱：MOPS
+- 官方入口：https://mopsov.twse.com.tw/mops/web/index
+- 資料類型：
+  - 重大訊息
+  - 財報
+  - 法說
+- 用途定位：
+  - Fundamental Evidence
+  - Event Trigger
+- 使用層級：
+  - L1 / L2 / L3 / L4 / L5
+- 驗收：
+  - 任一事件可回查公告原文 URL
+
+---
+
+## 三、新聞與題材資料來源（非官方，但必要）
+
+### 3.1 新聞（News）
+- 來源類型：
+  - 主流財經媒體
+  - 產業新聞
+- 資料內容：
+  - 標題
+  - 發布時間
+  - 來源
+  - 關聯公司/產業
+- 用途定位：
+  - Event Flag
+  - Narrative Evidence
+- 使用層級：
+  - L1 / L4 / L5 / L8 / L10
+- 驗收：
+  - 每則新聞必有來源 URL
+
+---
+
+### 3.2 社群與討論熱度（Social / Forum）
+- 來源類型：
+  - 社群平台
+  - 投資討論區
+- 資料內容：
+  - 關鍵字頻率
+  - 情緒偏向（不要求準確，只要求顯示）
+- 用途定位：
+  - Heat Score
+  - Rumor Risk Tag
+- 使用層級：
+  - L4 / L5 / L8
+- 重要原則：
+  - 不用來下單
+  - 只用來提示「過熱/謠言風險」
+
+---
+
+## 四、Observe-only 衍生品與信用資料（重點）
+
+### 4.1 期貨（Futures）
+- 來源：
+  - TAIFEX
+- 觀察項目：
+  - 趨勢方向
+  - 波動擴張
+  - 急轉折
+- 影響：
+  - Regime 判定
+  - 禁止追價
+- 禁止：
+  - ❌ 期貨下單
+
+---
+
+### 4.2 選擇權（Options）
+- 來源：
+  - TAIFEX
+- 觀察項目：
+  - OI 壓力
+  - 結算釘住風險
+- 影響：
+  - Exit Priority
+  - 波動風險標籤
+
+---
+
+### 4.3 融資融券（Credit）
+- 來源：
+  - 證交所 / 櫃買
+- 觀察項目：
+  - 融資使用率
+  - 融券比率
+- 影響：
+  - 槓桿過熱警示
+  - 踩踏風險提示
+
+---
+
+## 五、資料完整性與審計要求（強制）
+
+### 5.1 每筆資料必備欄位
+- source_ref（來源 URL / API）
+- captured_at（抓取時間）
+- data_time（資料所屬時間）
+- batch_id
+
+### 5.2 快照要求
+- 任何影響決策的資料，必須進入 Snapshot
+- Snapshot 必須列出：
+  - 使用哪些官方/非官方來源
+  - 缺失哪些資料
+
+---
+
+## 六、總結（母體約束）
+
+- TAITS **不因資料難用而忽略**
+- TAITS **不因資料非官方而否定**
+- TAITS **只顯示證據與風險，決策權在你**
+
+---
+
+# 【End of TAITS_DataSources_Universe 補齊】
+
