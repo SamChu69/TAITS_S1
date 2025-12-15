@@ -419,4 +419,229 @@ if circuit_breaker.is_active():
 
 - `docs/TAITS_Architecture_and_Flow.md`  
 - 或專案主要 README 的核心架構章節。
+---
+
+# 【TAITS 架構與流程差異補齊（D01–D12）｜流程級落點】
+## 版本：v2025-12-16
+## 性質：Only-Add（追加，不覆蓋既有內容）
+
+本章節將 D01–D12 的新增能力，**逐一掛載到既有流程**，明確標示：
+- 位於第幾層（L1–L10）
+- 做什麼
+- 輸入 / 處理 / 輸出
+- 下游影響與驗收點
+
+---
+
+## 全流程總覽（新增節點已標註）
+L1 資料接入  
+→ L2 正規化  
+→ **L3 快照封存（D07 強制）**  
+→ L4 特徵工廠（含 Wyckoff / 鮑迪克 / Observe-only / 題材）  
+→ **L5 證據包中樞（D01）**  
+→ **L6 Regime-first（D08）**  
+→ **L7 Risk / Compliance（D09）**  
+→ **L8 Strategy / Universe（三池）（D10）**  
+→ **L9 Governance Gate（D11）**  
+→ **L10 UI / Report（D12）**
+
+---
+
+## L1 → L2：資料接入到正規化（補齊官方來源與 Observe-only）
+### 新增落點（D04 / D05 / D06）
+**輸入**
+- 官方 OpenAPI（TWSE / TPEx / TAIFEX / MOPS）
+- 新聞/社群/題材資料
+- 期貨/選擇權/融資融券（Observe-only）
+
+**處理**
+- 來源白名單驗證
+- 欄位對齊（市場/新聞/衍生品/信用）
+- 標的對齊（股票代碼唯一化）
+
+**輸出**
+- normalized_market_data
+- normalized_news_data
+- normalized_derivatives_data（Observe-only）
+- normalized_credit_data（Observe-only）
+- source_ref + captured_at + batch_id
+
+**驗收**
+- 任一資料可回查官方端點
+- Observe-only 資料缺失需顯示（不可消失）
+
+---
+
+## L2 → L3：正規化到快照（D07 強制）
+### 新增落點
+**輸入**
+- L2 全部 normalized 資料
+
+**處理**
+- 封存為不可變快照
+- 產生 snapshot_ref 與 manifest
+
+**輸出**
+- snapshot_ref
+- snapshot_manifest（來源/時間/缺失欄位）
+
+**驗收**
+- 任一決策皆能指定 snapshot_ref
+- 歷史快照可回放
+
+---
+
+## L3 → L4：快照到特徵（補齊方法論與題材）
+### 新增落點（D02 / D03 / D04 / D05）
+**輸入**
+- snapshot_ref
+
+**處理**
+- 技術特徵（趨勢/動能/波動/量能）
+- Wyckoff 特徵（階段/事件/量價）
+- 鮑迪克特徵（段落/背離/一致性/共振）
+- Observe-only 旗標（期貨/選擇權/信用）
+- 題材特徵（事件/敘事/熱度/擴散鏈）
+
+**輸出**
+- feature_vector
+- feature_manifest（含缺失）
+
+**驗收**
+- 任一特徵能追溯 snapshot_ref
+- 方法論特徵必有中文說明欄位
+
+---
+
+## L4 → L5：特徵到證據包（D01）
+### 新增落點（核心）
+**輸入**
+- feature_vector + manifest
+
+**處理**
+- 規則觸發整理
+- 證據彙總與風險標籤
+
+**輸出（Evidence Bundle）**
+- snapshot_ref
+- trigger_rules[]
+- technical_summary
+- event_flags[]
+- narrative_evidence[]
+- heat_score
+- rumor_risk_tags[]
+- wyckoff_bundle
+- bodick_bundle
+- cross_market_flags
+- cross_market_risk_tags[]
+
+**驗收**
+- 任一結論必附完整 Evidence Bundle
+- 缺失需顯示缺失原因
+
+---
+
+## L5 → L6：證據包到 Regime-first（D08）
+### 新增落點
+**輸入**
+- Evidence Bundle
+
+**處理**
+- 依證據權重判定市場狀態
+
+**輸出**
+- regime_state
+- regime_confidence
+- regime_snapshot_ref
+- regime_evidence_refs[]
+
+**驗收**
+- Regime 變化可回溯證據
+- 無證據不允許定調
+
+---
+
+## L6 → L7：Regime 到 Risk / Compliance（D09）
+### 新增落點
+**輸入**
+- Regime + Evidence Bundle
+
+**處理**
+- 風控規則比對
+- Observe-only 風險覆蓋（禁止追價/降權）
+
+**輸出（Risk Audit Bundle）**
+- risk_trigger_rules[]
+- risk_snapshot_ref
+- risk_evidence_refs[]
+- blocked_actions[]
+- weight_adjustments
+- exit_priority_changes
+
+**驗收**
+- 任一否決可點開審計包
+
+---
+
+## L7 → L8：風控到策略與 Universe（三池）（D10）
+### 新增落點
+**輸入**
+- Risk Audit Bundle
+- Evidence Bundle
+
+**處理**
+- Universe 三池標記
+- 策略允許/禁止/降權
+
+**輸出**
+- allowed_strategy_set
+- weights
+- priorities
+- forced_exit_conditions
+
+**驗收**
+- 爆發池不得被直接刪除
+- 僅能降權或標註風險
+
+---
+
+## L8 → L9：策略到治理 Gate（D11）
+### 新增落點
+**輸入**
+- 策略決策
+- Risk/Regime
+
+**處理**
+- 權限與授權檢查（Append/Modify/Refactor）
+
+**輸出**
+- permission_state
+- gate_reason
+- gate_snapshot_ref
+
+**驗收**
+- 無授權不可改
+- 決策可審計
+
+---
+
+## L9 → L10：治理到 UI / Report（D12）
+### 新增落點
+**輸入**
+- Evidence Bundle
+- Regime / Risk / Gate
+
+**處理**
+- 可讀化呈現
+
+**輸出**
+- UI 面板（全證據）
+- 報告（含 snapshot_ref）
+
+**驗收**
+- 點任何建議都能看到「為什麼」
+
+---
+
+# 【End of Architecture_and_Flow 差異補齊】
 
