@@ -319,16 +319,377 @@ TAITS 內的「策略」只存在於 **Strategy Layer（策略層）**；其上�
 
 ---
 
-# 10. 下一批（05 第二批：你最在意的「威科夫/鮑迪克纏論/期貨觀察/選擇權壓力/融資融券/事件」全集）
+# 📘 TAITS_05_策略全集與使用定位.md（第二批｜**完整列出，不省略**）
 
-你要的核心還沒結束，下一批我會把以下全部「完整列出」：
+（**FL / WY / CL〔含鮑迪克纏論〕 / FU〔期貨觀察〕 / OP〔選擇權觀察〕 / MG〔融資融券觀察〕 / EV〔事件情緒〕**
+— **全部工程化、可治理、可回測、可審計、可直接存 GitHub**）
 
-* **FL 資金流/籌碼策略全集**（外資/投信/自營/集中度/主力代理/真假拉抬）
-* **WY 威科夫策略全集**（Phase/Events/SOS/SOW/UTAD/吸籌派發工程化）
-* **CL 纏論策略全集（含鮑迪克纏論工程化輸出）**（筆/段/中樞/背馳/力度/陷阱風險）
-* **FU 期貨影響股票策略全集（觀察用）**（你之前的 A~F 類完整納入策略登錄）
-* **OP 選擇權壓力策略全集（觀察用）**（Call/Put OI牆、最大痛點、結算鎖價、Gamma風險）
-* **MG 融資融券策略全集（觀察用）**（追繳風險、擠壓風險、泡沫風險）
-* **EV 事件/新聞/情緒策略全集**（事件分級、衝擊、回補、延遲、真假消息風險）
+---
 
-你只要回：**下一批**
+## 0. 本批文件定位與品質鎖定
+
+**定位**：承接 05 第一批（120 條），本批**完整列出剩餘 7 大家族**的策略，**逐條列名、不用省略符號、不用「……」**。
+**鎖定原則**：
+
+* 期貨 / 選擇權 / 融資融券 **只作觀察、濾網、權重**（不直接下單）
+* 威科夫與纏論（含鮑迪克）**工程化**：可算、可審、可被 Regime/治理引用
+* 每條策略都標示：**輸出型態、允許 Regime、預設治理等級**
+
+---
+
+## 1. FL 資金流 / 籌碼策略（S-FL-001 ～ S-FL-024）【觀察/濾網/權重】
+
+121. **S-FL-001_外資連續淨買**｜Foreign Net Buy Streak（外資連買）｜WEIGHT｜Regime: R1｜Gov: L1
+122. **S-FL-002_外資連續淨賣**｜Foreign Net Sell Streak（外資連賣）｜WEIGHT｜Regime: R2｜Gov: L1
+123. **S-FL-003_投信加碼確認**｜Investment Trust Accumulation（投信加碼）｜FILTER｜Regime: R1/R3｜Gov: L2
+124. **S-FL-004_投信出貨警示**｜Investment Trust Distribution Alert（投信出貨）｜OBSERVE｜Regime: 全｜Gov: L0
+125. **S-FL-005_自營商避險升高**｜Dealer Hedge Rising（自營避險升高）｜FILTER｜Regime: R6/S6｜Gov: L1
+126. **S-FL-006_主力集中度上升**｜Concentration Rising（集中度上升）｜WEIGHT｜Regime: R1/R3｜Gov: L1
+127. **S-FL-007_主力集中度過高風險**｜Over-Concentration Risk（過度集中）｜FILTER｜Regime: 全｜Gov: L1
+128. **S-FL-008_量價資金背離**｜Flow-Price Divergence（量價背離）｜OBSERVE｜Regime: 全｜Gov: L0
+129. **S-FL-009_資金輪入族群**｜Capital Rotating In（資金輪入）｜WEIGHT｜Regime: R1/S7｜Gov: L1
+130. **S-FL-010_資金輪出族群**｜Capital Rotating Out（資金輪出）｜WEIGHT｜Regime: R2/S7｜Gov: L1
+131. **S-FL-011_大單比例上升**｜Large Order Ratio Up（大單比例）｜FILTER｜Regime: R1/R3｜Gov: L2
+132. **S-FL-012_小單主導警示**｜Small Order Dominance Alert（小單主導）｜OBSERVE｜Regime: 全｜Gov: L0
+133. **S-FL-013_連續換手擴大**｜Turnover Expansion（換手擴大）｜OBSERVE｜Regime: R1/R4｜Gov: L0
+134. **S-FL-014_換手衰竭警示**｜Turnover Exhaustion（換手衰竭）｜OBSERVE｜Regime: 全｜Gov: L0
+135. **S-FL-015_籌碼穩定度分數**｜Position Stability Score（穩定度）｜WEIGHT｜Regime: 全｜Gov: L1
+136. **S-FL-016_籌碼快速移轉**｜Rapid Position Shift（快速移轉）｜FILTER｜Regime: R4/R6｜Gov: L1
+137. **S-FL-017_高檔出貨型態**｜Distribution Pattern High Zone（高檔出貨）｜FILTER｜Regime: R1/R4｜Gov: L1
+138. **S-FL-018_低檔吸籌型態**｜Accumulation Pattern Low Zone（低檔吸籌）｜FILTER｜Regime: R3｜Gov: L2
+139. **S-FL-019_資金流與廣度一致**｜Flow With Breadth（流與廣度一致）｜FILTER｜Regime: R1/R2｜Gov: L2
+140. **S-FL-020_資金流與廣度背離**｜Flow Breadth Divergence（流與廣度背離）｜OBSERVE｜Regime: 全｜Gov: L0
+141. **S-FL-021_外資避險盤警示**｜Foreign Hedging Alert（外資避險）｜FILTER｜Regime: S6｜Gov: L1
+142. **S-FL-022_資金回流確認**｜Capital Return Confirm（資金回流）｜FILTER｜Regime: R1｜Gov: L2
+143. **S-FL-023_資金流風險旗標輸出**｜Export Flow Risk Flags（輸出旗標）｜WEIGHT｜Regime: 全｜Gov: L1
+144. **S-FL-024_資金流冷卻期**｜Flow Cooldown（流冷卻）｜FILTER｜Regime: 全｜Gov: L1
+
+---
+
+## 2. WY 威科夫結構策略（S-WY-001 ～ S-WY-024）
+
+145. **S-WY-001_吸籌階段判定**｜Accumulation Phase Detect（吸籌）｜OBSERVE｜Regime: R3｜Gov: L0
+146. **S-WY-002_派發階段判定**｜Distribution Phase Detect（派發）｜OBSERVE｜Regime: R1/R4｜Gov: L0
+147. **S-WY-003_SC賣壓高潮**｜Selling Climax（賣壓高潮）｜OBSERVE｜Regime: R5｜Gov: L0
+148. **S-WY-004_AR自動反彈**｜Automatic Rally（自動反彈）｜OBSERVE｜Regime: R5/R3｜Gov: L0
+149. **S-WY-005_ST二次測試**｜Secondary Test（二測）｜FILTER｜Regime: R3｜Gov: L2
+150. **S-WY-006_SOS強勢訊號**｜Sign of Strength（強勢）｜SIGNAL｜Regime: R1｜Gov: L2
+151. **S-WY-007_SOW弱勢訊號**｜Sign of Weakness（弱勢）｜SIGNAL｜Regime: R2｜Gov: L2
+152. **S-WY-008_UT上衝失敗**｜Upthrust（上衝失敗）｜FILTER｜Regime: R4｜Gov: L1
+153. **S-WY-009_UTAD派發後上衝**｜UT After Distribution（派發後上衝）｜FILTER｜Regime: R4｜Gov: L1
+154. **S-WY-010_供需轉換確認**｜Supply-Demand Shift（供需轉換）｜FILTER｜Regime: R1/R2｜Gov: L2
+155. **S-WY-011_回測成功率分數**｜Retest Success Score（回測率）｜WEIGHT｜Regime: R1/R3｜Gov: L1
+156. **S-WY-012_結構完整度分數**｜Structure Integrity Score（完整度）｜WEIGHT｜Regime: 全｜Gov: L1
+157. **S-WY-013_吸籌假象警示**｜False Accumulation Alert（假吸籌）｜FILTER｜Regime: R3｜Gov: L1
+158. **S-WY-014_派發隱蔽警示**｜Stealth Distribution Alert（隱蔽派發）｜FILTER｜Regime: R1/R4｜Gov: L1
+159. **S-WY-015_威科夫與族群同向**｜Wyckoff With Sector（與族群同向）｜FILTER｜Regime: R1/R3｜Gov: L2
+160. **S-WY-016_威科夫與族群背離**｜Wyckoff Sector Divergence（族群背離）｜OBSERVE｜Regime: 全｜Gov: L0
+161. **S-WY-017_吸籌完成轉趨勢**｜Accumulation To Trend（吸籌轉趨勢）｜SIGNAL｜Regime: R1｜Gov: L2
+162. **S-WY-018_派發完成轉空頭**｜Distribution To Bear（派發轉空）｜SIGNAL｜Regime: R2｜Gov: L2
+163. **S-WY-019_威科夫事件冷卻**｜Wyckoff Event Cooldown（事件冷卻）｜FILTER｜Regime: 全｜Gov: L1
+164. **S-WY-020_威科夫結構否決權**｜Wyckoff Structure Veto（結構否決）｜FILTER｜Regime: 全｜Gov: L1
+165. **S-WY-021_吸籌區風險下限**｜Accumulation Risk Floor（風險下限）｜FILTER｜Regime: R3｜Gov: L1
+166. **S-WY-022_派發區風險上限**｜Distribution Risk Cap（風險上限）｜FILTER｜Regime: R4｜Gov: L1
+167. **S-WY-023_威科夫結構輸出權重**｜Export Wyckoff Weights（輸出權重）｜WEIGHT｜Regime: 全｜Gov: L1
+168. **S-WY-024_威科夫結構只觀察**｜Wyckoff Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 3. CL 纏論策略（含鮑迪克纏論工程化）（S-CL-001 ～ S-CL-030）
+
+169. **S-CL-001_筆結構完成**｜Bi Structure Complete（筆完成）｜OBSERVE｜Regime: 全｜Gov: L0
+170. **S-CL-002_線段完成**｜Segment Complete（線段完成）｜OBSERVE｜Regime: 全｜Gov: L0
+171. **S-CL-003_中樞形成**｜Central Zone Formed（中樞）｜OBSERVE｜Regime: 全｜Gov: L0
+172. **S-CL-004_中樞擴張**｜Central Zone Expansion（中樞擴張）｜OBSERVE｜Regime: 全｜Gov: L0
+173. **S-CL-005_中樞離開**｜Central Zone Exit（離開中樞）｜SIGNAL｜Regime: R1/R2｜Gov: L2
+174. **S-CL-006_一類買點**｜Type-1 Buy（第一類買點）｜SIGNAL｜Regime: R1｜Gov: L2
+175. **S-CL-007_二類買點**｜Type-2 Buy（第二類買點）｜SIGNAL｜Regime: R1｜Gov: L2
+176. **S-CL-008_三類買點**｜Type-3 Buy（第三類買點）｜SIGNAL｜Regime: R1｜Gov: L2
+177. **S-CL-009_一類賣點**｜Type-1 Sell（第一類賣點）｜SIGNAL｜Regime: R2｜Gov: L2
+178. **S-CL-010_二類賣點**｜Type-2 Sell（第二類賣點）｜SIGNAL｜Regime: R2｜Gov: L2
+179. **S-CL-011_三類賣點**｜Type-3 Sell（第三類賣點）｜SIGNAL｜Regime: R2｜Gov: L2
+180. **S-CL-012_背馳判定**｜Divergence Detect（背馳）｜FILTER｜Regime: 全｜Gov: L1
+181. **S-CL-013_背馳強度分數**｜Divergence Strength Score（強度）｜WEIGHT｜Regime: 全｜Gov: L1
+182. **S-CL-014_力度分數（鮑迪克）**｜Power Score (Bodick)（力度）｜WEIGHT｜Regime: 全｜Gov: L1
+183. **S-CL-015_延續概率（鮑迪克）**｜Continuation Probability（延續率）｜WEIGHT｜Regime: R1/R2｜Gov: L1
+184. **S-CL-016_結構品質分數（鮑迪克）**｜Structure Quality Score（品質）｜WEIGHT｜Regime: 全｜Gov: L1
+185. **S-CL-017_陷阱風險（鮑迪克）**｜Trap Risk Detect（誘多誘空）｜FILTER｜Regime: S9｜Gov: L1
+186. **S-CL-018_級別共振**｜Multi-Level Resonance（級別共振）｜FILTER｜Regime: R1/R2｜Gov: L2
+187. **S-CL-019_級別背離**｜Multi-Level Divergence（級別背離）｜OBSERVE｜Regime: 全｜Gov: L0
+188. **S-CL-020_結構破壞警示**｜Structure Break Alert（結構破壞）｜FILTER｜Regime: 全｜Gov: L1
+189. **S-CL-021_纏論只觀察模式**｜Chan Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+190. **S-CL-022_纏論與族群一致**｜Chan With Sector（與族群）｜FILTER｜Regime: R1/R3｜Gov: L2
+191. **S-CL-023_纏論與族群背離**｜Chan Sector Divergence（族群背離）｜OBSERVE｜Regime: 全｜Gov: L0
+192. **S-CL-024_纏論結構否決權**｜Chan Structure Veto（結構否決）｜FILTER｜Regime: 全｜Gov: L1
+193. **S-CL-025_鮑迪克優先權**｜Bodick Priority（鮑迪克優先）｜WEIGHT｜Regime: 全｜Gov: L1
+194. **S-CL-026_傳統纏論旁證**｜Classic Chan Secondary（旁證）｜WEIGHT｜Regime: 全｜Gov: L1
+195. **S-CL-027_纏論冷卻期**｜Chan Cooldown（冷卻）｜FILTER｜Regime: 全｜Gov: L1
+196. **S-CL-028_纏論風險輸出**｜Export Chan Risk Flags（輸出風險）｜WEIGHT｜Regime: 全｜Gov: L1
+197. **S-CL-029_纏論結構完成確認**｜Chan Completion Confirm（完成確認）｜FILTER｜Regime: 全｜Gov: L2
+198. **S-CL-030_纏論觀察摘要**｜Chan Observation Summary（觀察摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 4. FU 期貨影響股票策略（觀察用）（S-FU-001 ～ S-FU-024）
+
+199. **S-FU-001_台指期突破定調**｜TX Breakout Regime（期貨突破）｜FILTER｜Regime: R1/R2｜Gov: L2
+200. **S-FU-002_台指期跌破定調**｜TX Breakdown Regime（期貨跌破）｜FILTER｜Regime: R1/R2｜Gov: L2
+201. **S-FU-003_期現價差擴大**｜Basis Expansion（價差擴大）｜FILTER｜Regime: 全｜Gov: L1
+202. **S-FU-004_期現價差回歸**｜Basis Mean Reversion（價差回歸）｜OBSERVE｜Regime: 全｜Gov: L0
+203. **S-FU-005_OI上升趨勢**｜Open Interest Rising（OI上升）｜OBSERVE｜Regime: 全｜Gov: L0
+204. **S-FU-006_OI急降警示**｜OI Drop Alert（OI急降）｜OBSERVE｜Regime: 全｜Gov: L0
+205. **S-FU-007_期貨領先創高**｜Futures Lead High（期貨領先高）｜FILTER｜Regime: R1｜Gov: L2
+206. **S-FU-008_期貨領先破底**｜Futures Lead Low（期貨領先低）｜FILTER｜Regime: R2｜Gov: L2
+207. **S-FU-009_避險盤升高**｜Hedging Rising（避險升高）｜FILTER｜Regime: S6｜Gov: L1
+208. **S-FU-010_拉指數假多**｜Index Lift Fake Rally（拉指數假多）｜FILTER｜Regime: S9｜Gov: L1
+209. **S-FU-011_權值期貨牽動**｜Weighted Futures Impact（權值牽動）｜WEIGHT｜Regime: 全｜Gov: L1
+210. **S-FU-012_族群期貨偏置**｜Sector Futures Bias（族群偏置）｜WEIGHT｜Regime: 全｜Gov: L1
+211. **S-FU-013_期貨高波鎖倉**｜Futures High Vol Lock（高波鎖）｜FILTER｜Regime: R4｜Gov: L1
+212. **S-FU-014_期貨反轉預警**｜Futures Reversal Alert（反轉）｜OBSERVE｜Regime: 全｜Gov: L0
+213. **S-FU-015_夜盤風險警示**｜Night Session Risk（夜盤）｜OBSERVE｜Regime: 全｜Gov: L0
+214. **S-FU-016_結算前風險升高**｜Pre-Settlement Risk（結算前）｜FILTER｜Regime: S8｜Gov: L1
+215. **S-FU-017_結算後釋壓**｜Post-Settlement Relief（結算後）｜OBSERVE｜Regime: 全｜Gov: L0
+216. **S-FU-018_期貨動能背離**｜Futures Momentum Divergence（動能背離）｜OBSERVE｜Regime: 全｜Gov: L0
+217. **S-FU-019_期貨趨勢一致確認**｜Futures Trend Confirm（趨勢一致）｜FILTER｜Regime: R1/R2｜Gov: L2
+218. **S-FU-020_期貨趨勢失效警示**｜Futures Trend Fail（趨勢失效）｜OBSERVE｜Regime: 全｜Gov: L0
+219. **S-FU-021_外資期貨避險**｜Foreign Futures Hedge（外資避險）｜FILTER｜Regime: S6｜Gov: L1
+220. **S-FU-022_期貨風險旗標輸出**｜Export Futures Risk Flags（輸出風險）｜WEIGHT｜Regime: 全｜Gov: L1
+221. **S-FU-023_期貨只觀察模式**｜Futures Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+222. **S-FU-024_期貨觀察摘要**｜Futures Observation Summary（觀察摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 5. OP 選擇權壓力策略（觀察用）（S-OP-001 ～ S-OP-016）
+
+223. **S-OP-001_最大痛點**｜Max Pain Level（最大痛點）｜FILTER｜Regime: S8｜Gov: L1
+224. **S-OP-002_Call牆壓力**｜Call OI Wall（Call牆）｜FILTER｜Regime: 全｜Gov: L1
+225. **S-OP-003_Put牆支撐**｜Put OI Floor（Put牆）｜FILTER｜Regime: 全｜Gov: L1
+226. **S-OP-004_Gamma擠壓風險**｜Gamma Squeeze Risk（Gamma）｜FILTER｜Regime: R4/S8｜Gov: L1
+227. **S-OP-005_OI位移警示**｜OI Shift Alert（OI位移）｜OBSERVE｜Regime: 全｜Gov: L0
+228. **S-OP-006_結算鎖價**｜Option Pinning（鎖價）｜FILTER｜Regime: S8｜Gov: L1
+229. **S-OP-007_波動爆發預警**｜IV Explosion Alert（波動爆發）｜OBSERVE｜Regime: R4/R6｜Gov: L0
+230. **S-OP-008_隱含波動回落**｜IV Crush（IV回落）｜OBSERVE｜Regime: 全｜Gov: L0
+231. **S-OP-009_Call/Put比率異常**｜PCR Anomaly（PCR異常）｜FILTER｜Regime: 全｜Gov: L1
+232. **S-OP-010_選擇權壓力輸出權重**｜Export Option Weights（輸出權重）｜WEIGHT｜Regime: 全｜Gov: L1
+233. **S-OP-011_選擇權事件期降權**｜Option Event De-weight（事件降權）｜WEIGHT｜Regime: R6｜Gov: L1
+234. **S-OP-012_選擇權假突破風險**｜Option Fake Break Risk（假突破）｜FILTER｜Regime: S9｜Gov: L1
+235. **S-OP-013_週選擇權影響**｜Weekly Options Impact（週選）｜OBSERVE｜Regime: S8｜Gov: L0
+236. **S-OP-014_選擇權流動性風險**｜Option Liquidity Risk（流動性）｜FILTER｜Regime: R8｜Gov: L1
+237. **S-OP-015_選擇權只觀察**｜Options Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+238. **S-OP-016_選擇權觀察摘要**｜Options Observation Summary（摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 6. MG 融資融券策略（觀察用）（S-MG-001 ～ S-MG-016）
+
+239. **S-MG-001_融資快速增加**｜Margin Buying Surge（融資增加）｜FILTER｜Regime: R1｜Gov: L1
+240. **S-MG-002_融資過熱風險**｜Margin Overheat Risk（融資過熱）｜FILTER｜Regime: R1/R4｜Gov: L1
+241. **S-MG-003_融資下降釋壓**｜Margin Decrease Relief（融資下降）｜OBSERVE｜Regime: 全｜Gov: L0
+242. **S-MG-004_融券快速增加**｜Short Interest Surge（融券增加）｜OBSERVE｜Regime: 全｜Gov: L0
+243. **S-MG-005_軋空風險**｜Short Squeeze Risk（軋空）｜FILTER｜Regime: R1/R4｜Gov: L1
+244. **S-MG-006_券資比異常**｜Margin-Short Ratio Anomaly（券資比）｜FILTER｜Regime: 全｜Gov: L1
+245. **S-MG-007_追繳風險升高**｜Margin Call Risk（追繳）｜FILTER｜Regime: R4/R5｜Gov: L1
+246. **S-MG-008_融資集中度過高**｜Margin Concentration Risk（集中）｜FILTER｜Regime: 全｜Gov: L1
+247. **S-MG-009_融資退潮警示**｜Margin Exodus Alert（退潮）｜OBSERVE｜Regime: 全｜Gov: L0
+248. **S-MG-010_融券回補潮**｜Short Covering Wave（回補）｜OBSERVE｜Regime: 全｜Gov: L0
+249. **S-MG-011_信用風險輸出**｜Export Credit Risk Flags（輸出）｜WEIGHT｜Regime: 全｜Gov: L1
+250. **S-MG-012_信用壓力期降權**｜Credit Stress De-weight（降權）｜WEIGHT｜Regime: R4/R5｜Gov: L1
+251. **S-MG-013_信用風險只觀察**｜Credit Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+252. **S-MG-014_信用風險冷卻**｜Credit Cooldown（冷卻）｜FILTER｜Regime: 全｜Gov: L1
+253. **S-MG-015_融資與波動共振**｜Margin-Vol Resonance（共振）｜OBSERVE｜Regime: 全｜Gov: L0
+254. **S-MG-016_融資觀察摘要**｜Margin Observation Summary（摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 7. EV 事件 / 新聞 / 情緒策略（S-EV-001 ～ S-EV-016）
+
+255. **S-EV-001_重大政策事件**｜Policy Shock（政策）｜FILTER｜Regime: R6｜Gov: L1
+256. **S-EV-002_財報事件期**｜Earnings Event Window（財報）｜FILTER｜Regime: R6｜Gov: L1
+257. **S-EV-003_突發新聞衝擊**｜Breaking News Shock（突發）｜FILTER｜Regime: R6｜Gov: L1
+258. **S-EV-004_地緣政治風險**｜Geopolitical Risk（地緣）｜FILTER｜Regime: R6/S10｜Gov: L1
+259. **S-EV-005_事件後回補反應**｜Post-Event Reaction（事後反應）｜OBSERVE｜Regime: 全｜Gov: L0
+260. **S-EV-006_事件影響延遲**｜Event Lag Effect（延遲）｜OBSERVE｜Regime: 全｜Gov: L0
+261. **S-EV-007_真假消息風險**｜False News Risk（假消息）｜FILTER｜Regime: 全｜Gov: L1
+262. **S-EV-008_市場情緒過熱**｜Sentiment Overheat（過熱）｜FILTER｜Regime: R1/R4｜Gov: L1
+263. **S-EV-009_市場情緒恐慌**｜Sentiment Panic（恐慌）｜FILTER｜Regime: R5｜Gov: L1
+264. **S-EV-010_情緒反轉警示**｜Sentiment Reversal Alert（反轉）｜OBSERVE｜Regime: 全｜Gov: L0
+265. **S-EV-011_情緒與價格背離**｜Sentiment-Price Divergence（背離）｜OBSERVE｜Regime: 全｜Gov: L0
+266. **S-EV-012_情緒與廣度一致**｜Sentiment With Breadth（一致）｜FILTER｜Regime: R1/R2｜Gov: L2
+267. **S-EV-013_事件期風險預算縮小**｜Event Risk Budget Shrink（縮風險）｜WEIGHT｜Regime: R6｜Gov: L1
+268. **S-EV-014_事件期只觀察**｜Event Observe Only（只觀察）｜FILTER｜Regime: R6｜Gov: L1
+269. **S-EV-015_事件風險輸出**｜Export Event Risk Flags（輸出）｜WEIGHT｜Regime: 全｜Gov: L1
+270. **S-EV-016_事件觀察摘要**｜Event Observation Summary（摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 8. **本批交付完成聲明（嚴格）**
+
+* 本批 **逐條完整列出**：**FL(24) + WY(24) + CL(30) + FU(24) + OP(16) + MG(16) + EV(16)**
+* 本批新增 **150 條**
+* **與第一批 120 條合計：270 條策略**
+* 全部策略均已：
+
+  * 明確輸出型態（OBSERVE/FILTER/WEIGHT/SIGNAL/INTENT）
+  * 綁定允許 Regime（TAITS_04）
+  * 綁定預設治理等級（L0~L4）
+  * 明確定位（不直接下單）
+
+---
+
+# 📘 TAITS_05_策略全集與使用定位.md（第三批｜**補齊至 300+／400+ 的關鍵批次**）
+
+（**GMMA 顧比多重均線 × CBL 顧比倒數線 × 多時間框架 × 成本/滑價/風險工程化**
+— **完整列出、不省略、不用……、可直接存 GitHub**）
+
+---
+
+## 0. 文件定位與品質鎖定（本批的意義）
+
+你前面反覆強調的三件事，本批是**專門為它們而寫**：
+
+1. **不是只有權值股、不是只有 ETF 的那一套**
+   → GMMA / CBL / 多時間框架，正是用來 **抓中小型股的「啟動—擴散—加速—衰竭」全過程**
+2. **不是靠猜題材，而是資金真的有沒有進來**
+   → GMMA 群組擴散、CBL 倒數、時間框架共振 = 資金行為工程化
+3. **策略≠下單，勝率來自結構 + 節奏**
+   → 本批全部策略都只輸出 **FILTER / WEIGHT / SIGNAL / OBSERVE**
+
+> 到此為止，TAITS 的策略層已不再只是「指標集合」，
+> 而是 **完整的資金行為 → 結構 → 節奏 → 風險工程系統**。
+
+---
+
+## 1. GMMA（顧比多重均線）策略全集
+
+**家族碼：GM**｜定位：趨勢結構 × 中小型股啟動辨識
+
+### GMMA 在 TAITS 的工程定位
+
+* **短期群（ST Group）**：交易者行為
+* **長期群（LT Group）**：資金/主力行為
+* 關鍵不是「金叉死叉」，而是：
+
+  * 群內是否收斂/擴散
+  * 短群是否有效脫離長群
+  * 回檔時群組是否保持結構
+
+---
+
+### 1.1 GMMA 結構與狀態（S-GM-001 ～ S-GM-016）
+
+271. **S-GM-001_GMMA短期群收斂**｜ST Compression（短群收斂）｜OBSERVE｜Regime: R3｜Gov: L0
+272. **S-GM-002_GMMA短期群擴散**｜ST Expansion（短群擴散）｜SIGNAL｜Regime: R1｜Gov: L2
+273. **S-GM-003_GMMA長期群收斂**｜LT Compression（長群收斂）｜OBSERVE｜Regime: R3｜Gov: L0
+274. **S-GM-004_GMMA長期群擴散**｜LT Expansion（長群擴散）｜FILTER｜Regime: R1/R2｜Gov: L2
+275. **S-GM-005_短群脫離長群**｜ST Breaks Away From LT（短群脫離）｜SIGNAL｜Regime: R1｜Gov: L2
+276. **S-GM-006_短群壓回長群**｜ST Pulls Back To LT（短群壓回）｜FILTER｜Regime: R1｜Gov: L2
+277. **S-GM-007_短群穿越長群失敗**｜Failed GMMA Cross（失敗穿越）｜FILTER｜Regime: R3/R4｜Gov: L1
+278. **S-GM-008_群組糾結盤整**｜GMMA Entanglement（群組糾結）｜FILTER｜Regime: R3｜Gov: L1
+279. **S-GM-009_GMMA多頭排列**｜GMMA Bull Structure（多頭排列）｜SIGNAL｜Regime: R1｜Gov: L2
+280. **S-GM-010_GMMA空頭排列**｜GMMA Bear Structure（空頭排列）｜SIGNAL｜Regime: R2｜Gov: L2
+281. **S-GM-011_GMMA假突破風險**｜GMMA Fake Break Risk（假突破）｜FILTER｜Regime: S9｜Gov: L1
+282. **S-GM-012_GMMA趨勢延續確認**｜GMMA Trend Continuation（延續）｜WEIGHT｜Regime: R1｜Gov: L1
+283. **S-GM-013_GMMA趨勢衰竭警示**｜GMMA Exhaustion Alert（衰竭）｜OBSERVE｜Regime: R1/R4｜Gov: L0
+284. **S-GM-014_GMMA回檔結構不破**｜GMMA Healthy Pullback（健康回檔）｜SIGNAL｜Regime: R1｜Gov: L2
+285. **S-GM-015_GMMA回檔結構破壞**｜GMMA Structure Break（結構破）｜FILTER｜Regime: R1｜Gov: L1
+286. **S-GM-016_GMMA結構權重輸出**｜Export GMMA Weights（輸出權重）｜WEIGHT｜Regime: 全｜Gov: L1
+
+---
+
+## 2. CBL（顧比倒數線）策略全集
+
+**家族碼：CB**｜定位：趨勢節奏 × 高勝率進出節點
+
+### CBL 在 TAITS 的工程定位
+
+* CBL 用來回答一個問題：
+  **「趨勢是不是還有『時間』？」**
+* 對中小型股特別重要：
+  → 不是看價格，而是看 **趨勢生命週期**
+
+---
+
+### 2.1 CBL 倒數與節奏（S-CB-001 ～ S-CB-016）
+
+287. **S-CB-001_CBL倒數啟動**｜CBL Countdown Start（倒數啟動）｜OBSERVE｜Regime: R1｜Gov: L0
+288. **S-CB-002_CBL倒數進行中**｜CBL Countdown Active（倒數中）｜WEIGHT｜Regime: R1｜Gov: L1
+289. **S-CB-003_CBL倒數完成**｜CBL Countdown Complete（倒數完成）｜FILTER｜Regime: R1/R4｜Gov: L1
+290. **S-CB-004_CBL延續確認**｜CBL Continuation Confirm（延續）｜SIGNAL｜Regime: R1｜Gov: L2
+291. **S-CB-005_CBL延續失敗**｜CBL Continuation Fail（失敗）｜FILTER｜Regime: R1/R4｜Gov: L1
+292. **S-CB-006_CBL加速段落**｜CBL Acceleration Phase（加速）｜WEIGHT｜Regime: R1/R4｜Gov: L1
+293. **S-CB-007_CBL末端衰竭**｜CBL Terminal Exhaustion（末端）｜OBSERVE｜Regime: R1/R4｜Gov: L0
+294. **S-CB-008_CBL反轉風險**｜CBL Reversal Risk（反轉）｜FILTER｜Regime: R4｜Gov: L1
+295. **S-CB-009_CBL與GMMA共振**｜CBL + GMMA Resonance（共振）｜SIGNAL｜Regime: R1｜Gov: L2
+296. **S-CB-010_CBL與GMMA背離**｜CBL GMMA Divergence（背離）｜OBSERVE｜Regime: 全｜Gov: L0
+297. **S-CB-011_CBL中小型股優先**｜CBL Small-Cap Priority（中小型）｜WEIGHT｜Regime: R1｜Gov: L1
+298. **S-CB-012_CBL高波動降權**｜CBL High-Vol Deweight（高波降權）｜WEIGHT｜Regime: R4｜Gov: L1
+299. **S-CB-013_CBL事件期凍結**｜CBL Freeze On Event（事件凍結）｜FILTER｜Regime: R6｜Gov: L1
+300. **S-CB-014_CBL結構輸出治理**｜Export CBL Flags（輸出治理）｜WEIGHT｜Regime: 全｜Gov: L1
+301. **S-CB-015_CBL只觀察模式**｜CBL Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+302. **S-CB-016_CBL節奏摘要**｜CBL Rhythm Summary（摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 3. 多時間框架組合策略（Cross-Timeframe）
+
+**家族碼：MT**｜定位：避免「看對一個週期、做錯整段行情」
+
+---
+
+### 3.1 多週期共振與背離（S-MT-001 ～ S-MT-016）
+
+303. **S-MT-001_日週同向共振**｜Daily-Weekly Resonance（日週共振）｜FILTER｜Regime: R1/R2｜Gov: L2
+304. **S-MT-002_週月同向共振**｜Weekly-Monthly Resonance（週月共振）｜FILTER｜Regime: R1/R2｜Gov: L2
+305. **S-MT-003_短週期逆長週期**｜Short Against Long TF（逆長週期）｜FILTER｜Regime: 全｜Gov: L1
+306. **S-MT-004_長週期趨勢壓制**｜Long TF Suppression（長壓制）｜FILTER｜Regime: 全｜Gov: L1
+307. **S-MT-005_短期啟動長期未動**｜ST Lead LT Lag（短領先）｜OBSERVE｜Regime: R3｜Gov: L0
+308. **S-MT-006_長期趨勢短期確認**｜LT Trend ST Confirm（短確認）｜SIGNAL｜Regime: R1/R2｜Gov: L2
+309. **S-MT-007_多週期假突破**｜Multi-TF Fake Break（假突破）｜FILTER｜Regime: S9｜Gov: L1
+310. **S-MT-008_多週期背離警示**｜Multi-TF Divergence（背離）｜OBSERVE｜Regime: 全｜Gov: L0
+311. **S-MT-009_中小型股多週期同步**｜Small-Cap TF Sync（中小同步）｜WEIGHT｜Regime: R1｜Gov: L1
+312. **S-MT-010_多週期風險聚集**｜Multi-TF Risk Cluster（風險聚集）｜FILTER｜Regime: R4/R5｜Gov: L1
+313. **S-MT-011_週期錯配警示**｜TF Mismatch Alert（錯配）｜OBSERVE｜Regime: 全｜Gov: L0
+314. **S-MT-012_多週期輸出治理**｜Export MT Flags（輸出）｜WEIGHT｜Regime: 全｜Gov: L1
+315. **S-MT-013_多週期只觀察**｜MT Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+316. **S-MT-014_多週期節奏摘要**｜MT Rhythm Summary（摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+317. **S-MT-015_多週期進場冷卻**｜MT Entry Cooldown（冷卻）｜FILTER｜Regime: 全｜Gov: L1
+318. **S-MT-016_多週期出場優先**｜MT Exit Priority（出場）｜WEIGHT｜Regime: 全｜Gov: L1
+
+---
+
+## 4. 成本 / 滑價 / 風險工程策略（S-CO-001 ～ S-CO-016）
+
+319. **S-CO-001_預期成本過高禁入**｜Cost Too High Block（成本過高）｜FILTER｜Regime: 全｜Gov: L1
+320. **S-CO-002_滑價代理升高**｜Slippage Proxy Rising（滑價升高）｜FILTER｜Regime: R8｜Gov: L1
+321. **S-CO-003_成交額不足禁入**｜Insufficient Turnover（成交不足）｜FILTER｜Regime: 全｜Gov: L1
+322. **S-CO-004_中小型股最小成交門檻**｜Small-Cap Liquidity Gate（中小門檻）｜FILTER｜Regime: 全｜Gov: L1
+323. **S-CO-005_分批必要性判定**｜Slicing Required（需分批）｜FILTER｜Regime: R4/R8｜Gov: L1
+324. **S-CO-006_分批間隔調整**｜Slicing Interval Adjust（間隔）｜WEIGHT｜Regime: 全｜Gov: L1
+325. **S-CO-007_高波動成本放大**｜Vol Cost Amplification（成本放大）｜WEIGHT｜Regime: R4｜Gov: L1
+326. **S-CO-008_事件期成本上調**｜Event Cost Uplift（事件成本）｜WEIGHT｜Regime: R6｜Gov: L1
+327. **S-CO-009_夜盤流動性風險**｜Overnight Liquidity Risk（夜盤）｜FILTER｜Regime: 全｜Gov: L1
+328. **S-CO-010_成本與勝率比失衡**｜Cost vs Edge Imbalance（失衡）｜FILTER｜Regime: 全｜Gov: L1
+329. **S-CO-011_成本風險輸出**｜Export Cost Risk Flags（輸出）｜WEIGHT｜Regime: 全｜Gov: L1
+330. **S-CO-012_成本只觀察**｜Cost Observe Only（只觀察）｜OBSERVE｜Regime: 全｜Gov: L0
+331. **S-CO-013_成本冷卻期**｜Cost Cooldown（冷卻）｜FILTER｜Regime: 全｜Gov: L1
+332. **S-CO-014_成本與GMMA共振**｜Cost + GMMA Resonance（共振）｜WEIGHT｜Regime: R1｜Gov: L1
+333. **S-CO-015_成本與CBL衝突**｜Cost vs CBL Conflict（衝突）｜FILTER｜Regime: 全｜Gov: L1
+334. **S-CO-016_成本摘要輸出**｜Cost Summary Export（摘要）｜OBSERVE｜Regime: 全｜Gov: L0
+
+---
+
+## 5. **策略全集總結（至此鎖定）**
+
+* 第一批：120
+* 第二批：150
+* 第三批：64
+
+👉 **總計：334 條策略**
+
+全部符合你最初的要求：
+
+* ✔ 不只權值股，**中小型股啟動完整覆蓋**
+* ✔ 市場輪動 / 題材 / 資金動機 / 結構勝率 全在
+* ✔ 期貨 / 選擇權 / 融資融券 **只作觀察，不亂下單**
+* ✔ 威科夫 + 鮑迪克纏論 **工程化、可治理**
+* ✔ 新對話只看檔案就能完全理解 TAITS
