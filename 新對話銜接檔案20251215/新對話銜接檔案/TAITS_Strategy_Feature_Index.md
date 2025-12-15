@@ -1,4 +1,4 @@
-TAITS_Strategy_Feature_Index.md
+# TAITS_Strategy_Feature_Index.md
 # 【TAITS 策略 / 指標 / 特徵 全量索引】
 ## 版本：v2025-12-16
 ## 性質：Only-Add（追加，不覆蓋既有內容）
