@@ -1,0 +1,260 @@
+## **`TAITS_Full_System_Architecture.md`**
+
+**定位**：
+
+* TAITS **完整體總架構 + 全流程 + 模組責任邊界**
+* 不分 S1/S2/S3（那只是開發節奏），**此文件即最終完整體**
+* 保證與你已存的：
+
+  * `TAITS_DataSources_Universe.md`
+  * `TAITS_Strategy_Universe_Complete.md`
+    **100% 對齊**
+
+**存放路徑（GitHub）**：
+
+```
+docs/architecture/TAITS_Full_System_Architecture.md
+```
+
+---
+
+## 📄 請完整貼上以下內容（完整版 / 不縮水）
+
+> 這份檔案較長，但它就是你之後「不再迷路」的保證。
+
+```markdown
+# TAITS_Full_System_Architecture.md
+# TAITS — 全系統完整體架構白皮書（Master Architecture）
+
+版本：Master / Full  
+適用範圍：Research / Backtest / Paper / Live  
+對應文件：
+- TAITS_DataSources_Universe.md
+- TAITS_Strategy_Universe_Complete.md
+
+---
+
+## 0. 文件定位（必讀）
+
+本文件定義 **TAITS（Taiwan Alpha Intelligence Trading System）** 的：
+- 完整系統模組
+- 全資料與決策流程
+- 各層責任邊界
+- 合規與風控位置
+
+任何新對話、新工程師、新 AI，**只要先讀本文件，即可無縫接續**。
+
+---
+
+## 1. 系統總覽（One-Page View）
+
+TAITS 是一個 **多資料源 × 多策略 × 多 Agent × 多模型** 的混合式量化系統。
+
+```
+
+資料層
+↓
+指標層
+↓
+策略層
+↓
+Agents 智能分析層
+↓
+市場狀態（Regime）
+↓
+Fusion Engine（最終決策）
+↓
+Risk / 合規
+↓
+Execution / Backtest
+↓
+Report / Audit
+
+```
+
+---
+
+## 2. 專案目錄總結構（完整）
+
+```
+
+TAITS/
+│
+├── main.py
+│
+├── config/
+│   └── settings.py
+│
+├── data_sources/
+│   ├── yahoo_loader.py
+│   ├── twse_loader.py
+│   ├── finmind_loader.py
+│   ├── macro_loader.py
+│   ├── derivatives_loader.py
+│   ├── fallback_manager.py
+│   └── cache_manager.py
+│
+├── indicators/
+│   ├── trend/
+│   ├── momentum/
+│   ├── volatility/
+│   ├── volume/
+│   ├── chip/
+│   ├── fundamental/
+│   ├── derivatives/
+│   ├── ai/
+│   └── chanlun/
+│       ├── fractal_detector.py
+│       ├── bi_detector.py
+│       ├── segment_detector.py
+│       ├── zhongshu_detector.py
+│       └── divergence_detector.py
+│
+├── strategies/
+│   ├── ta/
+│   ├── chip/
+│   ├── fundamental/
+│   ├── sector/
+│   ├── behavior/
+│   ├── news/
+│   ├── derivatives/
+│   ├── ai/
+│   └── chanlun/
+│
+├── agents/
+│   ├── technical_agent.py
+│   ├── chip_agent.py
+│   ├── fundamental_agent.py
+│   ├── news_agent.py
+│   ├── sentiment_agent.py
+│   ├── macro_agent.py
+│   ├── derivatives_agent.py
+│   ├── event_agent.py
+│   ├── ai_model_agent.py
+│   ├── risk_agent.py
+│   └── summary_agent.py
+│
+├── engine/
+│   ├── orchestrator.py
+│   ├── indicator_manager.py
+│   ├── strategy_manager.py
+│   ├── agent_manager.py
+│   ├── market_regime_engine.py
+│   ├── fusion_engine.py
+│   ├── risk_engine.py
+│   └── data_validator.py
+│
+├── backtest/
+│   ├── backtester.py
+│   ├── fee_model.py
+│   ├── slippage_model.py
+│   └── report.py
+│
+├── trading/
+│   ├── broker_fubon.py
+│   ├── order_manager.py
+│   └── risk_manager.py
+│
+├── monitoring/
+│   ├── logger.py
+│   ├── metrics.py
+│   └── alerts.py
+│
+├── output/
+│   ├── reports_txt/
+│   ├── reports_json/
+│   └── reports_md/
+│
+└── docs/
+├── architecture/
+├── datasources/
+└── strategies/
+
+```
+
+---
+
+## 3. 核心流程（End-to-End）
+
+### Step 1：資料取得
+- FallbackManager 啟動
+- 官方資料優先（TWSE / TAIFEX）
+- Cache 防止重抓
+
+### Step 2：資料驗證
+- 缺值 / 異常 / 停牌
+- 合法交易時間
+
+### Step 3：指標計算
+- 技術 / 籌碼 / 基本面
+- 纏論解析（分型 → 筆 → 中樞）
+
+### Step 4：策略執行
+- 355+ 策略並行
+- 只產生 Signal / Confidence / Reason
+
+### Step 5：Agents 分析
+- 各自獨立判斷
+- 不互相影響
+
+### Step 6：市場狀態（Regime）
+- Trend / Range / Risk-Off
+- 期貨 + 選擇權輔助
+
+### Step 7：Fusion Engine
+- 權重融合
+- Regime-aware
+- Event / Risk Override
+
+### Step 8：風控與合規
+- TWSE 漲跌幅
+- Tick Size
+- 交易時間
+- 資金比例
+
+### Step 9：執行或回測
+- Backtest / Paper / Live
+
+### Step 10：報告輸出
+- TXT / JSON / Markdown
+- Audit-friendly
+
+---
+
+## 4. 設計原則（不可破壞）
+
+- 策略 ≠ 下單
+- Agent ≠ 策略
+- AI ≠ 唯一真理
+- Regime 具有最高優先級
+- 風控可否決一切
+
+---
+
+## 5. 為什麼這是完整體
+
+- 已包含所有資料源
+- 已包含所有策略（含纏論）
+- 已包含所有 Agent
+- 已包含期貨 / 選擇權
+- 已包含 AI 與非 AI 路徑
+- 可直接進入長期開發
+
+---
+
+（EOF）
+```
+
+---
+
+## 新增：Decision Core 與策略融合層（不推翻既有架構）
+
+### 模組新增（屬於邏輯層，非資料層）
+- **DecisionCore**：Explore/Exploit 雙軌 + 三層否決（Regime/Risk/Manipulation）
+- **TimeAdvantageEngine**：事件窗口、盤中快速切換、快速退出優先級
+- **ManipulationRiskEngine**：主力操盤風險等級（M0~M4）與否決規則
+- **MultiStrategyPortfolioManager**：多策略線權重治理與再平衡（零股友善）
+
+### 對現有模組的關係
+- 既有 StrategyManager/AgentManager 不變
+- 新增模組屬於「策略融合與治理」層，用來統一所有策略的輸出格式與否決優先級

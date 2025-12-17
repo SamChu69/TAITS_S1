@@ -1,217 +1,186 @@
-# TAITS — Taiwan Alpha Intelligence Trading System  
-**台灣阿爾法智能交易系統**
+# 🧠 TAITS – Taiwan Alpha Intelligence Trading System
+
+> **一套以「不被市場收割」為第一優先的台灣市場量化決策系統**
+
+TAITS（Taiwan Alpha Intelligence Trading System）  
+不是一個單一策略、不是 AI 炒股工具、也不是追逐短期績效的系統。
+
+TAITS 的核心目標只有一個：
+
+> **在對的時間，投資到對的標的，  
+> 並且避免在錯的情境下承擔不對稱風險。**
 
 ---
 
-## 🚨 重要聲明（請先閱讀）
+## 🎯 TAITS 解決什麼問題？
 
-TAITS 是一套 **交易決策作業系統（Trading Decision Operating System）**，  
-而不是單一策略、單一 AI、或一鍵自動交易工具。
+大多數投資系統失敗，不是因為策略不夠聰明，而是因為：
 
-TAITS **不保證獲利**，  
-但嚴格設計為：
+- 在 **錯的市場狀態** 使用對的策略  
+- 在 **被操盤的盤勢** 相信漂亮的訊號  
+- 在 **情緒與消息最吵的時候** 才開始行動  
+- 依賴 **單一敘事 / 單一策略 / 單一 AI 判斷**
 
-> **可解釋、可審計、可長期演進、不輕易出事的交易系統母體**
+TAITS 的設計出發點是：
 
----
-
-## 🧠 TAITS 是什麼？
-
-TAITS（Taiwan Alpha Intelligence Trading System）是一套：
-
-- 專為 **台灣市場（TWSE / TPEX / TAIFEX）** 設計
-- 結合：
-  - **355+ 策略宇宙**
-  - **完整纏論（ChanLun，作為結構因子）**
-  - **多智能體（Agents）**
-  - **Market Regime（市場狀態）**
-  - **AI 輔助（非唯一真理）**
-  - **風控與合規（最高否決權）**
-- 支援：
-  - Research / Backtest / Paper / Live
-- 強調：
-  - **策略 ≠ 下單**
-  - **AI ≠ 唯一真理**
-  - **Risk / Compliance 可否決一切**
+> **市場會反覆設局，  
+> 系統必須先學會「拒絕」，才有資格談「賺錢」。**
 
 ---
 
-## ❌ TAITS 不是什麼？
+## 🧩 TAITS 的核心設計哲學
 
-TAITS 不是：
+### ✔ Regime 高於策略  
+### ✔ Risk / Compliance 可否決一切  
+### ✔ 策略 ≠ 下單  
+### ✔ AI ≠ 唯一真理  
+### ✔ NO_TRADE 是一種成功決策  
 
-- ❌ 單一技術指標
-- ❌ 單模型 AI 猜盤
-- ❌ 一鍵跟單工具
-- ❌ 快速致富系統
-- ❌ 教學 Demo 專案
+TAITS 是一套 **以「治理與風險結構」為核心的決策系統**。
 
 ---
 
-## 🧱 系統總體架構（概覽）
+## 🏗️ TAITS 架構總覽（一頁版）
 
-TAITS 採用 **9 層分層架構**：
+TAITS 採用清楚的層級架構，確保任何擴充都不會破壞整體穩定性：
 
 ```
 
-Layer 0 ─ Infrastructure / Runtime
-Layer 1 ─ Data Layer
-Layer 2 ─ Feature / Indicator / Factor
-Layer 3 ─ Strategy Layer（355+）
-Layer 4 ─ Agents（多智能體）
-Layer 5 ─ Regime + Fusion
-Layer 6 ─ Portfolio + Risk
-Layer 7 ─ Execution
-Layer 8 ─ UI / Reporting / Audit
+L0 憲章與最高原則
+L1 架構骨幹（模組 / 流程）
+L2 資料與校驗
+L3 證據解讀（行為 / 基本 / 情緒）
+L4 Regime & 風險門控（最高否決）
+L5 策略治理（285+ 策略被「管起來」）
+L6 決策核心（唯一輸出）
+L7 執行與資金
+L8 每日 / 每週操作流程
 
 ```
 
-👉 詳細內容請閱讀：  
-`docs/architecture/TAITS_MASTER_ARCHITECTURE.md`
+📌 **完整層級定義請見：**  
+`docs/architecture/TAITS_Architecture_Layer_Map.md`
 
 ---
 
-## 📁 專案結構導覽（只列治理層）
+## 🔁 Dual-Track × Time Advantage（時間優勢）
 
+TAITS 同時運作兩條軌道：
+
+### 🧭 Explore Track（研究與時間領先）
+- 消息 / 基本面 / 結構行為
+- 提早理解「什麼值得等」
+- ❌ 不下單
+
+### 🎯 Exploit Track（風險確認與執行）
+- Regime / 操盤風險 / 技術共識
+- 只在市場同意時出手
+- ✔ Trade / Wait / No Trade
+
+📌 **TAITS 的快，在研究；  
+TAITS 的慢，在下注。**
+
+---
+
+## 🧠 多決策線（Multi-Lane）架構
+
+TAITS 不用固定比例分錢，而是同時維持多條「決策風格線」：
+
+- **Market Structure / Wyckoff 行為線**（保命）
+- **Value / Fundamental 價值線**（時間換報酬）
+- **Execution / Short-Term 執行線**（節奏獲利）
+
+是否啟用，由 **市場狀態與風險** 決定，而非事前分配比例。
+
+📌 詳見：  
+`docs/architecture/TAITS_Multi-Lane_Decision_Architecture.md`
+
+---
+
+## ⚠ 主力操盤與被割風險防護
+
+TAITS 明確將「主力操盤風險」視為 **市場狀態**，而不是策略機會。
+
+- MR-0 ～ MR-3 操盤風險分級
+- 高風險狀態 → 強制 NO_TRADE
+- 威科夫行為僅用於 **標記與否決**
+
+📌 相關文件：
+- `TAITS_Market_Manipulation_Risk_Framework.md`
+- `TAITS_Market_Manipulation_Risk_Checklist.md`
+
+---
+
+## 🗺️ 為什麼 TAITS 需要這麼多策略？
+
+因為每一個模組，都是在防一種「被割的情境」。
+
+TAITS 明確定義 8 大被割風險，並用不同模組交叉覆蓋：
+
+- 假突破 / 派發盤
+- 結算操盤
+- 消息配合出貨
+- 單一敘事陷阱
+- 情緒過熱最後一棒
+
+📌 全景圖請見：  
+`docs/architecture/TAITS_Risk_Blind_Spot_Coverage_Map.md`
+
+---
+
+## 📋 每日 / 每週實際使用方式
+
+TAITS 不要求頻繁交易，只要求固定節奏檢查：
+
+- **每日：**
+  - 市場狀態
+  - 操盤風險
+  - Decision Lane 是否允許
+- **每週：**
+  - Regime 是否轉換
+  - 是否出現結構性風險
+  - 是否該關掉某些線
+
+📌 實務流程：  
+`docs/operations/TAITS_Daily_Weekly_Risk_Check_Procedure.md`
+
+---
+
+## 📚 建議閱讀路線（重要）
+
+**新 AI / 新接手者請依序閱讀：**
+
+1. `TAITS_MASTER_ARCHITECTURE.md`
+2. `TAITS_Architecture_Layer_Map.md`
+3. `TAITS_Dual_Track_Decision_Architecture.md`
+4. `TAITS_Single_Page_Playbook.md`
+5. `TAITS_Market_Manipulation_Risk_Framework.md`
+6. `TAITS_Risk_Blind_Spot_Coverage_Map.md`
+
+👉 再依角色深入其他文件。
+
+---
+
+## 🧭 TAITS 一句話總結
+
+> **TAITS 的目標不是預測市場，  
+> 而是建立一套足夠完整的決策系統，  
+> 讓自己不成為任何人的出貨對象。  
+> 只要不被割，時間自然會站在你這邊。**
+
+---
+
+## 📌 專案狀態
+
+- 市場：台灣股票（TWSE / TPEX）
+- 投資方式：零股優先、保守擴充
+- 期貨 / 選擇權：已納入 Regime / Risk，未強制下單
+- 狀態：**架構穩定，可長期演進**
+
+---
+
+> 若你正在尋找的是「短期暴利系統」，  
+> TAITS 不適合你。  
+> 若你在找的是「不被市場玩壞的投資系統」，  
+> 歡迎深入閱讀。
 ```
-
-docs/
-├── TAITS_Document_Index.md        ← 專案文件總入口（必讀）
-│
-├── architecture/                  ← 系統母體與流程
-├── datasources/                   ← 資料 Single Source of Truth
-├── strategies/                    ← 策略 Single Source of Truth
-├── risk/                          ← 風控與合規（最高否決權）
-├── ui/                            ← 操作與防呆規範
-└── onboarding/                    ← 新手 / 新 AI 接手規範
-
-```
-
----
-
-## 📚 建議閱讀順序（非常重要）
-
-**第一次接觸 TAITS，請照此順序：**
-
-1. `docs/TAITS_Document_Index.md`
-2. `docs/architecture/TAITS_MASTER_ARCHITECTURE.md`
-3. `docs/architecture/TAITS_Full_System_Architecture.md`
-4. `docs/datasources/TAITS_DataSources_Universe.md`
-5. `docs/strategies/TAITS_Strategy_Universe_Complete.md`
-6. `docs/risk/TAITS_Risk_and_Compliance.md`
-7. `docs/ui/TAITS_UI_Spec.md`
-
----
-
-## 🛡 核心設計原則（不可違反）
-
-- 策略 ≠ 下單
-- Agent ≠ 策略
-- AI ≠ 唯一真理
-- Regime 高於單一訊號
-- **Risk / Compliance 可否決一切**
-- 官方資料優先，多層 fallback
-- 架構必須可長期演進
-
----
-
-## 🔧 開發與使用狀態
-
-目前專案狀態：
-
-- ✅ 文件治理層（docs）已完整
-- ⏳ 程式骨幹（S1）準備中
-- ⏳ 回測 / 模擬 / 實盤逐步落地
-
----
-
-## 👥 適合誰使用？
-
-TAITS 適合：
-
-- 想建立 **可長期演進交易系統** 的個人或團隊
-- 重視 **風控、合規、可解釋性** 的交易者
-- 想把 AI 放在「輔助角色」而非黑盒決策的人
-
-不適合：
-
-- 想快速跟單、無風控交易
-- 不願閱讀文件、只想要答案
-
----
-
-## ⚠️ 免責聲明
-
-本專案僅為研究與系統設計用途，  
-任何交易行為所產生之盈虧，  
-需由使用者自行承擔。
-
----
-
-## 🧭 一句話總結
-
-> **TAITS 不是為了「賺快錢」，  
-> 而是為了「在市場裡活得久」。**
-
----
-
-## 📊 Project Status
-
-![Status](https://img.shields.io/badge/status-active_development-blue)
-![Docs](https://img.shields.io/badge/docs-100%25_complete-brightgreen)
-![Architecture](https://img.shields.io/badge/architecture-master_ready-green)
-![Risk](https://img.shields.io/badge/risk-hard_gate-red)
-![Market](https://img.shields.io/badge/market-TWSE%20%7C%20TAIFEX-orange)
-![AI](https://img.shields.io/badge/AI-assisted_not_autonomous-yellow)
-
----
-
-## 🗺 Roadmap
-
-### ✅ Phase 0 — Governance & Architecture（已完成）
-- [x] 文件治理層（docs）完整建立
-- [x] Master Architecture / Flow / Risk / UI
-- [x] Data & Strategy Single Source of Truth
-- [x] README 專案門面完成
-
----
-
-### 🚧 Phase 1 — Core System Skeleton（S1，進行中）
-- [ ] main.py（系統啟動入口）
-- [ ] Orchestrator（流程調度核心）
-- [ ] Mode 切換（Research / Backtest / Paper）
-- [ ] 基礎 Logger / Audit Trail
-- [ ] Dummy Pipeline（不下單，只走流程）
-
----
-
-### ⏳ Phase 2 — Strategy & Agent Wiring
-- [ ] 策略註冊機制（355+ 掛接）
-- [ ] Agent Manager
-- [ ] Regime Engine v1
-- [ ] Fusion Engine v1
-
----
-
-### ⏳ Phase 3 — Risk / Backtest / Paper Trading
-- [ ] Risk Engine（Hard Gate）
-- [ ] 事件驅動回測
-- [ ] Paper Trading 撮合
-- [ ] 績效 / 回撤報告
-
----
-
-### 🔒 Phase 4 — Live Execution（嚴格受限）
-- [ ] 券商 API（富邦）
-- [ ] Live 模式雙重確認
-- [ ] 即時熔斷
-- [ ] 審計回放
-
----
-
-> **Roadmap 原則**  
-> - 文件先於程式  
-> - Risk 先於 Execution  
-> - 可跑 ≠ 可下單  
-
----
