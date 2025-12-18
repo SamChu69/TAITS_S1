@@ -302,7 +302,86 @@ AI 在輸出前必須自檢以下事項（不可省略心智流程）：
 
 ---
 
-## 15. 最終聲明（AI 必須內化）
+## 15. doc_key 文件治理識別制度（新增・最高約束）
+
+⚠️ 本章節為 治理補充條款，
+不影響、不取代、不修改本文件既有任何條文，
+僅作為 AI 行為、文件識別、治理一致性 之強制附加規則。
+
+15.1 doc_key 定義（強制）
+
+自本文件版本起，TAITS 所有治理級文件必須具備 doc_key，作為唯一治理識別碼。
+
+格式規範：
+
+doc_key：<SYSTEM>_<DOMAIN>_<SCOPE>
+
+
+範例（示意）：
+
+AI_GOVERNANCE_CANON
+
+TAITS_MASTER_ARCH
+
+TAITS_STRATEGY_UNIVERSE_STOCK
+
+TAITS_RISK_COMPLIANCE_CANON
+
+15.2 doc_key 的治理地位
+
+doc_key 在 TAITS 中具備以下優先順序（由高到低）：
+
+doc_key
+
+文件狀態（ACTIVE / INACTIVE）
+
+治理等級（A+ / A / A- …）
+
+檔名
+
+資料夾路徑
+
+對話上下文
+
+📌 任何衝突，以 doc_key 所屬 ACTIVE 文件為最終依據。
+
+15.3 ACTIVE / INACTIVE 狀態規範
+
+同一 doc_key：
+
+同一時間只允許一份 ACTIVE
+
+更新規則：
+
+必須產生新檔案
+
+不得覆蓋舊檔
+
+舊檔標示為 INACTIVE / ARCHIVED
+
+15.4 Only-Add 原則（與 doc_key 綁定）
+
+凡標示為 ACTIVE 的 doc_key 文件：
+
+❌ 禁止刪減
+
+❌ 禁止重寫造成內容遺失
+
+❌ 禁止摘要取代全文
+
+✅ 僅允許：
+
+新章節
+
+新子節
+
+新附錄
+
+新案例
+
+---
+
+## 16. 最終聲明（AI 必須內化）
 
 > TAITS 不是聊天專案，不是一次性策略，而是必須可長期演進、可審計、可回放的交易系統。  
 > AI 的價值在於幫人類維持秩序，而不是創造混亂。
@@ -310,3 +389,4 @@ AI 在輸出前必須自檢以下事項（不可省略心智流程）：
 ---
 
 （End of AI_GOVERNANCE_FULLSPEC）
+
