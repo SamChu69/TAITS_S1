@@ -1,496 +1,430 @@
-📘 TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__251219
-PART 1｜文件定位 × 最高否決權的法律地位 × 治理原則
-
-# TAITS_風險與合規最高否決權（RISK_COMPLIANCE）
-## Risk & Compliance Supreme Veto Specification
-
----
-
-## 風控前言（Why Risk Must Say No）
-
-在多數交易系統中，  
-風控被視為「限制獲利的阻礙」。
-
-在 TAITS 中，  
-**風控是系統得以長期存活的唯一理由**。
-
-本文件的存在目的，不是幫助系統「找到可以交易的理由」，  
-而是確保系統**永遠具備拒絕錯誤交易的能力**。
+# TAITS_風險控管與合規最高否決權（RISK_COMPLIANCE）__251219
+doc_key：RISK_COMPLIANCE  
+治理等級：A（Risk & Compliance Supreme Veto｜高於策略、高於績效、高於主觀）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（最高否決權文件，Only-Add 演進）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX（Index 裁決）  
+平行參照：FULL_ARCH / ARCH_FLOW / EXECUTION_CONTROL / UI_SPEC / VERSION_AUDIT / DATA_SOURCES / TWSE_RULES  
+變更原則：Only-Add（只可新增，不可刪減/覆寫/弱化否決權/偷換定義）  
+核心裁決：Binary Compliance（PASS / VETO）＋ Worst-case First（最壞情境優先）
 
 ---
 
-## 第 1 章｜RISK_COMPLIANCE 的治理位階與不可動搖性
+## 0. 文件定位（Risk & Compliance Charter｜最高否決權憲章）
 
-### 1.1 文件位階
-- 治理等級：**A（最高否決權）**
-- 上位文件：
-  - `MASTER_ARCH`
-  - `MASTER_CANON`
-- 平行約束：
-  - `ARCH_FLOW`
-- 下位文件：
-  - `EXECUTION_CONTROL`
-  - `UI_SPEC`
+本文件是 TAITS 的「風險控管與合規最高否決權」母文件，負責：
 
-📌 **任何文件不得削弱本文件所定義之否決權。**
+- 定義 **風險/合規的最高否決權（Supreme Veto）**
+- 定義 **風險門檻、合規門檻、觸發條件、理由碼**
+- 定義 **Risk/Compliance 在 Canonical Flow 的 Gate 機制與 UI 呈現義務**
+- 定義 **審計證據（Evidence）與可回放（Replay）必備輸出**
 
----
-
-### 1.2 最高否決權（Supreme Veto）的定義
-最高否決權，指：
-
-> **在任何時間點、任何流程層級，  
-> 只要風險或合規條件不成立，  
-> 即可立即中止流程，且不接受協商、辯護或事後合理化。**
+本文件不負責（避免越權）：
+- 不定義 Canonical 流程順序（由 MASTER_CANON / ARCH_FLOW 裁決）
+- 不定義架構模組地圖（由 FULL_ARCH 裁決）
+- 不定義下單細節與券商通道細則（由 EXECUTION_CONTROL 裁決）
+- 不產生策略建議、不產生交易方向、不承諾績效
 
 ---
 
-### 1.3 否決權的不可被覆寫性
-- 否決一旦成立：
-  - ❌ Strategy 不得反駁
-  - ❌ AI 不得合理化
-  - ❌ Execution 不得繞行
-- 唯一可終止否決的方式：
-  - **條件本身消失**
-  - **重新走完整 Canonical Flow**
+## 1. 最高鐵律（Hard Gates｜一票否決）
 
-📌 **不存在「強行放行」這種合法行為。**
+### 1.1 Risk / Compliance 的法定位階（不可動搖）
+- **Risk / Compliance 可否決一切**：策略、Agent、流程、人類裁決之「執行意圖」皆可被否決。
+- 任何 VETO：
+  - **立即中止流程**（依 ARCH_FLOW STOP / RETURN 規則）
+  - **不得以績效、直覺、緊急性辯護**
+  - **不得由人類覆寫**（Human Cannot Override Risk）
 
----
+### 1.2 Binary Compliance（非黑即白）
+- Gate 輸出僅允許：
+  - `PASS`
+  - `VETO`
+- 禁止：
+  - 模糊放行（Soft Pass）
+  - 條件通融（Conditional Pass）
+  - 以人工備註取代規則
 
-### 1.4 Risk 與 Compliance 的區分與合併
-在 TAITS 中：
-- **Risk（風險）**：
-  - 關注最壞情境
-  - 關注資金、生存、系統性風險
-- **Compliance（合規）**：
-  - 關注法規、交易所規則、制度邊界
+### 1.3 Worst-case First（最壞情境優先）
+- 所有風險評估必須以：
+  - 交易失敗、滑價擴大、流動性枯竭、撮合異常、制度變動、資料污染
+  作為基準情境。
+- 禁止以「過去沒發生」作為安全理由。
 
-二者在制度上：
-- **合併為同一否決層**
-- 任一成立 → 否決生效
+### 1.4 Evidence First（沒有證據不得放行）
+- 若 Evidence 不完整、不可追溯、不可回放：
+  - **視為 SYS 類否決（SYS-AUD / SYS-PROV）**
 
----
-
-## 第 2 章｜RISK_COMPLIANCE 的核心治理原則
-
-### 2.1 Worst-case First 原則
-RISK_COMPLIANCE **永遠以最壞情境為判斷基準**：
-
-- 不假設正常成交
-- 不假設流動性存在
-- 不假設系統穩定
-- 不假設人類理性
-
-📌 **只要最壞情境不可承受 → 必須否決。**
+### 1.5 Regime 高於策略
+- Regime 判定為不可交易（或 Regime 不明確且風險升級）：
+  - 可直接觸發 VETO（REG-VETO）
 
 ---
 
-### 2.2 Binary Judgment 原則
-RISK_COMPLIANCE 的輸出只有三種狀態：
+## 2. 官方制度與資料來源（Official Sources｜必須掛上來源入口）
 
-- **Pass**：可進入後續流程  
-- **Reject**：立即否決  
-- **Degrade**：降級（如 Observe-only）
+> 本節提供 TAITS 制度/規則/合規的「官方入口」。  
+> 實作時不得以非官方網站裁決制度；可用非官方作補充，但不得作最終裁決依據。
 
-📌 不存在「勉強可以」「小心一點」這種模糊狀態。
-
----
-
-### 2.3 獨立性原則
-RISK_COMPLIANCE：
-- 不參與策略設計
-- 不追求績效
-- 不評估勝率
-- 不受人類情緒影響
-
-📌 **風控必須能在所有人都想交易時，堅定地說不。**
+- TWSE（臺灣證券交易所）規章/法規查詢（Rules & Regulations Directory）  
+  https://twse-regulation.twse.com.tw/
+- TWSE 交易制度/交易機制（Trading Mechanism）  
+  https://www.twse.com.tw/en/products/system/trading.html
+- TAIFEX（臺灣期貨交易所）規章與規則（Rules & Regulations）  
+  https://www.taifex.com.tw/enl/eng6/ruleRegulation
+- FSC（金管會）法規資訊（Laws and Regulations）  
+  https://www.fsc.gov.tw/en/home.jsp?id=3&parentpath=0
+- SFB（證期局）法規與規章入口（Securities and Futures Bureau）  
+  https://www.sfb.gov.tw/en/
+- TDCC（集保結算所）清算交割/結算相關資訊（Clearing & Settlement）  
+  https://www.tdcc.com.tw/portal/en/equity/settlement
 
 ---
 
-### 2.4 即時性原則
-- 否決可以發生在：
-  - 流程開始前
-  - 流程進行中
-  - Execution 執行中
-- 不需等待：
-  - 批次檢查
-  - 人類確認
+## 3. RISK_COMPLIANCE 在 Canonical Flow 的定位（L7 Gate）
 
-📌 **風控的遲疑，本身就是風險。**
+### 3.1 所屬層級
+- **L7：Risk & Compliance Layer（最高否決 Gate）**
 
----
+### 3.2 上游輸入（Inputs）
+- Evidence Bundle（L5）
+- Regime State（L6）
+- Strategy Proposal（L8：僅作「可用性/風險映射」，不得作下單）
+- Account / Portfolio State（資金、倉位、未成交委託、曝險）
+- Market Microstructure State（流動性、委買委賣深度、波動）
+- Rulebook Snapshot（TWSE/TAIFEX/券商限制/交易時段/停牌等）
 
-## 第 3 章｜RISK_COMPLIANCE 與 Canonical Flow 的關係
-
-### 3.1 在 Canonical Flow 中的位置
-- 主體層級：**L7**
-- 影響範圍：
-  - L8 Strategy
-  - L9 Governance Gate
-  - L10 Human Decision
-  - L11 Execution
-
-📌 **L7 的否決，會向前與向後同時生效。**
+### 3.3 Gate 輸出（Outputs）
+- `risk_gate_decision`：PASS / VETO
+- `veto_reason_codes[]`：若 VETO 必填（不可空）
+- `risk_pass_token`：僅 PASS 生成，供 EXECUTION_CONTROL 驗證（不可偽造）
+- `risk_evidence_snapshot_ref`：證據快照引用（可回放）
 
 ---
 
-### 3.2 與 Regime（L6）的關係
-- Regime：
-  - 判定「不適用」
-- Risk / Compliance：
-  - 判定「不可承受」
+## 4. 風險/合規裁決層級與優先序（Risk Hierarchy）
 
-📌 Regime 是篩選器，  
-📌 Risk 是保險絲。
+優先序（高 → 低）：
+1) **Compliance（合規）**：制度/法規/交易規則硬限制（不可通融）
+2) **System Safety（系統安全）**：審計、版本、金鑰、資料污染（不可通融）
+3) **Market Integrity（市場完整性）**：停牌、撮合異常、極端波動、流動性枯竭
+4) **Portfolio Safety（組合安全）**：曝險、集中度、槓桿、回撤、資金使用
+5) **Execution Safety（執行安全）**：滑價、委託量、通道健康、Kill Switch 可用性
+6) **Strategy Compatibility（策略相容）**：Regime/策略條件不符（可 VETO 或 RETURN）
 
----
-
-### 3.3 與 Governance Gate（L9）的關係
-- Governance Gate：
-  - 檢查流程完整性
-- Risk / Compliance：
-  - 判定是否允許任何後續行為
-
-📌 **流程完整但風險不可承受 → 仍然否決。**
+任何高層級否決：
+- 低層級不得覆寫或辯護。
 
 ---
 
-### 3.4 與 Human Decision（L10）的關係
-- 人類：
-  - 不得覆寫否決
-- 人類可以：
-  - 在 Pass 或 Degrade 情況下選擇不交易
+## 5. 風險分類體系（Risk Taxonomy｜最大完備）
 
-📌 **人類主權高於策略，但不高於風險。**
+### 5.1 Compliance Risk（合規風險）
+- 交易時段/撮合規則不符
+- 停牌、處置、注意股、分盤交易、漲跌幅限制相關規則觸發
+- 標的交易限制（如不可融券、不可當沖、或交易所/券商限制）
+- 異常報價、超出可接受價格範圍（含錯價風險）
+- 法規/規則版本未同步或不可追溯
 
----
+### 5.2 System Risk（系統風險）
+- 審計缺失（缺 correlation_id / 缺 hash / 缺 replay bundle）
+- 版本不一致（doc_key/政策/模型版本對不上）
+- 資料來源不可追溯（provenance 斷裂）
+- 時間不同步（時鐘偏移、交易日判定錯誤）
+- 金鑰/憑證風險（敏感資訊外洩、權限不當）
+- 風控服務不可用或結果不可驗證
 
-（RISK_COMPLIANCE · PART 1 結束）
+### 5.3 Market Risk（市場風險）
+- 極端波動（Volatility spike）
+- 跳空、閃崩、連續跌停/漲停造成無法退出
+- 系統性風險事件（重大事件日、政策公布、颱風停市/臨時休市等）
+- 市場結構異常（流動性突然消失、價量失真）
 
-PART 2｜否決來源全集 × Reason Codes × Degrade / Observe-only
+### 5.4 Liquidity & Slippage Risk（流動性/滑價風險）
+- 委買委賣深度不足
+- 量能不足（成交量過低、點差過大）
+- 預估滑價超過容忍（含分段成交造成成本放大）
 
-## 第 4 章｜法定否決來源全集（Risk & Compliance Sources）
+### 5.5 Portfolio / Exposure Risk（曝險/組合風險）
+- 單一標的曝險過高（集中度）
+- 產業/因子/相關性過高（隱性集中）
+- 槓桿/保證金風險（期貨/選擇權時尤其嚴格）
+- 回撤/連續虧損超標
 
-本章列舉 **RISK_COMPLIANCE 可合法行使最高否決權的完整來源**。  
-凡未列於本章者，**不得作為否決理由**。
+### 5.6 Execution / Operational Risk（執行/營運風險）
+- 通道異常（券商 API 不穩、回報延遲、重送風險）
+- 風控/執行狀態不一致（已下單但系統以為未下）
+- Kill Switch 不可用或未驗證
+- 倉位回報延遲造成重複下單
 
----
-
-### 4.1 法規與交易所規則風險（Regulatory Risk）
-
-否決條件包括但不限於：
-- 交易所交易規則限制（如漲跌幅、撮合限制）
-- 商品或交易單位不符當前法規
-- 委託方式違反券商或交易所規定
-- 異常交易行為可能觸發監管關注
-
-📌 **任何法規不確定性 → 預設否決。**
-
----
-
-### 4.2 市場結構與流動性風險（Market & Liquidity Risk）
-
-否決條件包括：
-- 流動性顯著不足（如：零股深度不足）
-- 價差異常擴大
-- 成交斷層或撮合不連續
-- 交易時段結構性異常（開盤/收盤極端）
-
-📌 **假設無法成交，是風控的基本假設。**
-
----
-
-### 4.3 資料完整性與品質風險（Data Integrity Risk）
-
-否決條件包括：
-- Raw Data 缺失或延遲
-- Snapshot 不完整或不可回放
-- Evidence Completeness Score 低於門檻
-- 關鍵 Feature 缺失或方法論未定義
-
-📌 **資料不足 ≠ 保守交易，而是直接否決。**
+### 5.7 Strategy Risk（策略風險，僅作相容性與限制映射）
+- Regime 不匹配（策略在非適用市場狀態啟用）
+- 過擬合跡象（僅研究警示，不作績效論證）
+- 策略依賴資料不可用（特徵缺失/延遲）
 
 ---
 
-### 4.4 Regime 不穩定或不適用風險（Regime Risk）
+## 6. Gate 結構（Risk Gate Architecture）
 
-否決條件包括：
-- Regime 被標註為混合 / 不穩定
-- Evidence 衝突過高
-- Regime 與策略假設不相容
+### 6.1 Gate 分層（內部結構，仍對外輸出 PASS/VETO）
+- **C-Gate（Compliance Gate）**：合規硬否決
+- **S-Gate（System Safety Gate）**：審計/版本/資料追溯硬否決
+- **M-Gate（Market Integrity Gate）**：市場狀態與完整性否決
+- **P-Gate（Portfolio Gate）**：曝險/集中度/資金安全否決
+- **E-Gate（Execution Gate）**：通道/滑價/急停可用性否決
+- **X-Gate（Cross-Gate Consistency）**：跨 Gate 一致性檢查（防止矛盾）
 
-📌 **Regime 不確定時，風控必須收緊，而非放寬。**
-
----
-
-### 4.5 策略假設風險（Strategy Assumption Risk）
-
-否決條件包括：
-- 策略假設未清楚定義失效條件
-- 策略假設與 Evidence 相矛盾
-- 策略未列入白名單或狀態非 ENABLED
-
-📌 **無法明確說明「何時放棄」的策略，不得執行。**
+### 6.2 Gate 執行順序（高 → 低）
+C → S → M → P → E → X  
+任何 Gate VETO：立即停止後續 Gate 計算（節省資源，避免事後辯護）。
 
 ---
 
-### 4.6 資金與曝險風險（Capital & Exposure Risk）
+## 7. 否決條件全集（Veto Conditions｜不可弱化）
 
-否決條件包括：
-- 單一標的曝險過高
-- 相關性集中（隱性集中風險）
-- 預期最壞情境下不可承受損失
+> 規則設計原則：  
+> - 可新增條件，但不得移除既有條件  
+> - 任一條件命中即 VETO（除非明確標註為 RETURN 類型）  
+> - 所有條件必須對應 reason_code（不可空）
 
-📌 **風控看的是「活不活得下去」，不是「賺多少」。**
+### 7.1 合規硬否決（C-HARD VETO）
+- 非交易時段/不允許交易狀態（C-SESSION）
+- 標的不可交易（停牌/終止/暫停撮合等）（C-HALT）
+- 交易規則限制命中（漲跌幅/分盤/處置相關硬限制）（C-RULE）
+- 券商/通道限制命中（C-BROKER）
+- 法規/規則版本不可追溯或失效（C-VERSION）
+
+### 7.2 系統安全硬否決（S-HARD VETO）
+- 缺審計（correlation_id / hash / artifact 缺漏）（S-AUDIT）
+- 版本不一致（doc/policy/model mismatch）（S-VERSION）
+- 資料來源不可追溯（provenance 斷裂）（S-PROV）
+- 風控計算不可驗證（S-VERIFY）
+- 金鑰/權限風險（S-KEY）
+
+### 7.3 市場完整性硬否決（M-HARD VETO）
+- Regime 不可交易或不明確且風險升級（M-REGIME）
+- 極端波動狀態（M-VOL）
+- 流動性枯竭/點差異常（M-LIQ）
+- 市場異常事件旗標（M-EVENT）
+
+### 7.4 組合曝險硬否決（P-HARD VETO）
+- 單一標的曝險超標（P-CONC）
+- 產業/因子曝險超標（P-SECTOR / P-FACTOR）
+- 槓桿/保證金安全邊際不足（P-MARGIN）
+- 回撤或損失限制觸發（P-DD / P-LOSS）
+
+### 7.5 執行安全硬否決（E-HARD VETO）
+- Kill Switch 不可用或未通過自檢（E-KILL）
+- 通道健康檢查失敗（E-CHANNEL）
+- 預估滑價超標（E-SLIP）
+- 委託量/頻率限制命中（E-RATE）
+
+### 7.6 可退回型否決（RETURN｜不是放行）
+- Evidence 不足（RETURN-EVIDENCE → 回到 L4/L5）
+- 策略在當前 Regime 無適用（RETURN-STRATEGY → 回到 L6/L8）
+- 流動性不足但可等待（RETURN-LIQUIDITY → 回到 L3/L4）
 
 ---
 
-### 4.7 系統與操作風險（System & Operational Risk）
+## 8. 否決原因碼（Veto Reason Codes｜最大完備版）
 
-否決條件包括：
-- 系統狀態異常
-- API 回應不穩定
-- Log 或審計模組異常
-- Kill Switch 不可用
+> 格式：`[Domain]-[Category]-[Number]`  
+> Domain：CMP（合規）/ SYS（系統）/ MKT（市場）/ LIQ（流動性）/ PTF（組合）/ EXE（執行）/ GOV（治理一致性）/ REG（Regime）
 
-📌 **系統不穩定時，最安全的行為是「不動作」。**
+### 8.1 合規（CMP-*）
+- CMP-SESSION-01：非交易時段 / 不允許交易狀態
+- CMP-HALT-01：標的停牌/暫停撮合/不可交易
+- CMP-RULE-01：交易所規則限制觸發（含漲跌幅/分盤/處置）
+- CMP-BROKER-01：券商/通道限制觸發（含下單頻率/額度/權限）
+- CMP-VERSION-01：規則版本不可追溯/未同步（制度風險）
+
+### 8.2 系統（SYS-*）
+- SYS-AUDIT-01：缺 correlation_id / 審計物不完整
+- SYS-HASH-01：hash 驗證失敗（資料被改/不一致）
+- SYS-VERSION-01：文件/政策/模型版本不一致
+- SYS-PROV-01：資料來源不可追溯（provenance 斷裂）
+- SYS-TIME-01：時間不同步（時鐘偏移/交易日判定錯）
+- SYS-KEY-01：金鑰/敏感資訊風險
+- SYS-VERIFY-01：風控結果不可驗證（不可重算/不可回放）
+
+### 8.3 市場與流動性（MKT/LIQ-*）
+- MKT-REGIME-01：Regime 判定不可交易
+- MKT-REGIME-02：Regime 不明確且風險升級
+- MKT-VOL-01：極端波動（Vol spike）
+- MKT-EVENT-01：重大事件風險旗標（事件期禁入）
+- LIQ-DEPTH-01：委買委賣深度不足
+- LIQ-SPREAD-01：點差異常
+- LIQ-VOL-01：成交量不足（低量風險）
+
+### 8.4 組合（PTF-*）
+- PTF-CONC-01：單一標的集中度超標
+- PTF-SECTOR-01：產業集中度超標
+- PTF-FACTOR-01：因子曝險集中超標
+- PTF-MARGIN-01：保證金/槓桿安全邊際不足
+- PTF-DD-01：回撤門檻觸發
+- PTF-LOSS-01：損失門檻觸發
+- PTF-CORR-01：相關性集中（隱性集中）超標
+
+### 8.5 執行（EXE-*）
+- EXE-KILL-01：Kill Switch 不可用/未通過自檢
+- EXE-CHANNEL-01：通道健康檢查失敗（延遲/斷線/回報異常）
+- EXE-SLIP-01：預估滑價超標
+- EXE-RATE-01：下單頻率/速率限制觸發
+- EXE-DUP-01：疑似重複下單風險（狀態不一致）
+
+### 8.6 治理一致性（GOV-*）
+- GOV-FLOW-01：流程跳層或不完整（違反 ARCH_FLOW）
+- GOV-DOC-01：引用非 Index 文件（違反 DOCUMENT_INDEX）
+- GOV-SCOPE-01：Freeze 後越界變更（Only-Add 違規）
 
 ---
 
-## 第 5 章｜否決理由標準化（Reason Codes）
+## 9. 風控門檻（Thresholds）治理規則（最大完備）
 
-### 5.1 Reason Code 的存在目的
-Reason Code 用於：
-- 統一否決語言
-- 支援審計與回放
-- 避免模糊或情緒化判斷
+> 注意：門檻值屬「可配置政策」，不得硬寫死於程式碼。  
+> 本文件定義「門檻治理結構」與「必需存在的門檻種類」。  
+> 具體數值由 `Risk Policy Profile`（風控政策檔）管理，且必須版控與可回放（VERSION_AUDIT）。
 
-📌 **沒有 Reason Code 的否決，視為不合法。**
+### 9.1 必備門檻種類（Policy Must-Haves）
+- 波動門檻：`vol_limit`
+- 流動性門檻：`min_depth`, `max_spread`, `min_volume`
+- 滑價門檻：`max_slippage_bps`
+- 集中度門檻：`max_single_name_weight`, `max_sector_weight`
+- 槓桿/保證金門檻：`min_margin_ratio`
+- 回撤/損失門檻：`max_drawdown`, `max_daily_loss`, `max_weekly_loss`
+- 下單頻率/速率門檻：`max_orders_per_min`, `max_cancel_rate`
+- Regime 禁入門檻：`regime_blocklist`, `regime_confidence_min`
+- 事件禁入門檻：`event_blackout_window`
+- 系統健康門檻：`max_latency_ms`, `max_clock_skew_ms`, `audit_required=true`
+
+### 9.2 門檻變更（Only-Add + 可追溯）
+任何門檻變更必須：
+- 生成 `policy_version`（不可覆寫）
+- 記錄 `change_id / reason / approver / effective_time`
+- 保障舊回放可重算（Replay Compatible）
 
 ---
 
-### 5.2 Reason Code 類型（示例）
+## 10. Risk PASS Token（放行憑證）規範
 
-| 類型 | Code | 說明 |
+### 10.1 目的
+防止任何模組（含人類 UI）繞過風控直接進入執行層。
+
+### 10.2 Token 最小欄位
+- `token_id`
+- `correlation_id`
+- `policy_version`
+- `gate_decision=PASS`
+- `issued_at`
+- `expires_at`
+- `input_hash_ref`（Evidence/State 版本）
+- `signature/hash`（防偽）
+
+### 10.3 Token 驗證規則
+- EXECUTION_CONTROL 必須在下單前驗證：
+  - token 未過期
+  - correlation_id 一致
+  - policy_version 存在且可回放
+  - signature/hash 驗證成功
+- 驗證失敗：視為 **SYS-VERSION / SYS-VERIFY** 類 VETO（並觸發急停保護）
+
+---
+
+## 11. UI 呈現義務（UI Must-Show｜不可模糊）
+
+> UI 詳規在 UI_SPEC；本節定義 RISK 必須交付 UI 的「不可省略欄位」。
+
+UI 必須顯示：
+- PASS / VETO（不可用模糊詞）
+- Veto Reason Codes（可展開）
+- 對應 Evidence Snapshot（可點開）
+- policy_version（可追溯）
+- correlation_id（可稽核）
+- 若為 RETURN：必須顯示「退回原因」與「需補齊清單」
+
+禁止：
+- 用「建議」「可能」「注意」取代否決
+- 遮蔽否決原因碼
+- 以績效圖表弱化風險揭露（風險揭露優先於績效）
+
+---
+
+## 12. 審計與回放（Audit / Replay）— Risk 專屬輸出
+
+### 12.1 必備審計物（Artifacts）
+- `risk_gate_decision.json`（或等價結構化輸出）
+- `veto_reason_codes[]`
+- `policy_version`
+- `evidence_snapshot_ref`
+- `regime_state_ref`
+- `account_state_ref`
+- `token_ref`（PASS 時）
+
+### 12.2 「無審計 = 未放行」
+- PASS 若缺上述任一審計物：
+  - 視為 SYS-AUDIT-01 → VETO
+- Replay 必須可重建：
+  - 當下 Evidence/Regime/Policy/Account 的一致狀態
+
+---
+
+## 13. 不同運行模式的一致性（No Downgrade）
+
+| 模式 | Risk/Compliance 是否生效 | 說明 |
 |---|---|---|
-| 法規 | RC-REG-01 | 法規/交易所規則不確定 |
-| 流動性 | RC-LIQ-02 | 流動性不足 |
-| 資料 | RC-DATA-03 | 資料不完整或延遲 |
-| Regime | RC-REGM-04 | 市場狀態不穩定 |
-| 策略 | RC-STR-05 | 策略假設不成立 |
-| 曝險 | RC-EXP-06 | 曝險過高 |
-| 系統 | RC-SYS-07 | 系統或操作風險 |
+| Research | 必須生效 | 防研究捷徑污染制度 |
+| Backtest | 必須生效 | 回測要對齊實盤語義 |
+| Simulation | 必須生效 | 驗證流程完整性 |
+| Paper | 必須生效 | 與 Live 同構 |
+| Live | 必須生效 | 合規/追責必需 |
 
-📌 實作可擴充，但**不得改變語義**。
+禁止任何模式以「方便」降低風控級別。
 
 ---
 
-### 5.3 多重 Reason Code
-- 否決可同時附帶多個 Reason Code
-- 不得只選擇「較好看的理由」
+## 14. 禁止事項（Forbidden｜一票否決）
 
-📌 **否決理由的完整性，高於可接受性。**
-
----
-
-## 第 6 章｜Degrade 與 Observe-only 的合法使用
-
-### 6.1 何謂 Degrade（降級）
-Degrade 指：
-> **在不完全否決流程的前提下，  
-> 強制將系統行為降級至更保守狀態。**
+- 任何形式的「人類覆寫風控否決」
+- 以績效、勝率、回測曲線要求放行
+- 以主觀緊急性跳過 Gate
+- 以非 Index 文件或非官方來源裁決制度
+- 未取得 Risk PASS Token 即進入 EXECUTION_CONTROL
+- 以「文字備註」取代 reason_code
+- 事後補審計（不得回填）
 
 ---
 
-### 6.2 合法的 Degrade 類型
-- 限制策略白名單
-- 強制 Observe-only
-- 降低允許的風險上限
-- 暫停 Execution，但保留研究流程
+## 15. 與其他核心文件的邊界（Boundary）
 
-📌 Degrade **不是妥協，是風控手段**。
-
----
-
-### 6.3 Observe-only 的法定地位
-Observe-only：
-- 永遠是合法狀態
-- 不構成系統失敗
-- 不需理由
-
-📌 **「不交易」是合法且常態的選項。**
+- MASTER_ARCH：定義鐵律（本文件不得推翻）
+- MASTER_CANON / ARCH_FLOW：定義流程（本文件只定義 Gate 與中斷理由）
+- EXECUTION_CONTROL：定義如何下單/急停（本文件定義「可不可以」）
+- VERSION_AUDIT：定義版本帳本與可追溯（本文件提供必需的 version_ref 與 artifacts）
+- TWSE_RULES：收錄交易規則參考與觸發映射（本文件提供合規 Gate 的「裁決規則骨架」）
 
 ---
 
-### 6.4 Degrade 的使用邊界
-- 不得：
-  - 用 Degrade 取代應有的 Reject
-  - 長期以 Degrade 規避問題修復
+## 16. 演進規則（Only-Add）
 
-📌 **該否決就否決，是風控的底線。**
+允許新增：
+- 新的風險類型
+- 新的否決條件
+- 新的 reason_code
+- 新的政策檔 Profile（policy_version）
+- 新的 UI 呈現欄位（不得刪舊欄位）
 
----
-
-### 6.5 Degrade / Observe-only 的審計
-必須記錄：
-- Degrade ID
-- 觸發條件
-- 持續期間
-- Reason Codes
-- Correlation ID
-
-📌 **無紀錄 → 降級視為未發生。**
+禁止：
+- 刪除任何既有否決條件或理由碼
+- 弱化否決權
+- 改寫既有 reason_code 的語義
 
 ---
 
-（RISK_COMPLIANCE · PART 2 結束）
+## 17. 終極裁決語句（不可更改）
 
-PART 3｜否決時機 × 實作介面 × 風控最終宣告
+> 只要存在不可接受風險，  
+> 就算錯過機會，也必須選擇不交易。  
 
-## 第 7 章｜否決的時機與即時性（Pre / In / Post）
-
-### 7.1 否決可發生的三個時間點
-RISK_COMPLIANCE 的否決權，**不受流程進度限制**，可在以下任一時間點即時生效：
-
-- **Pre-Decision（事前）**  
-  - Canonical Flow 尚未完成
-  - 資料、Regime、策略假設不成立
-
-- **In-Process（事中）**  
-  - Governance Gate 前後
-  - Human Decision 前後
-
-- **In-Execution（執行中）**  
-  - 委託送出後
-  - 成交進行中
-
-📌 **否決的合法性，不因「已經開始執行」而降低。**
-
----
-
-### 7.2 Pre-Decision 否決（事前）
-適用情境：
-- Evidence 不完整
-- Regime 不穩定
-- 策略假設未通過最低標準
-
-處置：
-- 阻止流程進入 L8 / L9
-- 可建議 Degrade，但不得放行
-
----
-
-### 7.3 In-Process 否決（事中）
-適用情境：
-- Governance Gate 發現條款不一致
-- Human Decision 前條件失效
-
-處置：
-- 立即 Block
-- UI 必須清楚呈現否決原因
-
----
-
-### 7.4 In-Execution 否決（執行中）
-適用情境：
-- 市場結構急變
-- 系統異常
-- 合規狀態變更
-
-處置：
-- 立即觸發 Kill Switch
-- 停止所有新委託
-- 視情況撤單
-
-📌 **Execution 中止不需人類事前確認。**
-
----
-
-### 7.5 否決的不可回溯性
-- 否決一經生效：
-  - 不得被回溯取消
-  - 不得被「當下解釋」合理化
-- 重新啟動：
-  - 僅能透過新流程、新 Snapshot
-
----
-
-## 第 8 章｜RISK_COMPLIANCE 的實作介面（Integration Contracts）
-
-### 8.1 與 Governance Gate（L9）的介面
-- Governance Gate 必須：
-  - 即時查詢 RISK_COMPLIANCE 狀態
-  - 尊重最新否決結果
-- 任何 Allow：
-  - 必須以 RISK = Pass 為前提
-
----
-
-### 8.2 與 UI（L10）的介面
-UI 必須完整呈現：
-- 當前 Risk 狀態（Pass / Reject / Degrade）
-- Reason Codes（可展開）
-- 生效時間
-- 是否可重新評估
-
-📌 **UI 不得淡化或隱藏否決資訊。**
-
----
-
-### 8.3 與 Execution（L11）的介面
-Execution 必須：
-- 在每一次行為前：
-  - 再次確認 Risk 狀態
-- 支援：
-  - 即時 Kill Switch
-  - 部分成交後的中止
-
-📌 **Execution 對 Risk 狀態不具裁量權。**
-
----
-
-### 8.4 與 Strategy / AI 的介面
-- Strategy / AI：
-  - 僅能接收否決結果
-  - 不得嘗試規避或解釋
-- AI 必須：
-  - 原樣轉述否決原因
-  - 不得附加個人觀點
-
----
-
-### 8.5 與 Log / Audit 的介面
-每一次否決或降級，必須生成：
-- Risk Event Log
-- Reason Codes
-- 觸發時間
-- 影響範圍
-- Correlation ID
-
-📌 **無 Risk Event Log → 否決視為未發生。**
-
----
-
-## RISK_COMPLIANCE 最終宣告（Closing）
-
-在 TAITS 中，  
-**風控不是阻止你交易的敵人，  
-而是確保你還能繼續交易的朋友。**
-
-如果一套系統：
-- 無法在最想交易的時刻拒絕交易
-- 無法在執行中即時踩煞車
-- 無法在虧損前承認不確定性
-
-那它不是一套風控系統，  
-只是交易的附屬品。
-
-> **真正的風控，  
-> 不是事後解釋為何會輸，  
-> 而是事前、事中、隨時有能力說：  
-> 「現在不可以。」**
-
----
-
-（RISK_COMPLIANCE · PART 3 完成）
+（RISK_COMPLIANCE｜最大完備版 v2025-12-19 完）
