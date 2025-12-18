@@ -1,397 +1,357 @@
-治理等級： B（架構／制度級）
-裁決依據： DOCUMENT_INDEX（A+）__251219
-
-# TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）
-## Versioning, Audit & Traceability Governance (Governance-Aligned)
-
+# TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219
+doc_key：VERSION_AUDIT  
+治理等級：A（Versioning / Audit / Replay Governance｜Only-Add 母帳本制度）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（可追溯治理母文件，Only-Add 演進）  
 版本日期：2025-12-19  
-適用狀態：S0 / S1（Freeze 前後）  
-對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / DOCUMENT_INDEX（Index 裁決）  
+平行參照：MASTER_CANON / ARCH_FLOW / FULL_ARCH / RISK_COMPLIANCE / EXECUTION_CONTROL / UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+變更原則：Only-Add（只可新增，不可刪減/覆寫/回填/偷換語義）  
+核心鐵律：無版本＝不可執行；無稽核＝未發生；可回放＝可追責
 
 ---
 
-## 前言｜Why Versioning Is Governance
+## 0. 文件定位（Version & Audit Charter）
 
-在 TAITS 中，「版本」不是工程細節，而是**治理有效性的存在條件**。  
-任何無法被回放、被審計、被追責的變更，**在制度上視為不存在**。
+本文件定義 TAITS 的「版本控管、稽核與可追溯治理」最高規範，負責確保：
 
----
+- 所有文件、政策、規則、模型、設定檔、執行紀錄皆可：
+  - **被追溯（Traceable）**
+  - **被回放（Replayable）**
+  - **被審計（Auditable）**
+  - **不可抵賴（Non-repudiable）**
+- 系統在任何模式下皆遵守：
+  - **Only-Add（只增不減）**
+  - **Scope Freeze（凍結後不得越界）**
+  - **Evidence 法律地位（無證據視為未發生）**
 
-## 第 1 章｜文件位階、適用範圍與法律地位
-
-### 1.1 文件位階
-- 治理等級：**B（治理／制度級）**
-- 上位文件：
-  - `TAITS_AI_行為與決策治理最終規則全集__251217`（A+）
-  - `TAITS_MASTER_ARCHITECTURE`（A）
-  - `DOCUMENT_INDEX（A+）`
-- 平行約束：
-  - `ARCH_FLOW`
-  - `RISK_COMPLIANCE`
-  - `DEPLOY_OPS`
-
-### 1.2 適用範圍
-本文件規範以下對象之**版本控管、稽核、回放與追溯**：
-- 文件（A+ / A / B / C）
-- 策略中介工件（Evidence / Feature 定義）
-- 設定檔（非敏感）
-- 部署版本（Build / Release）
-- 事件（Incident / Freeze / Kill）
-
-📌 **任何未納入本規範的變更，視為未授權。**
+📌 本文件不負責（避免越權）
+- 不定義風控否決條文（→ RISK_COMPLIANCE）
+- 不定義執行細節（→ EXECUTION_CONTROL）
+- 不改寫 Canonical Flow（→ MASTER_CANON / ARCH_FLOW）
+- 不定義 UI 外觀（→ UI_SPEC）
+- 專注於「版本如何被管理、稽核如何生成、回放如何成立、變更如何可追責」
 
 ---
 
-## 第 2 章｜Hard Gates（硬性門檻）
+## 1. 官方參考入口（Official References｜版本與稽核依據）
 
-### 2.1 Only-Add 原則（AI_GOV §7, §11）
-- 允許：新增（Append）
-- 禁止：覆寫、刪改、回填歷史
+> 本節提供 TAITS 所依循的主流版本控管/稽核觀念之官方入口（非裁決 TAITS 母法）。
 
-📌 **修正錯誤 ≠ 覆寫歷史；必須以新版本補正。**
-
-### 2.2 可回放（Replayable）原則（AI_GOV §11）
-- 任一變更，必須可在指定時間點被完整回放：
-  - 生效版本
-  - 依據文件
-  - 影響範圍
-  - 當時決策軌跡
-
-### 2.3 Freeze 約束（AI_GOV §15）
-- 進入 S1 Freeze 後：
-  - A+ / A：**完全禁止**
-  - B：**僅允許紀錄性補充**
-  - C：**僅允許說明性修訂**
+- Git 官方文件（Git Documentation）  
+  https://git-scm.com/doc
+- GitHub Docs（版本控管/PR/保護分支/稽核）  
+  https://docs.github.com/
+- Semantic Versioning（語意化版本）  
+  https://semver.org/
+- iCalendar / RFC 5545（若需排程稽核/治理事件）  
+  https://www.rfc-editor.org/rfc/rfc5545
 
 ---
 
-## 第 3 章｜版本命名、狀態與生命週期
+## 2. TAITS 可追溯治理的四大目標（Hard Objectives）
 
-### 3.1 版本命名規範
-- 格式：`__YYYYMMDD`
-- 禁止：
-  - `latest`
-  - `final`
-  - 無日期版本
+1) **可回放（Replayability）**  
+   同一組 Replay Bundle 在相同版本映射下，必須可重建同一結論（或可解釋差異）。
 
-### 3.2 版本狀態（Status）
-- `DRAFT`：未生效
-- `ACTIVE`：唯一生效版本（僅 1）
-- `FROZEN`：Freeze 鎖定
-- `DEPRECATED`：停止使用（可回放）
-- `MERGED`：職責已合併（無正文）
+2) **可稽核（Auditability）**  
+   任一決策/否決/執行事件，必須能回到其證據、版本、責任者與過程。
 
-📌 **同一 doc_key 僅能存在一個 ACTIVE。**
+3) **不可抵賴（Non-repudiation）**  
+   人類裁決、政策變更、上線切換，必須有可驗證簽章或等價的不可否認性記錄。
+
+4) **Only-Add（不可刪改）**  
+   禁止覆寫與回填；歷史只能被「新增一筆新版本」取代，不得刪除舊版本存在。
 
 ---
 
-## 第 4 章｜變更類型與允許矩陣
+## 3. 版本治理對象（Versioned Objects Universe）
 
-| 變更類型 | 允許 | 說明 |
-|---|---|---|
-| 新增章節 | ✅ | Only-Add |
-| 條文補正 | ⚠️ | 需標記 Correction |
-| 條文刪除 | ❌ | 永久禁止 |
-| 歷史回填 | ❌ | 永久禁止 |
-| Freeze 後結構變更 | ❌ | 永久禁止 |
+TAITS 必須納入版本治理的對象（最小集合，可擴充不可縮減）：
+
+### 3.1 文件版本（Docs）
+- 所有 `doc_key` 文件（含 MASTER / B / C / D 等級）
+- Document Index（文件索引）本身也是版本治理對象（Index 裁決）
+
+### 3.2 政策版本（Policies）
+- Risk Policy Profile（風控政策檔）
+- Compliance Rulebook Snapshot（制度快照）
+- Execution Policy（下單速率/撤單策略/熔斷政策）
+- UI Governance Policy（顯示、trace、兩段式確認門檻等）
+
+### 3.3 規則版本（Rules）
+- Regime 判定規則版本（不等於策略）
+- Evidence Completeness 規則版本
+- Governance Gate 規則版本
+
+### 3.4 模型版本（Models｜若存在）
+- 任何 AI/ML 模型、Prompt、權重、特徵定義、後處理規則
+- 模型不是決策者，但其版本必須可追溯
+
+### 3.5 設定版本（Configs）
+- 環境設定（LOCAL_ENV 中的可版本化部分）
+- 交易通道設定（不含敏感金鑰本體）
+- 資料源設定（DataSources Adapter Map）
+
+### 3.6 審計與回放物（Artifacts）
+- Evidence Bundle
+- Regime State Snapshot
+- Risk Gate Decision + Token
+- UI Decision Trace
+- Execution Logs（Pre / In / Post）
+- Reconciliation Report
+- Kill Switch / Circuit Breaker Events
 
 ---
 
-## 第 5 章｜Change Ledger（變更帳冊）【必填】
+## 4. 核心識別碼（Identity System）
 
-### 5.1 Ledger 最小欄位
-- `change_id`（唯一）
-- `doc_key`
-- `from_version`
-- `to_version`
-- `change_type`
-- `reason_code`
-- `requested_by`
-- `approved_by`
+> 一切可追溯治理，從「能唯一識別」開始。
+
+### 4.1 doc_key（文件主鍵）
+- 全專案唯一
+- 必須出現在每份文件 header
+- 未列入 DOCUMENT_INDEX 的 doc_key：不得引用（GOV-DOC）
+
+### 4.2 correlation_id（全鏈路關聯鍵）
+- 串起一次完整 Canonical Flow（L1–L11）
+- 必須出現在：
+  - Evidence、Risk、UI、Execution、Audit 全部輸出
+
+### 4.3 session_id（會話鍵）
+- UI/使用者操作會話的識別碼
+- 用於稽核人類行為軌跡
+
+### 4.4 artifact_id（審計物鍵）
+- 每個 artifact（JSON/Parquet/Log/Bundle）必須有唯一 id
+
+---
+
+## 5. 版本映射（Active Version Map｜必須存在）
+
+### 5.1 Active Version Map 的定義
+Active Version Map 是「在某一次流程中，所有生效版本的集合」：
+
+- `docs_active_map`：doc_key → doc_version_id
+- `policy_active_map`：policy_key → policy_version
+- `rulebook_snapshot_id`
+- `model_active_map`：model_id → model_version
+- `config_active_map`：config_id → config_version
+- `code_commit_ref`：git commit hash / tag（若有）
+
+### 5.2 強制規則
+- 任何 PASS / APPROVE / EXECUTE：
+  - 必須綁定一份 Active Version Map
+- 缺 Active Version Map：
+  - 視為 SYS-VERSION-01 → VETO / BLOCK
+
+---
+
+## 6. Only-Add 變更制度（Change Governance）
+
+### 6.1 禁止事項（Hard Forbidden）
+- 覆寫既有版本內容
+- 刪除歷史版本
+- 回填（Backfill）稽核紀錄
+- 用「修正舊檔」代替「新增新版本」
+
+### 6.2 允許事項（Only-Add Allowed）
+- 新增版本：
+  - `__YYMMDD` 或 `__251219` 類型日期標記（TAITS 制度優先）
+- 新增補充章節（不得刪原章節）
+- 新增 reason_code / policy_key / artifact type
+
+### 6.3 Scope Freeze（範圍凍結）
+- 當某版本被標記為 ACTIVE 且進入 Live/Paper 供應鏈：
+  - 該版本的語義不得被改寫
+  - 任何變更只能透過「新版本」上線
+
+---
+
+## 7. 變更流程（Change Lifecycle｜最大完備）
+
+> 本節定義「變更如何被提出、審核、上線、回溯」。
+
+### 7.1 Change Request（CR）
+每個變更必須建立 CR（可文件化，不必依賴特定工具）並至少包含：
+- `change_id`
+- `scope`（doc/policy/rule/model/config）
+- `reason`（原因，禁止用「感覺更好」）
+- `risk_impact`（可能影響哪些風控/合規/執行）
+- `rollback_plan`（回滾策略）
+- `approver`（責任者）
 - `effective_time`
-- `freeze_state`
-- `audit_ref`
 
-### 5.2 Reason Codes（範例）
-- `ERR_CORRECTION`
-- `SCOPE_CLARIFICATION`
-- `COMPLIANCE_UPDATE`
-- `INCIDENT_RESPONSE`
+### 7.2 Review Gate（審核闸門）
+- 任何變更若影響：
+  - Risk / Compliance / Execution / UI 決策流程
+  必須經過對應治理等級的 Review（A 級要求更嚴格）
 
-📌 **缺任一欄位 → 變更無效。**
+### 7.3 Activation（生效）
+- 生效必須：
+  - 生成新的 Active Version Map
+  - 記錄切換事件（Activation Event）
+  - 保留舊 Active Map 供回放
 
----
-
-## 第 6 章｜審計（Audit）與回放（Replay）
-
-### 6.1 必備審計能力
-- 查詢任一時間點：
-  - 生效文件版本
-  - ACTIVE 狀態
-  - Freeze 狀態
-- 回放：
-  - Decision Trace
-  - Evidence 來源
-  - Veto / Override 記錄
-
-### 6.2 Replay Spec（最小）
-- `timestamp`
-- `actor`（Human / AI / System）
-- `doc_refs[]`
-- `inputs`
-- `outputs`
-- `veto_flags`
+### 7.4 Rollback（回滾）
+- 回滾不是覆寫，而是：
+  - 切回舊版本為 Active（新增一筆切換事件）
+- 回滾事件必須產生：
+  - `rollback_event_id`
+  - `from_version` / `to_version`
+  - `reason`
 
 ---
 
-## 第 7 章｜違規與處置（Enforcement）
+## 8. 稽核（Audit）制度（「無稽核＝未發生」）
 
-### 7.1 違規定義
-- 覆寫既有版本
-- 未記錄變更即部署
-- Freeze 期間修改 B 級結構
-- 無法回放之版本
+### 8.1 稽核層級
+- **System Audit**：流程/版本/完整性
+- **Decision Audit**：Evidence/Regime/Risk/Gov/UI
+- **Execution Audit**：Pre/In/Post + 對帳 + 急停
+- **Ops Audit**：部署/上線/金鑰/權限（DEPLOY_OPS / LOCAL_ENV）
 
-### 7.2 處置等級
-- **Minor**：補記 Ledger
-- **Major**：流程中止
-- **Critical**：Freeze / Kill
+### 8.2 稽核輸出最小集合（Artifacts Must-Have）
+- `active_version_map.json`
+- `evidence_bundle_ref`
+- `regime_state_ref`
+- `risk_gate_decision.json` + `risk_pass_token_ref`（PASS 時）
+- `governance_report_ref`
+- `ui_trace_ref`（有人類裁決時）
+- `execution_logs_ref`（有執行時）
+- `reconciliation_report_ref`（有執行時）
 
-📌 **績效、緊急性不得作為抗辯理由。**
-
----
-
-## 第 8 章｜AI 與人類邊界
-
-### 8.1 AI
-- 可讀取：版本、Ledger、審計結果
-- 不得：
-  - 合理化缺失紀錄
-  - 推論「應該存在的版本」
-
-### 8.2 Human
-- 有決策權
-- **無版本解釋權**
-- 任何操作必須留痕
+缺任一項：
+- PASS 不成立 / EXEC 不合法（依 RISK/EXEC 規範 BLOCK）
 
 ---
 
-## 附錄 A｜Version Checklist（上線前）
+## 9. 回放（Replay）規範（Replayability Contract）
 
-- [ ] ACTIVE 唯一
-- [ ] Ledger 完整
-- [ ] Replay 可用
-- [ ] Freeze 狀態一致
-- [ ] DOCUMENT_INDEX 對齊
+### 9.1 Replay Bundle 必備內容
+- `active_version_map`
+- `input_data_refs`（資料引用，含 provenance）
+- `snapshot_state_refs`
+- `feature_set_refs`
+- `evidence_bundle`
+- `regime_state`
+- `risk_gate_decision`（含 reason codes）
+- `human_decision_trace`（若有）
+- `execution_logs`（若有）
+- `hash_manifest`（完整性校驗）
 
----
-
-## 結語｜Closing
-
-在 TAITS 中，  
-**沒有被版本化的東西，等於沒有被允許。**  
-版本不是歷史負擔，而是**責任的錨點**。
-
-（VERSION_AUDIT 完）
-
-治理等級： B（架構／制度級）
-裁決依據： DOCUMENT_INDEX（A+）__251219
-對齊母法： TAITS_AI_行為與決策治理最終規則全集__251217
-
-# TAITS_全系統架構總覽（FULL_ARCH）
-## Full System Architecture Overview (Governance-Aligned)
-
-版本日期：2025-12-19  
-適用狀態：S0 / S1（Freeze 前後）  
-對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217
+### 9.2 Replay 驗證規則（Replay Verification）
+- hash 全數驗證成功
+- 版本映射可解析（doc/policy/model/config 均可定位）
+- 若結果與歷史不同：
+  - 必須能指出差異來源（版本不同/資料不同/政策不同）
+  - 否則視為污染（SYS-HASH / SYS-VERSION）
 
 ---
 
-## 前言｜Why FULL_ARCH Exists
+## 10. 日誌與不可變更儲存（Immutable Storage）
 
-FULL_ARCH 的任務不是描述流程細節，  
-而是**界定模組邊界、通訊限制與治理責任歸屬**。
+### 10.1 Immutable 的最低要求
+- 審計物必須寫入：
+  - Append-only（只能追加）
+  - 具備防竄改校驗（hash / signature）
 
-> **流程屬於 ARCH_FLOW；  
-> 邊界與權限，屬於 FULL_ARCH。**
+### 10.2 禁止
+- 允許任意刪除/修改稽核檔
+- 用一般可覆寫的路徑存放「唯一稽核真相」
 
----
-
-## 第 1 章｜文件位階、適用範圍與不可動搖原則
-
-### 1.1 文件位階
-- 治理等級：**B（架構／制度級）**
-- 上位文件：
-  - `TAITS_AI_行為與決策治理最終規則全集__251217`（A+）
-  - `TAITS_MASTER_ARCHITECTURE`（A）
-  - `MASTER_CANON`（A）
-- 平行約束：
-  - `ARCH_FLOW`
-  - `RISK_COMPLIANCE`
-  - `EXECUTION_CONTROL`
-  - `UI_SPEC`
-  - `DEPLOY_OPS`
-
-### 1.2 適用範圍
-本文件定義：
-- 系統模組劃分
-- 模組責任與權限
-- 模組間通訊邊界
-- 禁止事項（Hard No）
-
-📌 **本文件不定義策略、不定義決策、不定義下單。**
+> 實作細節（S3 Object Lock/WORM/Append-only DB 等）由 DEPLOY_OPS 決定；  
+> 本文件只規定「必須不可變更」。
 
 ---
 
-## 第 2 章｜Hard Gates（硬性門檻）
+## 11. 責任矩陣（RACI｜可追責）
 
-### 2.1 模組邊界不可混用（AI_GOV §4, §6, §14）
-- 每一模組僅能執行其被授權的職責
-- 禁止跨模組回寫狀態
+> TAITS 治理強制：任何變更與裁決必須可追溯到責任者。
 
-### 2.2 AI 不得升格為模組（AI_GOV §14）
-- AI 僅能作為：
-  - 分析者
-  - 描述者
-  - 輔助者
-- **不得**：
-  - 成為裁決模組
-  - 成為執行模組
-  - 擁有狀態主權
+### 11.1 最小 RACI 角色
+- `Author`（提出者）
+- `Reviewer`（審核者）
+- `Approver`（核准者）
+- `Operator`（上線/切換執行者）
+- `Auditor`（稽核查核者）
 
-### 2.3 單一真實來源（Single Source of Truth）
-- 任一治理事實：
-  - 僅能存在於一個模組
-- 其他模組僅能讀取，不得複製
+### 11.2 強制規則
+- 沒有 Approver：不得生效
+- 沒有 Operator 記錄：不得認定已部署
+- 沒有 Auditor 可查：不得宣稱可追溯
 
 ---
 
-## 第 3 章｜TAITS 模組總覽（Module Map）
+## 12. 文件命名與版本格式（TAITS 專案規範）
 
-### 3.1 模組分類總表
+### 12.1 文件命名
+- 檔名格式（建議一致）：  
+  `TAITS_<中文主標題>（<DOC_KEY>）__YYMMDD.md`  
+  例：`TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219.md`
 
-| 類別 | 模組 |
-|---|---|
-| 資料層 | Data Ingest / Data Validation |
-| 分析層 | Feature Engine / Evidence Builder |
-| 狀態層 | Regime Engine |
-| 風控層 | Risk & Compliance |
-| 策略層 | Strategy Selector |
-| 決策層 | Human Decision Interface |
-| 執行層 | Execution Engine |
-| 治理層 | Audit / Version / Freeze |
-| 展示層 | UI / Reporting |
+### 12.2 版本日期
+- 一律使用台灣時區（Asia/Taipei）對應日期
+- 本次版本：2025-12-19（__251219）
 
-📌 **分類僅用於治理，非技術實作限制。**
+### 12.3 版本狀態（ACTIVE / DRAFT / ARCHIVED）
+- ACTIVE：可用於 Paper/Live 或作為裁決依據
+- DRAFT：草案不得作為裁決依據
+- ARCHIVED：歷史封存，仍可回放不得刪
 
 ---
 
-## 第 4 章｜核心模組責任與禁止事項
+## 13. 版本與稽核的「硬性阻斷條件」（Block Conditions）
 
-### 4.1 Data Ingest Module
-- 職責：
-  - 收集官方／授權資料
-- 禁止：
-  - 推論缺失資料
-  - 自行補值裁決
+以下任一條件成立，系統必須阻斷（BLOCK / VETO）：
 
-### 4.2 Feature Engine
-- 職責：
-  - 計算 Feature（描述性）
-- 禁止：
-  - 形成方向性結論
-  - 產生 Signal
-
-### 4.3 Evidence Builder
-- 職責：
-  - 組合 Feature 為 Evidence
-- 禁止：
-  - 跳過 Evidence 直接給策略
-
-### 4.4 Regime Engine
-- 職責：
-  - 市場狀態裁定
-- 禁止：
-  - 直接影響下單
-
-### 4.5 Risk & Compliance
-- 職責：
-  - 否決一切不合規行為
-- 禁止：
-  - 以績效為理由放行
-
-### 4.6 Strategy Selector
-- 職責：
-  - 策略可用性判斷
-- 禁止：
-  - 產生交易指令
-
-### 4.7 Human Decision Interface
-- 職責：
-  - 人類最終裁決
-- 禁止：
-  - 隱性自動化
-
-### 4.8 Execution Engine
-- 職責：
-  - 嚴格依裁決執行
-- 禁止：
-  - 自行判斷方向
+- 缺 `active_version_map`
+- doc_key 未列入 DOCUMENT_INDEX 卻被引用（GOV-DOC）
+- hash 驗證失敗（SYS-HASH）
+- 稽核物不可寫入（SYS-AUDIT）
+- Token 與 evidence/regime/account 快照不一致（SYS-VERIFY）
+- 發現覆寫或回填行為（GOV-SCOPE / GOV-FLOW）
 
 ---
 
-## 第 5 章｜模組通訊與資料流限制
+## 14. Mermaid｜版本與回放治理流程圖（可直接放入 md）
 
-### 5.1 允許的通訊方向（摘要）
-- Data → Feature → Evidence → Regime → Strategy → Human → Execution
+```mermaid
+flowchart TB
+  A[Change Request] --> B[Review Gate]
+  B -->|APPROVE| C[Create New Version (Only-Add)]
+  C --> D[Activation Event]
+  D --> E[Generate Active Version Map]
+  E --> F[Run Flow (L1-L11)]
+  F --> G[Write Immutable Artifacts]
+  G --> H[Assemble Replay Bundle]
+  H --> I[Replay Verification]
+  I -->|PASS| J[Auditable & Traceable]
+  I -->|FAIL| K[Integrity Incident (SYS-HASH/VERSION)]
+15. Only-Add 演進規則（本文件專屬）
+允許新增：
 
-### 5.2 永久禁止的通訊
-- Execution → Strategy
-- Strategy → Regime
-- Feature → Execution
-- AI → Execution
+新的 artifact 類型
 
-📌 **任何逆向通訊 = 治理違規。**
+新的 version_map 欄位
 
----
+新的 RACI 角色
 
-## 第 6 章｜Module × Layer 映射（審計輸出）
+新的 block condition（更嚴格）
 
-| 模組 | 對應 Layer |
-|---|---|
-| Data Ingest | L1–L3 |
-| Feature Engine | L4 |
-| Evidence Builder | L5 |
-| Regime Engine | L6 |
-| Risk & Compliance | L7 |
-| Strategy Selector | L8 |
-| Decision Interface | L10 |
-| Execution Engine | L11 |
+禁止：
 
----
+刪除任何既有稽核必備輸出
 
-## 第 7 章｜審計輸出（Audit Artifacts）
+弱化 immutable 要求
 
-### 7.1 必須產出
-- 模組呼叫紀錄
-- 輸入／輸出摘要
-- 否決／放行標記
-- 版本與 Freeze 狀態
+允許覆寫或回填
 
-### 7.2 稽核重點
-- 是否跨模組越權
-- 是否跳層
-- 是否 AI 升格
+允許「缺版本仍可執行」
 
----
+16. 終極裁決語句（不可更改）
+版本是制度的邊界，稽核是事實的證明，回放是責任的載體。
+任何缺一者，都不允許進入執行。
 
-## 結語｜Closing
-
-TAITS 的強度，不來自模組數量，  
-而來自**模組不做不該做的事**。
-
-> **當每個模組都被邊界約束，  
-> 系統才可能長期存活。**
-
-（FULL_ARCH 完）
-
+（VERSION_AUDIT｜最大完備版 v2025-12-19 完）
