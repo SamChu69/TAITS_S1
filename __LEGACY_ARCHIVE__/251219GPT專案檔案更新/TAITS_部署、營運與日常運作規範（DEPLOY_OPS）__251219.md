@@ -1,465 +1,368 @@
-📘 TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219
-PART 1｜文件定位 × 營運的法律地位 × 環境治理原則
-
-# TAITS_部署、營運與日常運作規範（DEPLOY_OPS）
-## Deployment, Operations & Daily Runbook Specification
-
----
-
-## 營運前言（Why Operations Is Governance）
-
-在多數系統中，  
-部署與營運被視為「工程或維運問題」。
-
-在 TAITS 中，  
-**營運本身即是治理行為**。
-
-一套在文件中正確、  
-但在日常運作中被「便宜行事」的系統，  
-在制度上等同於失敗。
+# TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219
+doc_key：DEPLOY_OPS  
+治理等級：C（Deployment / Operations / Runbook｜營運級治理規範）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（營運規範，可隨系統擴充 Only-Add）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
+平行參照：FULL_ARCH / ARCH_FLOW / VERSION_AUDIT / LOCAL_ENV / RISK_COMPLIANCE / EXECUTION_CONTROL / UI_SPEC / DATA_UNIVERSE / TWSE_RULES  
+變更原則：Only-Add（只可新增，不可刪減/覆寫/弱化：回滾能力、急停能力、稽核可回放、金鑰隔離、責任可追溯）  
+核心鐵律：可回滾、可停機、可稽核、可回放、可追責（缺一不可上線）
 
 ---
 
-## 第 1 章｜DEPLOY_OPS 的治理位階與適用範圍
+## 0. 文件定位（Deployment & Operations Charter）
 
-### 1.1 文件位階
-- 治理等級：**B（營運治理級）**
-- 上位文件：
-  - `MASTER_ARCH`
-  - `MASTER_CANON`
-  - `ARCH_FLOW`
-  - `RISK_COMPLIANCE`
-- 平行約束：
-  - `EXECUTION_CONTROL`
-  - `UI_SPEC`
+本文件定義 TAITS 的部署、營運與日常運作（Ops）最高規範，用於回答：
 
-📌 **任何營運便利性不得凌駕治理與風控。**
+- 如何將 TAITS 從本地/研究模式逐步推進到 Paper / Live，且**不破壞治理**
+- 如何確保部署與上線過程遵守：
+  - Only-Add
+  - 版本可追溯（Active Version Map）
+  - 稽核可回放（Replay Bundle）
+  - Human-in-the-Loop（UI 裁決仍是唯一入口）
+  - Risk/Compliance 最高否決權
+- 如何落地 Runbook（操作手冊）與 Incident（事件處置），確保可停機、可回滾、可保全證據
 
----
-
-### 1.2 適用範圍（Scope）
-本文件適用於：
-
-- 本地環境（Local / Research）
-- 模擬環境（Paper / Sim）
-- 實盤環境（Live）
-
-📌 不同環境可有不同設定，  
-📌 但 **治理鐵律不可分環境例外**。
+📌 本文件不負責（避免越權）
+- 不改寫交易制度內容（→ TWSE_RULES + 官方來源裁決）
+- 不改寫風控否決條文（→ RISK_COMPLIANCE）
+- 不改寫執行安全細節（→ EXECUTION_CONTROL）
+- 不改寫版本稽核母帳本（→ VERSION_AUDIT）
+- 專注於：部署與營運如何「不讓治理破功」
 
 ---
 
-### 1.3 營運的法律地位
-在 TAITS 中：
+## 1. 官方參考入口（Official References｜部署/營運依據）
 
-> **任何持續運作的系統狀態，  
-> 都被視為一種制度選擇，  
-> 必須可被審計、可被中止。**
+> 本節提供可核對之官方文件入口（不取代 TAITS 母法裁決）。
 
-📌 沒有「暫時跑一下」這種合法狀態。
-
----
-
-## 第 2 章｜部署環境分類與治理要求
-
-### 2.1 環境分類（Mandatory）
-TAITS 僅承認以下三種環境：
-
-1. **Local / Research**
-2. **Simulation / Paper**
-3. **Production / Live**
-
-📌 未標示環境 → 視為違規部署。
-
----
-
-### 2.2 Local / Research 環境規範
-用途：
-- 架構驗證
-- 策略研究
-- UI 測試
-
-限制：
-- ❌ 不得連接真實下單 API
-- ❌ 不得產生實盤 Execution
-- ✅ 允許資料回放與模擬
-
-📌 Local 永遠不具備任何實盤權限。
+- Git 官方文件（Git Documentation）  
+  https://git-scm.com/doc
+- GitHub Docs（分支保護 / PR / Actions / 環境）  
+  https://docs.github.com/
+- Docker 官方文件（Containers）  
+  https://docs.docker.com/
+- Kubernetes 官方文件（若採 K8s）  
+  https://kubernetes.io/docs/
+- OWASP Top 10（應用安全基準）  
+  https://owasp.org/www-project-top-ten/
+- NIST Cybersecurity Framework（營運安全框架）  
+  https://www.nist.gov/cyberframework
+- TWSE 規章（Regulations）  
+  https://twse-regulation.twse.com.tw/
+- TAIFEX 規章（Rules & Regulations）  
+  https://www.taifex.com.tw/enl/eng6/ruleRegulation
 
 ---
 
-### 2.3 Simulation / Paper 環境規範
-用途：
-- 流程完整性測試
-- Execution 模擬
-- UI 人類流程演練
+## 2. 部署與營運的四大硬性目標（Hard Objectives）
 
-限制：
-- ❌ 不得影響真實資金
-- ❌ 不得繞過風控或 Gate
-- ✅ 必須完整走 Canonical Flow
+1) **可回滾（Rollbackable）**  
+   任一上線必須可回到上一個可用版本（透過切換 Active Version Map，而非覆寫）。
 
-📌 模擬不等於簡化。
+2) **可停機（Stoppable）**  
+   任一異常必須能立即停止執行（Kill Switch / Safe Mode），並阻斷新單。
 
----
+3) **可稽核（Auditable）**  
+   任一部署、切換、設定變更必須產生不可變更審計物（Append-only）。
 
-### 2.4 Production / Live 環境規範
-用途：
-- 真實市場參與
-
-強制條件：
-- 完整文件版本鎖定
-- Governance Gate 啟用
-- Risk / Compliance 即時監控
-- Kill Switch 可用
-
-📌 **Live 環境的任何異常，  
-都必須以「停機」為預設反應。**
+4) **可回放（Replayable）**  
+   任一重要事件（尤其 Live/Paper）必須保留回放所需資料引用與版本映射。
 
 ---
 
-## 第 3 章｜部署前的強制治理檢查（Pre-Deployment Gate）
+## 3. 環境分級（Environments）與治理強度
 
-### 3.1 為何部署前也需要 Gate
-部署本身即代表：
-- 系統可能影響真實世界
-- 風險從理論進入現實
+TAITS 環境至少分為五類（可新增不可縮減）：
 
-📌 **部署是第一個「可能造成後果」的行為。**
+- **Research**：研究（本地或共享環境）
+- **Backtest**：回測（可離線，但仍需版本映射）
+- **Simulation**：模擬（語義上遵守 Gate）
+- **Paper**：仿真下單（與 Live 同級治理，僅通道不同）
+- **Live**：實盤
 
----
+### 3.1 不變項（所有環境必須同樣遵守）
+- Active Version Map 必須存在（缺＝阻斷）
+- 稽核與回放輸出不可省略（缺＝未發生）
+- Risk/Compliance 的二元裁決語義不可被模糊化
+- UI 人類裁決入口不可被繞過
 
-### 3.2 部署前 Gate 的最小條件
-任何環境（含 Local）部署前，**必須確認**：
-
-1. 文件版本一致（doc_key + version）
-2. Correlation ID 機制正常
-3. Risk / Compliance 模組啟用
-4. Execution 預設為 Disable（非 Live）
-5. Log / Audit 模組可寫入
-
-📌 任一項未通過 → **禁止部署**。
-
----
-
-### 3.3 部署紀錄（Deployment Log）
-每一次部署，必須記錄：
-
-- Deployment ID
-- 環境類型
-- 文件版本
-- 啟用模組清單
-- 時間戳與負責人
-
-📌 **無 Deployment Log → 視為未部署。**
+### 3.2 允許差異（僅三類差異）
+- 資料來源（歷史/即時）
+- 時間推進方式（模擬/真實）
+- 交易通道（模擬/真實券商）
 
 ---
 
-（DEPLOY_OPS · PART 1 結束）
+## 4. 部署拓樸（Deployment Topologies｜Only-Add）
 
-PART 2｜日常營運模式 × 即時監控告警 × 事件處理機制
+> FULL_ARCH 定義模組域；此處定義營運上可採的佈署型態與隔離原則。
 
-## 第 4 章｜日常營運模式（Run Modes）
+### 4.1 單機拓樸（Local）
+- 適用：Research/Backtest/Simulation
+- 要求：
+  - 稽核物仍需落盤（不可只在記憶體）
+  - 金鑰隔離（即便本地也不得入 repo）
+  - 若啟用 Paper/Live 通道，必須轉為 Live 級治理
 
-### 4.1 Run Mode 的治理定位
-Run Mode 並非技術設定，而是**制度選擇**。  
-每一種 Run Mode，代表系統在當下**被允許做到什麼程度**。
+### 4.2 分層服務拓樸（Service-based）
+- 適用：Paper/Live
+- 必要隔離：
+  - Execution（L11）與 Secrets/Keys 最高隔離
+  - Risk/Compliance（L7）高可用與不可變更審計
+  - Version Ledger / Immutable Store（稽核儲存）必須可靠
 
-📌 未明確宣告 Run Mode → 系統視為 **不可營運狀態**。
-
----
-
-### 4.2 合法 Run Mode 類型（唯一白名單）
-
-TAITS 僅承認以下 Run Mode：
-
-1. **Disabled**
-2. **Observe-only**
-3. **Simulated Execution**
-4. **Live Execution**
-
-📌 任何其他自訂模式 → **違規**。
-
----
-
-### 4.3 Disabled Mode（完全停用）
-用途：
-- 系統維護
-- 重大異常後的安全狀態
-
-特性：
-- ❌ 不產生 Execution
-- ❌ 不要求人類決策
-- ✅ 允許資料蒐集與 Log
-
-📌 Disabled 是**安全狀態，不是失敗狀態**。
+### 4.3 高可用拓樸（HA）
+- 允許：多副本、跨區、故障轉移
+- 硬性要求：
+  - 不得破壞去重/冪等（idempotency）
+  - 不得破壞稽核不可變更
+  - 不得破壞 Kill Switch 可用性
 
 ---
 
-### 4.4 Observe-only Mode（觀察模式）
-用途：
-- 市場觀察
-- 人類訓練
-- 策略假設驗證（不承擔風險）
+## 5. 上線門檻（Release Gates｜不可跳過）
 
-特性：
-- ❌ 不允許 Execution
-- ✅ 完整走 Canonical Flow（L1–L10）
-- ✅ 產生 Human Decision Log（Defer 為主）
+任何版本要進入 Paper/Live，必須全部通過：
 
-📌 Observe-only 是 **預設推薦的營運模式**。
+### 5.1 文件與版本門檻（VERSION_AUDIT Gate）
+- [ ] `DOCUMENT_INDEX` 中 doc_key 狀態一致（ACTIVE 唯一）
+- [ ] Active Version Map 產生成功（docs/policy/model/config/code）
+- [ ] Change Ledger（Only-Add 變更帳本）已追加事件
+- [ ] 回放所需 artifact 類型已就緒（Replay Bundle Schema 可用）
 
----
+### 5.2 風控合規門檻（RISK_COMPLIANCE Gate）
+- [ ] Policy 版本可追溯（policy_version 可定位）
+- [ ] 規則快照（rulebook_snapshot_ref）可回放
+- [ ] Veto Reason Codes 映射完整（UI/Log 可呈現）
 
-### 4.5 Simulated Execution Mode（模擬執行）
-用途：
-- 執行流程測試
-- Execution 控制驗證
+### 5.3 執行安全門檻（EXECUTION_CONTROL Gate）
+- [ ] Kill Switch Preflight 成功（可觸發/可回報/可稽核）
+- [ ] Channel Health Check 成功
+- [ ] Idempotency / De-dup Guard 啟用
+- [ ] Pre/In/Post Execution Logs 不可變更寫入可用
+- [ ] Reconciliation（對帳）流程可用
 
-特性：
-- ❌ 不影響真實市場
-- ✅ 模擬下單 / 成交
-- ✅ 觸發 Kill Switch / Failure 流程
-
-📌 模擬必須 **完整模擬錯誤與中止**，不得只跑順境。
-
----
-
-### 4.6 Live Execution Mode（實盤執行）
-用途：
-- 真實市場參與
-
-強制條件：
-- Governance Gate 啟用
-- Risk / Compliance 即時監控
-- Kill Switch 隨時可觸發
-- 人類裁決流程不可省略
-
-📌 **Live 是例外狀態，不是常態。**
+### 5.4 UI 與人類主權門檻（UI_SPEC Gate）
+- [ ] APPROVE 必須兩段式確認
+- [ ] VETO/RETURN 狀態 APPROVE 必須禁用
+- [ ] UI Trace 不可變更寫入可用
+- [ ] UI 能顯示版本映射與原因碼
 
 ---
 
-## 第 5 章｜即時監控、告警與中止（Monitoring & Alerting）
+## 6. 部署流程（Deployment Pipeline｜最大完備）
 
-### 5.1 監控的治理目的
-監控不是為了「知道發生什麼」，  
-而是為了在**錯誤尚未擴大前中止行為**。
+> 你不需要固定工具（GitHub Actions、Jenkins、GitLab CI 都可），  
+> 但流程語義必須一致且可稽核。
 
-📌 無法即時中止的監控，沒有治理價值。
+### 6.1 Pipeline 階段（不得省略語義）
+1) **Build**：產生可部署產物（artifact）
+2) **Test**：單元/整合/合規語義測試（含 Gate 測試）
+3) **Package**：封裝（container/image）
+4) **Sign/Hash**：產物簽章或 hash（不可抵賴）
+5) **Deploy**：佈署到目標環境
+6) **Verify**：健康檢查 + Gate 驗證（含 Kill Switch Preflight）
+7) **Activate**：切換 Active Version Map（Only-Add）
+8) **Monitor**：監控與告警上線
+9) **Audit Record**：把部署事件寫入不可變更稽核儲存
 
----
-
-### 5.2 強制監控項目（Mandatory）
-所有 Run Mode（除 Disabled）**必須監控**：
-
-- Risk / Compliance 狀態
-- Governance Gate 狀態
-- Execution 狀態（即使為 Observe-only）
-- 系統健康度（API、延遲、錯誤率）
-- Log / Audit 寫入狀態
-
-📌 任一監控失效 → **自動降級或停機**。
-
----
-
-### 5.3 告警分級（Alert Severity）
-告警必須分級處理：
-
-- **INFO**：狀態通知
-- **WARN**：需關注但不需中止
-- **CRITICAL**：立即中止（Kill Switch）
-
-📌 不得將 CRITICAL 降級處理。
+### 6.2 部署事件（Deployment Event）必備欄位
+- `deploy_event_id`
+- `environment`（Research/Backtest/Simulation/Paper/Live）
+- `artifact_ref`（build 產物引用）
+- `code_commit_ref`
+- `active_version_map_ref`（切換前/後）
+- `operator_id`
+- `timestamp`
+- `result`（SUCCESS/FAIL/ROLLED_BACK）
+- `reason_codes[]`（FAIL/ROLLBACK 必填）
+- `hash_manifest_ref`
+- `runbook_ref`（採用哪個 Runbook）
 
 ---
 
-### 5.4 告警的處置原則
-- 告警出現時：
-  - 預設採取 **保守行為**
-- 無法判斷影響時：
-  - 預設 **中止執行**
+## 7. 設定管理（Config Management）與變更控制
 
-📌 **不確定性本身就是風險。**
+### 7.1 設定分類
+- **可進 repo 的設定**（非敏感）：例如欄位映射、模組啟用旗標、非機密的資料源端點
+- **不可進 repo 的設定**（敏感）：API keys、token、私鑰、券商憑證、個資
 
----
-
-## 第 6 章｜營運中異常與事件處理（Incident Response）
-
-### 6.1 事件的定義
-事件（Incident）指：
-> **任何偏離預期、  
-> 可能影響治理、風控或人類主權的狀態。**
+### 7.2 變更控制原則
+- 任何配置變更視同版本變更：
+  - 必須產生 `config_version`
+  - 必須記錄 Change Ledger（Only-Add）
+  - 必須綁定 Active Version Map
+- 禁止「直接改線上設定檔不留痕」
 
 ---
 
-### 6.2 事件分級
-- **Minor**：不影響治理（紀錄即可）
-- **Major**：影響流程完整性（需停機）
-- **Critical**：可能造成實際損失（立即 Kill）
+## 8. 金鑰與敏感資訊治理（Secrets & Keys Governance｜硬門檻）
 
-📌 分級以 **最壞情境** 為準。
+> 本節與 LOCAL_ENV 相互約束；此處定義營運層面的強制規則。
 
----
+### 8.1 硬性禁止
+- 金鑰/密碼/券商憑證進 repo
+- 金鑰寫入 log、UI、錯誤訊息
+- 用共享帳號操作 Live
 
-### 6.3 事件處理三步驟（不可跳過）
-1. **Stop**：停止相關行為
-2. **Stabilize**：確保系統不再擴散錯誤
-3. **Record**：完整記錄事件
-
-📌 **修復永遠在事後進行。**
-
----
-
-### 6.4 事件記錄（Incident Log）
-每一事件必須記錄：
-
-- Incident ID
-- 類型與等級
-- 發生時間
-- 影響範圍
-- 採取行動
-- Correlation ID
-
-📌 **無 Incident Log → 視為未處理事件。**
+### 8.2 必須做到
+- Secrets 必須由 KMS/Secrets Manager/安全儲存管理
+- 最小權限（Least Privilege）
+- 金鑰輪替（Rotation）：
+  - 有計畫、可稽核、可回滾
+- Secrets 使用必須可追溯：
+  - `who/when/for correlation_id/for what action`
 
 ---
 
-（DEPLOY_OPS · PART 2 結束）
+## 9. 監控與告警（Monitoring & Alerting｜最大完備）
 
-PART 3｜例行營運節奏 × 變更治理 × 營運最終宣告
+### 9.1 必監控指標（最小集合）
+- 系統健康：
+  - CPU/Mem/Disk/Network
+  - 服務存活與延遲
+- 資料品質：
+  - ingestion 失敗率、延遲、缺漏比例
+- Gate 狀態：
+  - Risk PASS/VETO 比率與 reason codes 分佈
+  - Governance RETURN 缺口類型
+- 執行安全：
+  - Order 提交/拒單/撤單/成交事件速率
+  - Channel latency
+  - Idempotency hit（去重觸發次數）
+  - Reconciliation 不一致事件
+- 急停/熔斷：
+  - Kill Switch 觸發次數與原因
+  - Circuit Breaker 觸發次數與原因
 
-## 第 7 章｜日常例行檢查與營運節奏（Operational Runbook）
-
-### 7.1 為何需要 Runbook
-在 TAITS 中，  
-**「照表操課」不是低階操作，而是治理穩定性的來源**。
-
-Runbook 的存在，是為了防止：
-- 人為疏忽
-- 長期營運下的習慣性鬆動
-- 「今天先這樣跑」的破口
-
----
-
-### 7.2 每日啟動前檢查（Daily Pre-Run Checklist）
-每個營運日開始前，**必須完成以下檢查**：
-
-1. 環境確認（Local / Sim / Live）
-2. Run Mode 明確標示
-3. Risk / Compliance 模組狀態 = 正常
-4. Governance Gate 可用
-5. Kill Switch 測試通過
-6. Log / Audit 寫入正常
-
-📌 任一未通過 → **當日不得進入 Live**。
+### 9.2 告警分級（必須）
+- **P0（立即停機）**：疑似重複下單、對帳不一致、Kill Switch 不可用、token 驗證失敗仍嘗試送單
+- **P1（立即處置）**：通道不健康、連續拒單、資料 provenance 斷裂
+- **P2（需追蹤）**：資料延遲、feature 品質下降、Evidence completeness 下降
 
 ---
 
-### 7.3 盤中監控節奏（Intra-Day Operations）
-盤中必須：
+## 10. 事件處置（Incident Response｜Runbook 必備）
 
-- 持續監控：
-  - Risk 狀態
-  - Execution 狀態
-  - 告警等級
-- 當出現：
-  - CRITICAL 告警  
-  → 立即中止所有 Execution
+### 10.1 事件分類（最小集合）
+- `INC-EXE`：執行層事件（重複/錯單/拒單/對帳）
+- `INC-RISK`：風控/合規事件（規則快照失效、reason code 激增）
+- `INC-DATA`：資料事件（延遲、缺漏、provenance 斷裂）
+- `INC-UI`：介面事件（APPROVE 被誤啟用、trace 失效）
+- `INC-SEC`：安全事件（疑似金鑰外洩/權限異常）
+- `INC-OPS`：部署事件（上線失敗、回滾）
 
-📌 **盤中不處理結構性變更，只做中止與紀錄。**
-
----
-
-### 7.4 盤後檢查（Post-Run Review）
-每個營運日結束後，必須完成：
-
-- Execution Summary
-- Incident Review（若有）
-- 未解決告警清單
-- Log 完整性檢查
-
-📌 **盤後檢查不做績效評分，只做事實確認。**
+### 10.2 P0 標準處置序列（硬性）
+1) 觸發 Kill Switch（或確認已觸發）
+2) 阻斷新單（Execution Safe Mode）
+3) 保全證據（鎖定稽核物、快照、log）
+4) 對帳（reconciliation）並記錄結果
+5) 通知 UI 顯示狀態與原因碼（不可靜默）
+6) 依 Runbook 決定回滾或修復
+7) 追加 Incident Report 到不可變更儲存（Only-Add）
 
 ---
 
-## 第 8 章｜變更、升級與治理凍結（Change Management & Freeze）
+## 11. 回滾（Rollback）與停機（Stop-the-Line）機制
 
-### 8.1 變更的治理定位
-在 TAITS 中：
+### 11.1 回滾定義（嚴格）
+- 回滾不是覆寫，而是：
+  - 切回上一個 Active Version Map（並記錄 Rollback Event）
+- 回滾必須可稽核、可回放
 
-> **任何變更，都是對風險結構的重新定義。**
-
-因此，變更本身即是高風險行為。
-
----
-
-### 8.2 變更類型分類
-TAITS 僅承認以下變更類型：
-
-1. **文件變更**
-2. **設定變更**
-3. **模組升級**
-4. **治理規則變更**
-
-📌 未分類變更 → **違規**。
+### 11.2 Stop-the-Line（停線）條件（最小集合）
+- Kill Switch 不可用（EXE-KILL-01）
+- Token 驗證鏈失效（SYS-VERIFY）
+- 對帳不一致（EXE-RECON-FAIL）
+- 稽核不可寫入（SYS-AUDIT）
+- Provenance 斷裂（SYS-PROV）
 
 ---
 
-### 8.3 變更前的強制要求
-任何變更前，必須：
+## 12. 營運日常作業（Daily Ops Checklist｜最大完備）
 
-- 停止 Live Execution
-- 切換至 Disabled 或 Observe-only
-- 完成變更說明與影響評估
-- 記錄 Change Request
+> 以下清單建議每天/每次啟動 Paper/Live 前執行（可自動化，但不得省略稽核）。
 
-📌 **不允許「熱更新」Live 系統。**
+### 12.1 開盤前（Pre-Session）
+- [ ] 交易日曆與時段狀態正確（TWSE/TAIFEX）
+- [ ] Data sources 健康檢查（官方優先 + fallback）
+- [ ] 規則快照可載入（rulebook_snapshot_ref）
+- [ ] Risk policy 版本可定位（policy_version）
+- [ ] Active Version Map 已生成
+- [ ] Immutable store 可寫入
+- [ ] UI Trace 可寫入
+- [ ] Kill Switch Preflight 成功
+- [ ] Channel Health OK
+- [ ] Reconciliation 引擎可用
 
----
+### 12.2 盤中（In-Session）
+- [ ] 監控告警啟用（P0/P1）
+- [ ] 觀察 VETO reason codes 異常激增
+- [ ] 觀察通道延遲與拒單率
+- [ ] 觀察對帳一致性
 
-### 8.4 治理凍結（Governance Freeze）
-在以下情境，必須啟動治理凍結：
-
-- 實盤階段（S1）
-- 發生重大 Incident 後
-- 監管或制度風險提高時
-
-凍結期間：
-- ❌ 不允許結構性變更
-- ❌ 不允許策略擴張
-- ✅ 僅允許修復型變更（需審計）
-
----
-
-### 8.5 解除凍結的條件
-解除治理凍結前，必須：
-
-- 完成事件回顧
-- 通過風控與治理審查
-- 更新文件版本
-- 重新部署並驗證
-
-📌 **凍結不是結束，而是重新確認。**
+### 12.3 收盤後（Post-Session）
+- [ ] 對帳報告完成並封存
+- [ ] 生成 Replay Bundles（必要事件）
+- [ ] 追加日結營運報告（Only-Add）
+- [ ] 觸發輪替/備份（如政策要求）
 
 ---
 
-## DEPLOY_OPS 最終宣告（Closing）
+## 13. 權限與操作責任（Ops RBAC & RACI）
 
-在 TAITS 中，  
-**部署與營運不是背景工作，  
-而是系統能否長期存活的前線防線**。
+### 13.1 Ops 角色（最小集合）
+- `Operator`：執行部署/切換/回滾（不可覆寫風控）
+- `Trader`：僅人類裁決（UI APPROVE），不可做部署
+- `Admin`：管理系統設定與權限（仍不可覆寫否決）
+- `Auditor`：查核稽核物與回放（只讀）
 
-如果一套系統：
-- 在文件中嚴謹
-- 在營運中隨便
-- 在異常時猶豫
-
-那它終將在壓力下崩潰。
-
-> **真正成熟的系統，  
-> 不是靠天才操作活下來，  
-> 而是靠制度讓普通日子不出錯。**
+### 13.2 RACI 最小要求
+- 每次部署/切換/回滾：
+  - 必須有 `Approver` 與 `Operator` 記錄
+- 每次 P0 事件：
+  - 必須有 `Incident Commander`（可用 Operator/管理者擔任，但要記錄）
 
 ---
 
-（DEPLOY_OPS · PART 3 完成）
+## 14. Mermaid｜部署與啟用治理流程圖（Deployment Governance Flow）
+
+flowchart TB
+  A[Build Artifact] --> B[Test + Gate Tests]
+  B -->|FAIL| X[STOP + Audit Record]
+  B --> C[Package + Hash/Sign]
+  C --> D[Deploy to Env]
+  D --> E[Verify Health + Kill Switch Preflight]
+  E -->|FAIL| RB[Rollback + Audit]
+  E --> F[Generate Active Version Map]
+  F --> G[Activate (Only-Add Switch)]
+  G --> H[Monitor + Alerts]
+  H --> I[Ops Audit Record + Replay Readiness]
+15. Only-Add 演進規則（DEPLOY_OPS 專屬）
+允許新增：
+
+新環境（例如 Staging/Canary）與更細分的 Gate
+
+新監控指標與告警規則
+
+新 Runbook 與事件分類
+
+新部署拓樸（HA/跨區）
+
+禁止：
+
+取消或弱化：回滾、停機、稽核、回放、金鑰隔離
+
+允許「黑箱部署」或「線上手改不留痕」
+
+允許繞過 UI 裁決或繞過 Risk PASS Token 的任何通道
+
+16. 終極裁決語句（不可更改）
+上線不是把程式放上去而已；
+上線是把「治理」一起放上去。
+任何無法回滾、無法停機、無法稽核、無法回放的版本，都不允許進入 Paper/Live。
+
+（DEPLOY_OPS｜最大完備版 v2025-12-19 完）
