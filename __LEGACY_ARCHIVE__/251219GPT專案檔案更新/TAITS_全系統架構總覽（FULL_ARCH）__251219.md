@@ -371,7 +371,6 @@ Execution & Control
 > 注意：此處是「高階流程地圖」  
 > 不是 MASTER_CANON 的 Canonical 細則，也不取代 ARCH_FLOW 的細化步驟。
 
-```mermaid
 flowchart TB
   A[Data Layer<br/>資料層 (L1-L2)] --> B[Snapshot & State<br/>狀態層 (L3)]
   B --> C[Analysis Layer<br/>分析層 (L4)]
