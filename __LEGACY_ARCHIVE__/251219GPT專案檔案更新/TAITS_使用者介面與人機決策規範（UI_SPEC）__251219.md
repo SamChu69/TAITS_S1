@@ -396,6 +396,7 @@ flowchart TB
   J -->|OK| L[Show Execution Live Status]
 
 14.2 Veto Visualization Map（否決可視化地圖）
+
 flowchart LR
   VETO[VETO] --> C1[CMP 合規]
   VETO --> S1[SYS 系統完整性]
