@@ -185,7 +185,7 @@ TAITS 採用：
 ## 4. 核心資料流（High-Level Data Flow｜最大完備）
 
 ### 4.1 主幹資料流（不含退回）
-```mermaid
+mermaid
 flowchart TB
   D1[Data Domain<br/>L1-L2] --> S1[State/Snapshot<br/>L3]
   S1 --> A1[Analysis Domain<br/>L4]
@@ -368,9 +368,10 @@ Execution 與 Secrets/Keys 需最高隔離
 
 Risk Gate 與 Version Ledger 需高可靠與不可變更
 
+---
+
 11. Mermaid｜「橫向模組域」總覽圖（System Map）
-mermaid
-複製程式碼
+```mermaid
 flowchart LR
   subgraph DATA[Data Domain]
     DS[DataSources Adapter]
