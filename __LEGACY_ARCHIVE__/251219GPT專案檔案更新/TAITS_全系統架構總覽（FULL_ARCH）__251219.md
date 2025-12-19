@@ -185,22 +185,21 @@ TAITS 採用：
 ## 4. 核心資料流（High-Level Data Flow｜最大完備）
 
 ### 4.1 主幹資料流（不含退回）
-
+```mermaid
 flowchart TB
   D1[Data Domain<br/>L1-L2] --> S1[State/Snapshot<br/>L3]
-S1 --> A1[Analysis Domain<br/>L4]
-A1 --> E1[Evidence Domain<br/>L5]
-E1 --> R1[Regime Domain<br/>L6]
-R1 --> RC[Risk & Compliance<br/>L7]
-RC -->|PASS| SR[Strategy & Research<br/>L8]
-RC -->|VETO| STOP1[STOP]
-SR --> GOV[Governance Gate<br/>L9]
-GOV -->|PASS| UI[UI Human Decision<br/>L10]
-GOV -->|RETURN| A1
-UI -->|APPROVE| EXE[Execution & Control<br/>L11]
-UI -->|REJECT| STOP2[STOP]
-
-###4.2 否決鏈與阻斷（Veto/Block）
+  S1 --> A1[Analysis Domain<br/>L4]
+  A1 --> E1[Evidence Domain<br/>L5]
+  E1 --> R1[Regime Domain<br/>L6]
+  R1 --> RC[Risk & Compliance<br/>L7]
+  RC -->|PASS| SR[Strategy & Research<br/>L8]
+  RC -->|VETO| STOP1[STOP]
+  SR --> GOV[Governance Gate<br/>L9]
+  GOV -->|PASS| UI[UI Human Decision<br/>L10]
+  GOV -->|RETURN| A1
+  UI -->|APPROVE| EXE[Execution & Control<br/>L11]
+  UI -->|REJECT| STOP2[STOP]
+4.2 否決鏈與阻斷（Veto/Block）
 L7 VETO：流程立即 STOP（不得進入 L8+）
 
 L9 RETURN：退回補齊（不得跳層）
@@ -369,10 +368,9 @@ Execution 與 Secrets/Keys 需最高隔離
 
 Risk Gate 與 Version Ledger 需高可靠與不可變更
 
----
-
 11. Mermaid｜「橫向模組域」總覽圖（System Map）
-
+mermaid
+複製程式碼
 flowchart LR
   subgraph DATA[Data Domain]
     DS[DataSources Adapter]
@@ -473,7 +471,6 @@ flowchart LR
   INFRA --- GOV
   INFRA --- UI
   INFRA --- EXE
-
 12. Only-Add 演進規則（FULL_ARCH 專屬）
 允許：
 
