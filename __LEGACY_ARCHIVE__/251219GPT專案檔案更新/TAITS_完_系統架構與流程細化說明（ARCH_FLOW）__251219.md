@@ -1,405 +1,297 @@
 # TAITS_系統架構與流程細化說明（ARCH_FLOW）__251219
 doc_key：ARCH_FLOW  
 治理等級：B+（Canonical Flow Specification｜承接 MASTER_CANON / FULL_ARCH）  
-適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
-版本狀態：ACTIVE（流程層細化，允許 Only-Add 擴充）  
+版本狀態：ACTIVE · LOCK_CANDIDATE（流程層細化，允許 Only-Add 擴充）  
 版本日期：2025-12-19  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
 對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
-變更原則：Only-Add（僅可新增，不可刪減／覆寫／改寫語義）  
+變更原則：**Only-Add（僅可新增，不可刪減／覆寫／改寫語義）**  
 上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
-平行參照：FULL_ARCH / RISK_COMPLIANCE / EXECUTION_CONTROL / UI_SPEC / VERSION_AUDIT  
+平行參照：FULL_ARCH / RISK_COMPLIANCE / EXECUTION_CONTROL / UI_SPEC / VERSION_AUDIT / LOCAL_ENV / DEPLOY_OPS / TWSE_RULES  
 
 ---
 
-## 0. 文件定位（Architecture Flow Specification）
+## 0. 文件定位（Architecture Flow Specification｜不可省略）
 
-本文件為 **TAITS Canonical Flow 的「最大完備流程細化說明」**，  
-負責回答四個工程與治理層都必須清楚的問題：
+本文件為 **TAITS Canonical Flow（L1–L11）之「最大完備流程法規」**，  
+以制度化方式定義：
 
-1. **流程何時被觸發（Trigger）**
-2. **流程在每一層做什麼、不做什麼**
-3. **流程在哪些條件下必須中斷、退回或終止**
-4. **流程如何在不同運行模式下（Research / Backtest / Simulation / Paper / Live）保持一致性**
+1) **流程觸發（Trigger）**  
+2) **各層責任邊界（做什麼／不做什麼）**  
+3) **中斷、退回、否決與緊急中止的法定語義**  
+4) **跨運行模式的一致性（Research / Backtest / Simulation / Paper / Live）**  
+5) **審計、回放、版本一致性之最低不可降標準**
 
-📌 本文件嚴格遵守：
+📌 嚴格遵守：
 - **L1–L11 不可跳步**
-- **任何中斷都必須可解釋、可回放**
-- **流程 ≠ 策略**
-- **流程 ≠ 下單權限**
+- **流程 ≠ 策略；流程 ≠ 下單**
+- **任何中斷必須可解釋、可回放**
+- **Risk / Compliance 具最高否決權**
+- **Human-in-the-Loop 不可被替代**
 
 ---
 
-## 1. Canonical Flow 的「不變核心」
-
-### 1.1 五個不可破壞的流程公理
+## 1. Canonical Flow 的不變核心（五大流程公理）
 
 1. **單向性（Forward-only）**  
-   流程只能前進或中斷，不存在「偷偷回寫修正」。
+   只能前進或中斷；不存在隱性回寫或偷偷修正。
 
 2. **層級隔離（Layer Isolation）**  
-   每一層只處理該層責任，不得越權。
+   每層只處理該層責任；任何越權即違規。
 
 3. **證據先於判斷（Evidence First）**  
-   沒有 Evidence，不得進入 Regime / Risk。
+   無 Evidence 不得進入 Regime / Risk / Strategy。
 
 4. **否決優先於建議（Veto > Proposal）**  
-   任一否決，流程立即停止或退回。
+   任一否決立即生效；績效不得辯護。
 
-5. **人類裁決不可被模擬（Human不可被取代）**  
-   L10 只能由人類完成。
-
----
-
-## 2. L1–L11「輸入 / 輸出 / 狀態轉移」矩陣（最大完備）
-
-> 本節補齊前文未展開的「狀態轉移語義」，  
-> 用於工程實作、回測模擬與流程審計。
-
-| Layer | 輸入狀態 | 成功輸出狀態 | 失敗狀態 | 失敗後去向 |
-|---|---|---|---|---|
-| L1 | NoData | RawDataReady | SourceFail | STOP |
-| L2 | RawDataReady | CanonicalReady | QAFail | STOP |
-| L3 | CanonicalReady | SnapshotReady | SnapshotFail | STOP |
-| L4 | SnapshotReady | FeatureReady | AnalysisFail | STOP |
-| L5 | FeatureReady | EvidenceReady | EvidenceInsufficient | RETURN L4 |
-| L6 | EvidenceReady | RegimeReady | RegimeUnclear | STOP |
-| L7 | RegimeReady | RiskPass | RiskVeto | STOP |
-| L8 | RiskPass | StrategyReady | NoStrategy | RETURN L6 |
-| L9 | StrategyReady | FlowValid | FlowInvalid | RETURN L4 |
-| L10 | FlowValid | HumanApprove | HumanReject | STOP |
-| L11 | HumanApprove | Executed | ExecFail | EMERGENCY_STOP |
+5. **人類裁決不可被模擬**  
+   L10 僅由人類完成；AI 不得取得最終裁決權。
 
 ---
 
-## 3. 多模式一致性設計（Research / Backtest / Simulation / Paper / Live）
+## 2. Canonical Flow 總覽（L1–L11｜不可跳步）
 
-### 3.1 為什麼所有模式必須共用同一 Canonical Flow？
+```text
+L1  Data Ingestion（資料取得）
+L2  Validation & Normalization（校驗/正規化）
+L3  Snapshot & State Build（快照/狀態建構）
+L4  Feature / Indicator / Structure Extraction（特徵/指標/結構）
+L5  Evidence Bundle Assembly（證據包）
+L6  Regime Determination（市場狀態）
+L7  Risk & Compliance Gate（最高否決）
+L8  Strategy Proposal Generation（策略建議）
+L9  Governance Gate（治理閘門）
+L10 UI Decision & Explain（人機決策/可解釋）
+L11 Execution & Control（受控執行）
+跨層總禁止：
 
-- 避免「回測能跑、實盤不能跑」
-- 避免「研究捷徑」污染實盤邏輯
-- 確保所有決策都有一致的審計語義
+層間回寫（Back-write）
 
-### 3.2 模式差異只允許存在於以下三點
+跳層（Skipping）
 
-| 項目 | 可變動 | 說明 |
-|---|---|---|
-| 資料來源 | ✅ | 歷史 / 即時 |
-| 時間推進 | ✅ | 模擬時間 / 真實時間 |
-| Execution 開關 | ✅ | 真實下單 / 模擬 |
+策略直連執行
 
-🚫 以下不可因模式而改變：
-- L1–L11 順序
-- Risk / Governance Gate
-- Human Decision 存在性
+AI 自主化
 
----
+Annotation 升格
 
-## 4. 流程中斷類型（Interrupt Taxonomy）
+3. 流程狀態轉移矩陣（State Transition Matrix｜最大完備）
+Layer	輸入狀態	成功輸出	失敗狀態	失敗去向
+L1	NoData	RawDataReady	SourceFail	STOP
+L2	RawDataReady	CanonicalReady	QAFail	STOP
+L3	CanonicalReady	SnapshotReady	SnapshotFail	STOP
+L4	SnapshotReady	FeatureReady	AnalysisFail	STOP
+L5	FeatureReady	EvidenceReady	EvidenceInsufficient	RETURN L4
+L6	EvidenceReady	RegimeReady	RegimeUnclear	STOP
+L7	RegimeReady	RiskPass	RiskVeto	STOP
+L8	RiskPass	StrategyReady	NoStrategy	RETURN L6
+L9	StrategyReady	FlowValid	FlowInvalid	RETURN L4
+L10	FlowValid	HumanApprove	HumanReject	STOP
+L11	HumanApprove	Executed	ExecFail	EMERGENCY_STOP
 
-### 4.1 中斷分類
+4. 中斷類型（Interrupt Taxonomy）
+4.1 類型
+Hard Stop：Risk Veto / Compliance Violation
 
-1. **Hard Stop（硬性中止）**
-   - Risk Veto
-   - Compliance Violation
-   - Kill Switch
+Soft Return：Evidence 不足 / Strategy 不適用 / Flow 不完整
 
-2. **Soft Return（可退回）**
-   - Evidence 不足
-   - Strategy 不適用
-   - Flow 完整性不足
+Emergency Stop：Execution 異常 / 系統錯誤 / 人工 Kill Switch
 
-3. **Emergency Stop（緊急中止）**
-   - Execution 異常
-   - 系統錯誤
-   - 外部風險事件
+4.2 最小審計要求
+任何中斷必留：
 
-### 4.2 中斷後的最小要求
+中斷層級（Layer）
 
-任何中斷必須留下：
-- 中斷層級
-- 中斷原因碼
-- 當下 Evidence Snapshot
-- Version Reference
+原因碼（Reason Code）
 
----
+Evidence Snapshot
 
-## 5. 與風控、治理文件的責任切分（避免重疊）
+Version Reference
 
-### 5.1 ARCH_FLOW 負責
-- **流程路徑**
-- **觸發點**
-- **中斷與退回邏輯**
+5. 多模式一致性（Mode Consistency）
+允許變動：
 
-### 5.2 ARCH_FLOW 不負責
-- 否決條文細節（→ RISK_COMPLIANCE）
-- 下單細節（→ EXECUTION_CONTROL）
-- 治理鐵律（→ MASTER_ARCH）
+資料來源（歷史/即時）
 
----
+時間推進（模擬/真實）
 
-## 6. 流程完整性檢查點（Flow Integrity Checkpoints）
+Execution 開關（真實/模擬）
 
-在以下節點必須做完整性檢查：
+禁止變動：
 
-- L5：Evidence Completeness
-- L7：Risk Gate Completeness
-- L9：Flow Validator
-- L11：Post-Execution Integrity
+L1–L11 順序
 
-任何一個檢查點失敗：
-- 不得進入下一層
-- 必須記錄並可回放
+Risk / Governance Gate
 
----
+Human Decision 存在性
 
-## 7. Canonical Flow Mermaid（完整版，含退回路徑）
+審計密度
 
+6. 全域 Hard Gates（摘要）
+Gate	觸發	處置
+Human Sovereignty	無人值守	BLOCK
+Evidence Replay	不可回放	BLOCK
+Regime Precondition	不符/衝突	DOWNGRADE / BLOCK
+Risk Veto	任一疑慮	VETO
+Strategy≠Execution	含方向/下單	BLOCK
+Governance Completeness	缺審計	RETURN
+
+7. L1–L11 逐層法規（精要）
+L1｜Data Ingestion
+輸出：raw_snapshot_id / source_provenance
+禁止：推論、清洗、方向化
+失敗：ABORT(L1_FETCH_FAIL)
+
+L2｜Validation & Normalization
+輸出：validated_snapshot_id / validation_report
+禁止：以估算掩蓋缺口
+失敗：ABORT(L2_SCHEMA_FAIL)
+
+L3｜Snapshot & State
+輸出：market_snapshot / replay_anchor
+禁止：只存在記憶體
+失敗：ABORT(L3_STATE_INTEGRITY_FAIL)
+
+L4｜Feature / Structure
+輸出：feature_vector / structure_state
+禁止：方向化 / 非白名單 Feature / Annotation 升格
+失敗：ABORT(L4_ILLEGAL_FEATURE)
+
+L5｜Evidence Bundle
+輸出：evidence_bundle_id / completeness_score
+禁止：以推測補證據
+失敗：RETURN 或 ABORT(L5_EVIDENCE_INCOMPLETE)
+
+L6｜Regime
+輸出：regime_state / confidence / conflict_flag
+禁止：由策略反推
+失敗：ABORT(L6_REGIME_UNDEFINED)
+
+L7｜Risk & Compliance
+輸出：PASS / VETO / DOWNGRADE / AVOID + reason codes
+禁止：績效辯護
+失敗：VETO（最高）
+
+L8｜Strategy Proposal
+輸出：proposal（非方向）
+禁止：價格/數量/下單
+失敗：ABORT(L8_OUTPUT_VIOLATION)
+
+L9｜Governance Gate
+輸出：PASS / RETURN / BLOCK
+禁止：放行缺證據
+失敗：RETURN 或 BLOCK
+
+L10｜UI Decision
+輸出：decision_trace / risk_disclosure
+禁止：誘導下單 / 隱藏否決
+失敗：STOP
+
+L11｜Execution & Control
+輸出：execution_log / kill_switch_state
+禁止：無人值守
+失敗：EMERGENCY_STOP
+
+8. 審計（Audit）總則｜「無紀錄＝未發生」
+覆蓋 L1–L11、所有中斷、所有模式
+
+不得以 Console Log 取代正式審計物
+
+8.1 Mandatory Audit Fields（最小集）
+correlation_id / session_id / layer_id / module_id
+
+timestamp_utc / version_ref
+
+input_hash / output_hash / status / reason_codes
+
+8.2 層級專屬
+L3：snapshot_id
+
+L5：evidence_id / provenance_map
+
+L6：regime_label / confidence
+
+L7：policy_version / veto_reason_codes
+
+L10：user_id / ui_trace
+
+L11：order_id_map / kill_switch_events
+
+9. 回放（Replay）規範
+Replay Bundle（最小集合）：
+
+documents_active_map
+
+evidence_bundle
+
+regime_state
+
+risk_decision
+
+human_decision（若有）
+
+execution_logs（若有）
+
+all_hashes
+
+一致性要求： 相同 Bundle → 相同結論；否則視為污染。
+
+10. 版本一致性（Version Alignment）
+所有輸出必綁 version_ref
+
+新版不得破壞舊 Replay
+
+與 VERSION_AUDIT 分工：
+
+ARCH_FLOW 定義「在哪裡引用版本」
+
+VERSION_AUDIT 管理「如何追溯/回退」
+
+11. Mermaid（含退回/否決）
+mermaid
+複製程式碼
 flowchart TB
-  L1[L1 Data Source] --> L2[L2 Normalization]
-  L2 --> L3[L3 Snapshot & State]
+  L1[L1 Data] --> L2[L2 QA]
+  L2 --> L3[L3 Snapshot]
   L3 --> L4[L4 Analysis]
-  L4 --> L5[L5 Evidence Builder]
-
-  L5 -->|OK| L6[L6 Regime Engine]
+  L4 --> L5[L5 Evidence]
+  L5 -->|OK| L6[L6 Regime]
   L5 -->|Insufficient| L4
-
-  L6 -->|OK| L7[L7 Risk & Compliance]
+  L6 -->|OK| L7[L7 Risk]
   L6 -->|Unclear| STOP1[STOP]
-
-  L7 -->|PASS| L8[L8 Strategy & Research]
+  L7 -->|PASS| L8[L8 Strategy]
   L7 -->|VETO| STOP2[STOP]
-
-  L8 -->|OK| L9[L9 Governance Gate]
+  L8 -->|OK| L9[L9 Governance]
   L8 -->|None| L6
-
-  L9 -->|PASS| L10[L10 Human Decision]
+  L9 -->|PASS| L10[L10 Human]
   L9 -->|INVALID| L4
-
-  L10 -->|APPROVE| L11[L11 Execution]
+  L10 -->|APPROVE| L11[L11 Exec]
   L10 -->|REJECT| STOP3[STOP]
-
   L11 -->|SUCCESS| END[END]
   L11 -->|FAIL| EMERGENCY[EMERGENCY STOP]
-8. 與 FULL_ARCH 的對位說明（強制一致）
-FULL_ARCH 定義 「有哪一層、有哪一模組」
+12. FULL_ARCH 對位
+FULL_ARCH：定義「有什麼層/模組」
 
-ARCH_FLOW 定義 「它們怎麼按順序動起來」
+ARCH_FLOW：定義「如何按序運作」
 
-任何實作：
+任一不對位 → 非法
 
-若流程存在但架構無對應模組 → 非法
-
-若架構存在但流程跳過 → 非法
-
-9. 演進規則（Only-Add）
+13. Only-Add 演進規則
 允許：
 
-新增子流程（例如 L4.1、L7.2）
+新增子流程（L4.1、L7.2）
 
-新增中斷類型與原因碼
+新增中斷原因碼
 
-新增模式支援（如 Sandbox）
+新增模式（Sandbox）
 
 禁止：
 
-刪除或合併 L1–L11
+刪除/合併 L1–L11
 
-改寫既有中斷語義
+改寫中斷語義
 
-以「簡化流程」為由跳層
+以效能為由省略審計
 
-（ARCH_FLOW｜最大完備版 · Part 1 完）
-
- TAITS_系統架構與流程細化說明（ARCH_FLOW）__251219
-## Part 2｜審計・回放・版本一致性（Audit / Replay / Version Alignment）
-
-doc_key：ARCH_FLOW  
-治理等級：B+（Canonical Flow Specification｜承接 MASTER_CANON / FULL_ARCH）  
-適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
-版本狀態：ACTIVE（流程層細化，允許 Only-Add 擴充）  
-版本日期：2025-12-19  
-對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
-變更原則：Only-Add（僅可新增，不可刪減／覆寫／改寫語義）  
-上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
-平行參照：FULL_ARCH / RISK_COMPLIANCE / EXECUTION_CONTROL / UI_SPEC / VERSION_AUDIT  
-
----
-
-## 10. 審計（Audit）總則｜「無紀錄＝未發生」
-
-### 10.1 審計的治理定位
-- 審計不是除錯工具，而是 **治理事實的唯一證據**。
-- 任何流程節點若無審計物（Artifact），該節點在制度上 **視為未發生**。
-
-### 10.2 審計覆蓋範圍（必覆蓋）
-- L1–L11 **每一層**  
-- 所有 **中斷 / 退回 / 否決 / 急停**  
-- 所有 **模式差異（Research / Backtest / Simulation / Paper / Live）**
-
-### 10.3 審計不可被替代
-- 不得以 Console Log、暫存檔、即時記憶體狀態替代正式審計物。
-- 不得以「結果正確」合理化「缺審計」。
-
----
-
-## 11. 全鏈路審計欄位（Mandatory Audit Fields）
-
-> 下列欄位為 **最小必備集合**；可擴充，不可縮減。
-
-### 11.1 通用欄位（所有層級）
-- `correlation_id`（串起一次完整流程）
-- `session_id`（一次操作會話）
-- `layer_id`（L1–L11）
-- `module_id`
-- `timestamp_utc`
-- `version_ref`（文件／政策／模型版本）
-- `input_hash`
-- `output_hash`
-- `status`（SUCCESS / FAIL / RETURN / VETO）
-- `reason_codes`（若非 SUCCESS 必填）
-
-### 11.2 層級專屬補充
-- **L3（Snapshot）**：`snapshot_id`, `market_time`
-- **L5（Evidence）**：`evidence_id`, `provenance_map_ref`
-- **L6（Regime）**：`regime_label`, `confidence`
-- **L7（Risk）**：`policy_version`, `veto_reason_codes`
-- **L10（Human）**：`user_id`, `ui_trace_ref`
-- **L11（Execution）**：`order_id_map`, `kill_switch_events`
-
----
-
-## 12. 回放（Replay）規範｜可重建、可驗證
-
-### 12.1 回放的定義
-回放（Replay）是指：  
-> **在不接觸即時系統、不連動外部世界的前提下，完整重建某一次決策當下的上下文。**
-
-### 12.2 Replay Bundle（最小集合）
-- `documents_active_map`（當下生效文件版本）
-- `evidence_bundle`
-- `regime_state`
-- `risk_gate_decision`
-- `human_decision`（若有）
-- `execution_logs`（若有）
-- `all_hashes`（完整性校驗）
-
-### 12.3 回放一致性要求
-- 相同 Replay Bundle → 必須產生 **相同結論**  
-- 若結果不同 → 視為 **版本或資料污染**
-
----
-
-## 13. 版本一致性（Version Alignment）
-
-### 13.1 版本引用原則
-- 所有流程輸出 **必須綁定 version_ref**
-- version_ref 至少包含：
-  - 文件版本（doc_key@version）
-  - 風控政策版本
-  - 模型／規則版本（若有）
-
-### 13.2 Only-Add 與回放相容
-- 新版本上線不得破壞舊 Replay
-- 舊 Replay 必須能在新系統中被載入、檢視、驗證
-
-### 13.3 與 VERSION_AUDIT 的關係
-- ARCH_FLOW：定義「流程在哪裡產生版本引用」
-- VERSION_AUDIT：定義「版本如何被管理、追溯、回退」
-
----
-
-## 14. 流程中斷與否決的審計語義
-
-### 14.1 否決（VETO）
-- 必須記錄：
-  - 否決層級
-  - 否決原因碼
-  - 相關 Evidence / Regime 快照
-- 不得以摘要取代原始證據
-
-### 14.2 退回（RETURN）
-- 必須記錄：
-  - 退回起點與目標層
-  - 需補齊項目清單
-- 退回不是重跑；是 **補齊後再前進**
-
-### 14.3 緊急中止（EMERGENCY STOP）
-- 觸發條件：
-  - 系統錯誤
-  - 市場異常
-  - 人工 Kill Switch
-- 必須：
-  - 立即中止 Execution
-  - 完整留存事發前後審計物
-
----
-
-## 15. 不同運行模式下的審計一致性
-
-| 模式 | 是否需要審計 | 說明 |
-|---|---|---|
-| Research | 是 | 防止研究捷徑污染 |
-| Backtest | 是 | 可對齊實盤回放 |
-| Simulation | 是 | 驗證流程完整 |
-| Paper | 是 | 與 Live 同構 |
-| Live | 是 | 法遵與追責 |
-
-📌 **審計密度不可因模式降低**。
-
----
-
-## 16. ARCH_FLOW × FULL_ARCH × MASTER_CANON 對齊表
-
-| 面向 | MASTER_CANON | FULL_ARCH | ARCH_FLOW |
-|---|---|---|---|
-| 定義順序 | ✓ |  |  |
-| 定義模組 |  | ✓ |  |
-| 定義流程 |  |  | ✓ |
-| 定義否決條文 |  |  | ✗ |
-| 定義執行細節 |  |  | ✗ |
-| 定義審計點 |  |  | ✓ |
-
----
-
-## 17. 審計與回放流程圖（Mermaid）
-
-```mermaid
-flowchart TB
-  EVT[Flow Event] --> AID[Attach Correlation/Session IDs]
-  AID --> HASH[Hash Inputs/Outputs]
-  HASH --> LOG[Write Audit Artifact]
-  LOG --> BUNDLE[Assemble Replay Bundle]
-  BUNDLE --> VERIFY[Verify Hashes & Versions]
-  VERIFY --> STORE[Immutable Storage]
-
-18. 合規檢核清單（ARCH_FLOW 專屬）
-
- L1–L11 無跳層
-
- 每層皆有審計物
-
- 所有中斷具原因碼
-
- Replay Bundle 可重建
-
- version_ref 完整
-
-19. 演進規則（Only-Add）
-
-允許：
-
-新增審計欄位
-
-新增回放視角（View）
-
-新增模式支援（Sandbox）
-
-禁止：
-
-移除既有審計欄位
-
-破壞舊 Replay 的可讀性
-
-以效能理由省略審計
-
-（ARCH_FLOW｜最大完備版 · Part 2 完）
+（ARCH_FLOW｜最大完備整合版 完）
