@@ -285,6 +285,7 @@ doc_key：LOCAL_ENV
 
 ## 13. Mermaid｜本地環境治理與隔離架構圖
 
+```mermaid
 flowchart TB
   subgraph T0[Tier-0 Research/Backtest/Simulation]
     DEV[IDE/Notebook/Runner]
