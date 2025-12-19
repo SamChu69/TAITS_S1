@@ -1,9 +1,11 @@
-📘 TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251219
-PART 1｜文件治理憲法 × 位階裁決 × 使用原則
-
-# TAITS_文件索引與治理對照表（DOCUMENT_INDEX）
-## Document Index & Governance Resolution Canon
-
+# TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251219
+#Document Index & Governance Resolution Canon
+doc_key：DOCUMENT_INDEX
+治理等級：A+（文件裁決最高母法）
+版本狀態：ACTIVE（不可被任何文件覆寫）
+版本日期：2025-12-19
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）
+變更原則：Only-Add（僅可新增，不可刪減／改寫／弱化任何治理語義）
 ---
 
 ## 文件前言（Why Index Is Power）
@@ -349,3 +351,86 @@ PART 3｜版本控管 × 引用審計 × 違規處置（最終裁決）
 ---
 
 （DOCUMENT_INDEX · PART 3 完成）
+
+PART 4｜文件索引帳冊 × Active Set × AI / 系統可執行附錄
+
+（Implementation Appendix｜Only-Add）
+
+📌 本 PART 為 制度落地與 AI / 工程可執行層
+📌 不具解釋權、不改寫 PART 1–3
+📌 僅負責回答：「系統此刻，哪些文件有效？」
+
+4.1 Active Governance File Set（唯一有效集合）
+
+⚠ 僅以下文件，具備治理效力
+⚠ 未列入者＝不存在（即使實體檔案存在）
+
+doc_key	文件名稱	治理等級	狀態
+AI_GOV	TAITS_AI_行為與決策治理最終規則全集__251217.md	A+	ACTIVE
+MASTER_ARCH	TAITS_母體總憲法與核心鐵律（MASTER_ARCH）__251219.md	A	ACTIVE
+MASTER_CANON	TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__251219.md	A	ACTIVE
+DOCUMENT_INDEX	TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251219.md	A+	ACTIVE
+ARCH_FLOW	TAITS_系統架構與流程細化說明（ARCH_FLOW）__251219.md	B	ACTIVE
+FULL_ARCH	TAITS_全系統架構總覽（FULL_ARCH）__251219.md	B	ACTIVE
+RISK_COMPLIANCE	TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__251219.md	B	ACTIVE
+EXECUTION_CONTROL	TAITS_交易執行與控制規範（EXECUTION_CONTROL）__251219.md	B	ACTIVE
+UI_SPEC	TAITS_使用者介面與人機決策規範（UI_SPEC）__251219.md	B	ACTIVE
+DEPLOY_OPS	TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219.md	B	ACTIVE
+LOCAL_ENV	TAITS_本地執行與運算環境規範（LOCAL_ENV）__251219.md	B	ACTIVE
+DATA_SOURCES	TAITS_資料來源全集（DATA_SOURCES）__251219.md	B	ACTIVE
+STRATEGY_UNIVERSE	TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__251219.md	B	ACTIVE
+STRATEGY_FEATURE_INDEX	TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219.md	B	ACTIVE
+TWSE_RULES	TAITS_TWSE交易規則參考彙編（TWSE_RULES）__251219.md	B	ACTIVE
+VERSION_AUDIT	TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219.md	B	ACTIVE
+BEGINNER_GUIDE	TAITS_新手教學與操作引導總則（BEGINNER_GUIDE）__251219.md	C	ACTIVE
+4.2 AI / Agent 啟動時的強制檢查序列（不可略過）
+
+任何 AI / Agent 啟動時，必須依序完成：
+
+載入 DOCUMENT_INDEX
+
+建立 Active File Set 快照
+
+驗證 A+ / A 級文件完整存在
+
+拒絕任何未列入之文件引用
+
+禁止自行補完缺失條文
+
+📌 未完成任一步 → AI 不得產生任何實質行為
+
+4.3 文件狀態語義（唯一有效）
+狀態	語義
+ACTIVE	具治理效力，必須遵守
+FROZEN	僅可讀，不可引用新增語義
+DEPRECATED	不可引用，不可作依據
+ARCHIVED	歷史留存，僅供查證
+4.4 DOCUMENT_INDEX 自我保護條款（Self-Protection）
+
+DOCUMENT_INDEX：
+
+不得被任何文件覆寫
+
+不得被任何 AI 解釋
+
+不得被任何人類「合理化調整」
+
+📌 若 DOCUMENT_INDEX 與任何文件衝突：
+📌 直接適用 DOCUMENT_INDEX，無需解釋。
+
+最終鎖定宣告（Final Lock）
+
+從此版本起，
+TAITS 的所有權力邊界，
+已不可再被模糊。
+
+AI 不再「猜」
+
+人類不再「解釋」
+
+策略不再「越權」
+
+系統可被審計、可被追責、可長期運作
+
+📌 DOCUMENT_INDEX v2025-12-19
+📌 正式封存為 TAITS 文件治理最高母法
