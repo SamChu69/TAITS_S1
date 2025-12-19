@@ -185,7 +185,7 @@ TAITS 採用：
 ## 4. 核心資料流（High-Level Data Flow｜最大完備）
 
 ### 4.1 主幹資料流（不含退回）
-```mermaid
+
 flowchart TB
   D1[Data Domain<br/>L1-L2] --> S1[State/Snapshot<br/>L3]
   S1 --> A1[Analysis Domain<br/>L4]
@@ -199,7 +199,8 @@ flowchart TB
   GOV -->|RETURN| A1
   UI -->|APPROVE| EXE[Execution & Control<br/>L11]
   UI -->|REJECT| STOP2[STOP]
-4.2 否決鏈與阻斷（Veto/Block）
+
+###4.2 否決鏈與阻斷（Veto/Block）
 L7 VETO：流程立即 STOP（不得進入 L8+）
 
 L9 RETURN：退回補齊（不得跳層）
@@ -371,7 +372,7 @@ Risk Gate 與 Version Ledger 需高可靠與不可變更
 ---
 
 11. Mermaid｜「橫向模組域」總覽圖（System Map）
-mermaid
+
 flowchart LR
   subgraph DATA[Data Domain]
     DS[DataSources Adapter]
