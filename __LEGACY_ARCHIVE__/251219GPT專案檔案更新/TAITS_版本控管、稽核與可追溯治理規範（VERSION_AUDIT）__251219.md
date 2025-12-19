@@ -317,6 +317,7 @@ Active Version Map 是「在某一次流程中，所有生效版本的集合」�
 
 ## 14. Mermaid｜版本與回放治理流程圖（可直接放入 md）
 
+```mermaid
 flowchart TB
   A[Change Request] --> B[Review Gate]
   B -->|APPROVE| C[Create New Version (Only-Add)]
