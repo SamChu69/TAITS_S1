@@ -1,4 +1,4 @@
-## TAITS_完整總架構 × 總流程 × 全資訊體系
+# TAITS_完整總架構 × 總流程 × 全資訊體系
 # MASTER_CANON（Canonical Constitution）__251219
 
 Part 1｜母體定位 × 世界觀 × 不可動搖鐵律
