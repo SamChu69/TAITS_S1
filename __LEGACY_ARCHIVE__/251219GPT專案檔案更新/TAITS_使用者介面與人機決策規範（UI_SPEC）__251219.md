@@ -377,7 +377,6 @@ UI 必須能區分並明示：
 ## 14. Mermaid｜UI 決策與否決可視化流程圖（必須能放入 md）
 
 ### 14.1 UI Decision Flow（含否決/退回）
-
 ```mermaid
 flowchart TB
   A[Load Decision Workbench] --> B[Show Evidence/Regime/Risk/Gov/Strategy]
@@ -394,9 +393,9 @@ flowchart TB
   I --> J{Execution Preflight}
   J -->|BLOCK| K[UI: BLOCK + Reason Codes]
   J -->|OK| L[Show Execution Live Status]
-
 14.2 Veto Visualization Map（否決可視化地圖）
-
+mermaid
+複製程式碼
 flowchart LR
   VETO[VETO] --> C1[CMP 合規]
   VETO --> S1[SYS 系統完整性]
@@ -410,9 +409,7 @@ flowchart LR
   L1 --> CODE1
   P1 --> CODE1
   E1 --> CODE1
-
 15. Only-Add 演進規則（UI_SPEC 專屬）
-
 允許新增：
 
 新面板（例如：事件面板、宏觀面板）
@@ -436,7 +433,6 @@ flowchart LR
 任何形式的「自動批准」「無人值守」入口
 
 16. UI_SPEC 終極裁決語句（不可更改）
-
 UI 的使命不是讓交易變快，
 而是讓每一次交易在發生前都可被理解、被否決、被追溯。
 
