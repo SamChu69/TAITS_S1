@@ -400,6 +400,7 @@ doc_key：DATA_UNIVERSE
 
 ## 12. Mermaid｜資料來源治理流程（L1-L2）
 
+```mermaid
 flowchart TB
   A[Select Source_id<br/>from DATA_UNIVERSE] --> B[Ingest Raw Payload]
   B --> C[Create Source Snapshot<br/>+ provenance + hash]
@@ -410,6 +411,7 @@ flowchart TB
   E --> F[Emit Canonical Data + field_map_ref]
   F --> G[Write Immutable Audit Refs]
   G --> H[Forward to L3 Snapshot]
+
 13. Only-Add 演進規則（DATA_UNIVERSE 專屬）
 允許新增：
 
@@ -437,7 +439,19 @@ flowchart TB
 
 （DATA_UNIVERSE｜最大完備版 v2025-12-19 · Part 1 完）
 
+# TAITS_資料來源全集（DATA_UNIVERSE）__251219
 ## Part 2｜台股資料子類別全集 × 官方優先 × Provenance 必備清單（最大完備）
+
+doc_key：DATA_UNIVERSE  
+治理等級：D（DataSources Universe｜官方優先 × 多層Fallback × 可追溯Provenance）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（資料來源全集可 Only-Add 擴充；不得弱化官方優先與可追溯）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / DOCUMENT_INDEX / MASTER_CANON / VERSION_AUDIT  
+平行參照：FULL_ARCH / ARCH_FLOW / RISK_COMPLIANCE / TWSE_RULES / EXECUTION_CONTROL / UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+變更原則：Only-Add（只可新增，不可刪減/覆寫/偷換資料語義；不得用第三方裁決制度）  
+核心鐵律：官方資料優先；多層Fallback；Provenance 可追溯；Snapshot 可回放；資料品質可審計；缺證據不得裁決
 
 ---
 
@@ -802,6 +816,7 @@ flowchart TB
 
 ## 27. Mermaid｜「子類別」到「證據鏈」的治理通路
 
+```mermaid
 flowchart TB
   S[Select subcategory_id<br/>from DATA_UNIVERSE] --> P[Pick Primary Source_id]
   P --> I[L1 DataIngested<br/>raw+prov+hash]
@@ -834,7 +849,19 @@ flowchart TB
 
 （DATA_UNIVERSE｜最大完備版 v2025-12-19 · Part 2 完）
 
+# TAITS_資料來源全集（DATA_UNIVERSE）__251219
 ## Part 3｜資料品質分級（Quality Grades）× Evidence Completeness 門檻映射 × 降級裁決規則（最大完備）
+
+doc_key：DATA_UNIVERSE  
+治理等級：D（DataSources Universe｜官方優先 × 多層Fallback × 可追溯Provenance）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（資料來源全集可 Only-Add 擴充；不得弱化官方優先與可追溯）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / DOCUMENT_INDEX / MASTER_CANON / VERSION_AUDIT  
+平行參照：FULL_ARCH / ARCH_FLOW / RISK_COMPLIANCE / TWSE_RULES / EXECUTION_CONTROL / UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+變更原則：Only-Add（只可新增，不可刪減/覆寫/偷換語義；不得用第三方裁決制度）  
+核心鐵律：品質不足不得靜默；缺證據不得裁決；降級必可見（UI/Log/Evidence）；合規與風控可直接否決（最高否決權）
 
 ---
 
@@ -1103,6 +1130,7 @@ UI 必須顯示（至少）：
 
 ## 37. Mermaid｜品質分級與完整度如何影響裁決（L1→L7）
 
+```mermaid
 flowchart TB
   A[L1 Ingest + Provenance + Hash] --> B[L2 Normalize + Quality Flags]
   B --> C[Compute Quality Grade QG-A..X]
@@ -1142,7 +1170,19 @@ TAITS 不允許「資料不足還硬判」。
 
 （DATA_UNIVERSE｜最大完備版 v2025-12-19 · Part 3 完）
 
+# TAITS_資料來源全集（DATA_UNIVERSE）__251219
 ## Part 4｜端點型態治理（HTTP/CSV/PDF/公告頁/WebSocket）× Source Snapshot 證據保存規格 × 脫敏與稽核（最大完備）
+
+doc_key：DATA_UNIVERSE  
+治理等級：D（DataSources Universe｜官方優先 × 多層Fallback × 可追溯Provenance）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（資料來源全集可 Only-Add 擴充；不得弱化官方優先與可追溯）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / DOCUMENT_INDEX / MASTER_CANON / VERSION_AUDIT  
+平行參照：FULL_ARCH / ARCH_FLOW / RISK_COMPLIANCE / TWSE_RULES / EXECUTION_CONTROL / UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+變更原則：Only-Add（只可新增，不可刪減/覆寫/偷換語義；不得以第三方裁決制度）  
+核心鐵律：任何資料都必須能「證明從哪來」；任何敏感都必須脫敏；任何回放都必須可重建；任何制度裁決都必須能回指官方快照
 
 ---
 
@@ -1462,6 +1502,7 @@ Part 1/2 解決「有哪些來源與子類別」，Part 3 解決「能否裁決�
 
 ## 48. Mermaid｜端點型態 → Snapshot → Parser → Canonical → Evidence
 
+```mermaid
 flowchart TB
   A[Select Source_id + endpoint_type] --> B[Fetch Raw Payload]
   B --> C[Create Source Snapshot<br/>endpoint_ref + raw + hash + redaction]
