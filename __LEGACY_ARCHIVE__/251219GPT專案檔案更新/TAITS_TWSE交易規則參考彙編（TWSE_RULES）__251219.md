@@ -258,6 +258,7 @@ Trigger Map 將「交易行為」映射到「必須檢查的制度/規則類型�
 
 ## 9. Mermaid｜制度觸發到合規否決的流程圖（可放入 md）
 
+```mermaid
 flowchart TB
   A[L1-L2 Data + Calendar + Symbol State] --> B[L5 Evidence Bundle]
   B --> C[L6 Regime/Market State]
