@@ -1,4 +1,4 @@
-# 📘 TAITS_文件索引與治理對照表（DOCUMENT_INDEX）
+# 📘 TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251219
 ## Document Index & Governance Resolution Canon
 
 doc_key：DOCUMENT_INDEX  
