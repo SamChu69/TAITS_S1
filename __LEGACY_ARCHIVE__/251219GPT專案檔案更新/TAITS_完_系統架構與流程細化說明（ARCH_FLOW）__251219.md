@@ -371,7 +371,9 @@ flowchart TB
   LOG --> BUNDLE[Assemble Replay Bundle]
   BUNDLE --> VERIFY[Verify Hashes & Versions]
   VERIFY --> STORE[Immutable Storage]
+
 18. 合規檢核清單（ARCH_FLOW 專屬）
+
  L1–L11 無跳層
 
  每層皆有審計物
@@ -383,6 +385,7 @@ flowchart TB
  version_ref 完整
 
 19. 演進規則（Only-Add）
+
 允許：
 
 新增審計欄位
