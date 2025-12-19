@@ -363,6 +363,7 @@ doc_key：ARCH_FLOW
 
 ## 17. 審計與回放流程圖（Mermaid）
 
+```mermaid
 flowchart TB
   EVT[Flow Event] --> AID[Attach Correlation/Session IDs]
   AID --> HASH[Hash Inputs/Outputs]
