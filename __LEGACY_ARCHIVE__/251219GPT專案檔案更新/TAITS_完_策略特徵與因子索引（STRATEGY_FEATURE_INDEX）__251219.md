@@ -1,402 +1,1743 @@
 # TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219
 doc_key：STRATEGY_FEATURE_INDEX  
-治理等級：B（Feature & Factor Index｜治理對齊版｜承接 STRATEGY_UNIVERSE / ARCH_FLOW / DATA_SOURCES）  
+治理等級：B+（Feature Governance & Semantic Boundary Charter｜全知識自洽最大完備版）  
 適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
-版本狀態：ACTIVE（特徵/因子索引母表；Only-Add 演進；不可縮減語義）  
+版本狀態：ACTIVE（特徵層治理封頂＋可展開知識索引，Only-Add 演進）  
 版本日期：2025-12-19  
 對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
-上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX（Index 裁決）  
-平行參照：STRATEGY_UNIVERSE / ARCH_FLOW / FULL_ARCH / RISK_COMPLIANCE / EXECUTION_CONTROL / UI_SPEC / VERSION_AUDIT / DATA_SOURCES / TWSE_RULES  
-變更原則：Only-Add（只可新增，不可刪減/覆寫/弱化邊界/偷換定義）  
-核心鐵律：Feature ≠ Signal ≠ Strategy ≠ Order（特徵不是訊號、不是策略、不是下單）＋ Evidence First（證據先於判斷）＋ Regime > Strategy（狀態高於策略）＋ Risk/Compliance 可否決一切
+上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
+平行參照：STRATEGY_UNIVERSE / ARCH_FLOW / RISK_COMPLIANCE / VERSION_AUDIT / UI_SPEC / DATA_SOURCES / TWSE_RULES  
+變更原則：Only-Add（只可新增，不可刪減、不可覆寫、不可改寫既有語義、不可弱化邊界）  
+核心宣告：Feature ≠ Signal ≠ Strategy ≠ Order（特徵非訊號、非策略、非下單）  
 
 ---
 
-## 0. 文件定位（Why This Document Exists）
+## 0. 文件定位（最大完備｜全知識自洽）
 
-本文件是 TAITS 的「策略特徵與因子索引」母表，目的在於：
+本文件是 TAITS 的 **「策略特徵與因子索引」**，其定位不是列清單而已，而是提供一份**即使新對話只讀這一份，也能合法展開策略研究所需的「語義憲法＋知識索引」**。
 
-1. 定義 TAITS 全系統中可被使用的 **特徵（Feature）/因子（Factor）/指標（Indicator）/結構輸出（Structure Output）** 的標準語義、產生來源、輸入輸出、限制與審計義務  
-2. 讓任何策略（STRATEGY_UNIVERSE）只能「引用」特徵，而不是「暗藏」特徵；避免形成隱性策略  
-3. 強制落實治理邊界：  
-   - 特徵不產生交易方向  
-   - 特徵不具下單權  
-   - 特徵不能繞過 Evidence/Regime/Risk/Governance  
-4. 建立「可回放/可追溯」的 Feature Provenance（來源追溯）與 Version Alignment（版本一致性）標準  
-5. 使 UI、審計、回測、實盤可用同一語義，不允許研究捷徑污染實盤
+本文件同時滿足兩個目標：
 
-📌 本文件不負責（避免越權）：
-- 不定義 L1–L11 流程順序（由 MASTER_CANON / ARCH_FLOW 裁決）
-- 不定義策略宇宙內容（由 STRATEGY_UNIVERSE 裁決）
-- 不定義風控否決條文（由 RISK_COMPLIANCE 裁決）
-- 不定義下單與通道（由 EXECUTION_CONTROL 裁決）
-- 不承諾績效、不產生交易方向、不提供自動下單暗示
+1) **治理封頂（Hard Governance）**  
+- 明確定義 Feature 的法定意義  
+- 明確定義 Feature 的合法使用路徑（Feature→Evidence→Regime→Risk→Strategy→Human→Execution）  
+- 明確列出禁止事項與違規判定（可被審計、可被阻斷）
 
----
+2) **全知識自洽（Knowledge Self-Contained）**  
+- 將常用方法論（GMMA、顧比倒數線、威科夫、鮑迪克纏論等）落在 Feature 層，並以「描述性輸出」表達  
+- 提供 Feature → Evidence 組裝方式 → Regime 對應 → Strategy 適用邏輯 的展開規則  
+- 提供「備註」讓新對話能清楚理解每類 Feature 常用到的資料、指標、結構語義與常見陷阱（lookahead、資料延遲、過度信號化）
 
-## 1. 治理總則（Hard Gates｜不可動搖）
-
-### 1.1 名詞與地位（不可偷換）
-- **Raw Data（原始資料）**：L1 取得之來源資料（官方優先），不可被特徵層改寫  
-- **Canonical Data（標準化資料）**：L2 清洗後，具一致欄位與單位  
-- **Snapshot（快照）**：L3 固化的市場狀態，可回放  
-- **Feature（特徵）**：L4 將資料轉為「可解釋輸出」，不具方向性裁決權  
-- **Indicator（指標）**：Feature 的一種（如 MA、RSI），屬於可重算特徵  
-- **Factor（因子）**：Feature 的一種，但常用於橫斷面（cross-sectional）或組合層面（如價值/動能/品質）  
-- **Structure Output（結構輸出）**：結構分析（例如趨勢段、盤整區、纏論結構、威科夫階段）之「描述性輸出」  
-- **Signal（訊號）**：屬於策略層（L8）內部的「條件判斷結果」，不可在本文件定義為 Feature  
-- **Strategy（策略）**：L8 的建議/假設生成器，不得直連下單  
-- **Order（委託）**：L11 才能生成；須 Human + Risk PASS Token
-
-### 1.2 四大禁令（Forbidden）
-1) **禁止把 Feature 寫成「買/賣/多/空」**  
-2) **禁止把 Feature 當作策略**（Feature 只能被引用、不能自行形成交易結論）  
-3) **禁止 Feature 產生/暗示下單**（不得出現「直接買進/直接賣出」）  
-4) **禁止跳過 Evidence/Regime/Risk/Governance**（任何 Feature 若需決策裁決，必須走 L5–L10）
-
-### 1.3 Evidence First 與可回放
-- Feature 產出必須引用：  
-  - `snapshot_ref`（L3）  
-  - `data_provenance_ref`（來源追溯）  
-  - `feature_version_ref`（版本）  
-- 缺上述任一：視為 **不可用特徵（Feature Invalid）**，不得進入 L5 Evidence Bundle
+📌 本文件不負責（避免越權）：  
+- 不定義 Canonical Flow 順序（由 MASTER_CANON / ARCH_FLOW 裁決）  
+- 不定義否決門檻與理由碼全集（由 RISK_COMPLIANCE 裁決）  
+- 不定義 UI 外觀（由 UI_SPEC 裁決）  
+- 不輸出交易方向、不輸出下單指令、不承諾績效  
 
 ---
 
-## 2. 特徵分層（Feature Layering｜與 Canonical Flow 對齊）
+## 1. Feature 的法定定義（不可改寫）
 
-本文件的 Feature 定義以 L4 為中心，但必須與 L1–L11 對位：
+### 1.1 Feature 是什麼（Legal Definition）
+Feature（特徵/因子）是：
 
-- **L1–L2**：決定資料是否可被合法使用（來源/清洗/一致性）  
-- **L3**：決定 Feature 計算的時間點與狀態（Snapshot 固化）  
-- **L4**：產生 Feature / Indicator / Factor / Structure Output  
-- **L5**：Feature 被組裝成 Evidence（含衝突處理與完整性檢查）  
-- **L6**：Regime 會引用部分 Feature 但仍屬「狀態裁決」  
-- **L7**：Risk/Compliance 可否決使用某些 Feature（例如資料延遲、不可追溯、制度限制）  
-- **L8**：策略引用 Feature 形成條件，但策略不得「把 Feature 直接當作訊號」繞過 Evidence/Regime  
-- **L9–L10**：治理與人類裁決需可視化 Feature 的來源與解釋  
-- **L11**：不得直接接收 Feature 作為下單參數（必須透過 Human Approved Intent）
+> 對市場、標的、參與者行為或環境狀態的「可量化/可描述」表徵，  
+> 其輸出必須是**描述性（Descriptive）**，不可被直接解釋為方向或行動。
 
----
+Feature 的必備屬性：
+- **可追溯（Provenance）**：知道來自哪個資料源、哪個版本、哪個時間戳  
+- **可回放（Replayable）**：同一資料/版本輸入可重建同一輸出  
+- **可審計（Auditable）**：能被記錄到審計物，無紀錄視為不存在  
+- **非決策（Non-Decisive）**：不得直接產生買賣建議或行為指令  
 
-## 3. Feature Meta Schema（特徵治理欄位｜不可縮減）
-
-> 本節是 Feature 在治理上的「最小資料結構」。  
-> 任何新增 Feature 必須完整填寫；不可只寫名稱與公式。
-
-### 3.1 必填欄位（Mandatory）
-- `feature_id`：唯一 ID（不可重複）  
-- `feature_name_zh`：中文名稱（必填）  
-- `feature_name_en`：英文名稱（可填）  
-- `feature_family`：所屬家族（見 §4）  
-- `feature_type`：Indicator / Factor / Structure / RiskMetric / QualityMetric / EventTag / Meta  
-- `timeframe`：資料頻率（tick/1m/5m/15m/60m/1d/1w/1mo…）  
-- `inputs`：輸入欄位（必須可追溯到 DATA_SOURCES 的欄位定義）  
-- `calculation`：計算方式（可文字 + 公式；不得只寫「同 XX 指標」）  
-- `output`：輸出定義（數值範圍/單位/維度）  
-- `interpretation`：可解釋性說明（描述性，不得變成買賣建議）  
-- `constraints`：使用限制（資料缺失、交易時段、標的限制、冷啟動期、lookahead 禁止等）  
-- `audit_requirements`：審計欄位（至少 snapshot_ref/provenance/version/hash）  
-- `provenance`：來源（官方/第三方/內部推導；必須可追溯）  
-- `versioning`：版本策略（Only-Add；不可覆寫舊語義）  
-- `used_by`：被哪些策略類別/Regime/Risk 引用（引用而非綁死）
-
-### 3.2 禁止欄位（Not Allowed）
-- 不得含 `order_action` / `buy` / `sell` / `long` / `short` 作為 output  
-- 不得含「直接下單」的描述  
-- 不得把策略的 entry/exit 規則寫入 feature（那是 L8 的事）
+### 1.2 Feature 不是什麼（Hard Negation）
+Feature 永遠不是：
+- 交易訊號（Signal）  
+- 策略（Strategy）  
+- 建議（Recommendation）  
+- 指令（Instruction）  
+- 下單觸發器（Order Trigger）  
 
 ---
 
-## 4. Feature 家族總覽（Feature Families｜最大完備）
+## 2. Feature ≠ Signal ≠ Strategy ≠ Order（治理鐵律）
 
-> 這裡不是策略，而是「可被引用的輸出類型」。  
-> 每個家族都必須可追溯、可回放、可審計。
+### 2.1 層級隔離（Layer Isolation｜硬邊界）
+唯一合法路徑如下（不可跳步）：
 
-### 4.1 價格與報酬（Price & Return）
-- 報酬率（log return / simple return）
-- 缺口（gap）
-- 連續漲跌（streak）
-- 震盪幅度（range/true range）
-- 位置（相對區間高低）
+Feature（L4輸出）
+→ Evidence（L5）
+→ Regime（L6）
+→ Risk/Compliance Gate（L7）
+→ Strategy Proposal（L8）
+→ Governance Gate（L9）
+→ Human Decision（L10）
+→ Execution（L11）
 
-### 4.2 成交量與金流（Volume & Flow）
-- 成交量（volume）
-- 成交金額（turnover）
-- 均量/量比（volume ratio）
-- 量能分佈（volume profile：如可得）
-- 大單/小單（若資料合法可得）
-
-### 4.3 波動與風險度量（Volatility & Risk Metrics）
-- ATR、Historical Vol、Parkinson Vol（若適用）
-- 下行波動、偏態、峰度（研究用，需標註）
-- VaR/ES（組合層面，需政策與審計）
-
-### 4.4 趨勢類（Trend）
-- MA/EMA/WMA（各期）
-- MACD 類（線/柱/背離描述）
-- ADX / DMI 類
-- 多均線排列（例如 GMMA 類「群組特徵」：只輸出排列/收斂/擴張的描述性量化，不輸出買賣）
-
-### 4.5 動能類（Momentum）
-- ROC、RSI、Stoch、CCI
-- 多周期動能向量（研究用）
-- 相對強弱（RS：相對於基準）
-
-### 4.6 均值回歸與極端（Mean Reversion & Extremes）
-- z-score（以窗口統計）
-- Bollinger band 位置/寬度
-- percentile rank（分位數）
-
-### 4.7 結構與型態（Structure & Pattern）
-- 支撐/壓力（以算法定義的區域/強度/距離）
-- 盤整區（consolidation box：區間、寬度、持續時間）
-- 突破/假突破的「事後描述」特徵（不可當訊號）
-- K 線型態分類（僅作描述；嚴禁直接給買賣建議）
-
-### 4.8 市場微結構（Market Microstructure｜若資料可得）
-- 點差（spread）、深度（depth）、委買委賣失衡（imbalance）
-- 成交衝擊 proxy（impact proxy）
-
-### 4.9 Regime 相關特徵（Regime Features）
-- 趨勢/震盪/高波動/低流動性等狀態的「觀測量」
-- Regime engine 的輸入候選（但 Regime 的裁決仍在 L6）
-
-### 4.10 事件與消息標籤（Event & News Tags）
-- 財報日/法說/重大公告窗口（以官方日曆或公告可追溯）
-- 停牌/處置/分盤/注意股狀態（以 TWSE_RULES/官方公告追溯）
-- 宏觀事件（僅標籤，不裁決方向）
-
-### 4.11 基本面因子（Fundamental Factors｜以可追溯資料為前提）
-- 估值：PE/PB/EV/EBITDA（若資料可得且定義清楚）
-- 品質：ROE/ROA/毛利率/營益率
-- 成長：營收 YoY/MoM、EPS 成長
-- 財務安全：負債比、流動比、利息保障倍數
-- 需標註：資料頻率、公告延遲、可用時點（避免 lookahead）
-
-### 4.12 籌碼與法人（Institutional / Positioning｜資料合法可得才納入）
-- 三大法人買賣超、持股比例變化（以官方/可信來源追溯）
-- 融資融券、借券、當沖占比（以官方來源追溯）
-- 必須標註：發布延遲、可用時間、落後性（禁止偷看未來）
-
-### 4.13 期貨/選擇權衍生（Derivatives Features｜TAIFEX）
-- 期貨基差、正逆價差狀態（描述性）
-- Put/Call Ratio、OI 變化（描述性）
-- 波動率指標（若資料可得）
-- 不得直接輸出「做多/做空」
-
-### 4.14 風控/合規特徵（Compliance/Risk Features）
-- 可交易狀態（是否停牌/分盤/處置/禁買賣等）
-- 下單限制（交易時段/價格幅度/數量限制的「狀態」）
-- 這些特徵是 Gate 的輸入，不是策略訊號
+任何違反此路徑的行為，均屬治理違規：
+- `GOV-FEATURE-JUMP`：Feature 越級輸出到 Strategy/Execution  
+- `GOV-FEATURE-SIGNALIZE`：Feature 被信號化（用方向性語言呈現或被當作買賣條件）  
+- `GOV-FEATURE-OVERRIDE`：Feature 試圖覆寫 Risk/Compliance 或 Human 裁決  
 
 ---
 
-## 5. Feature → Evidence（L4 → L5）組裝規範（避免特徵信號化）
+## 3. Feature 的合法用途（Only Legal Uses）
 
-### 5.1 Evidence Item 的最小形狀（概念）
-- `evidence_item_id`
-- `feature_refs[]`（引用哪些 feature）
-- `claim`（可驗證的描述性主張，不得是下單指令）
-- `supporting_metrics`（可量化佐證）
-- `confidence`（若有，必須可追溯算法與版本）
-- `conflicts_with[]`（衝突 evidence 參照）
-- `provenance_map_ref` / `snapshot_ref` / `hash` / `version_ref`
+Feature 只能用於：
+1) 組成 Evidence Bundle 的元素（L5）  
+2) 協助 Regime 判定（作為狀態描述輸入，不是方向輸入）（L6）  
+3) 約束策略「適用性」與「可信度條件」（L8：策略是否可被提出，而非是否要交易）  
+4) 提供審計/解釋/回放素材（L10 UI 解釋與 L11 回放）  
 
-### 5.2 嚴禁「特徵即證據即訊號」
-- Feature 只能是 Evidence 的「材料」，不是結論  
-- Evidence 也不是策略建議  
-- 策略建議必須在 L8，且必須引用 Evidence/Regime/Risk 結果
+Feature 永遠不能用於：
+- 單一 Feature 直接下結論（例如「GMMA 轉多＝買」）  
+- 以 Feature 單獨形成策略（策略必須是 Evidence＋Regime＋Risk＋Human 的產物）  
+- 以 Feature 作為績效辯護或績效承諾依據  
 
 ---
 
-## 6. Feature 計算的資料治理（Source / Timing / Lookahead 防線）
+## 4. Feature 禁止事項（Hard Prohibition Blacklist）
 
-### 6.1 官方優先與來源追溯（對齊 DATA_SOURCES）
-- 所有輸入欄位必須能對應到 DATA_SOURCES 的 source_id / 欄位定義
-- 禁止以非官方網站裁決制度狀態（制度以官方/規則彙編裁決）
+### 4.1 語義違規（Semantic Violations）
+- 將 Feature 的數值/狀態直接翻譯成「買/賣/進/出」  
+- 使用方向性詞彙描述 Feature 輸出（如：看多/看空/必漲/必跌/進場/出場）  
+- 在 Feature 層做「訊號強弱排行」並當作下單依據  
 
-### 6.2 Timing Policy（可用時點）
-每個 Feature 必須標註：
-- `asof_time`：此輸出在時間上何時成立  
-- `publish_delay`：資料發布延遲（例如財報、法人籌碼）  
-- `effective_time`：可合法用於決策的最早時間（避免偷看未來）
+### 4.2 技術濫用（Technical Abuse）
+- 以 Feature 對齊績效做超參數最佳化（Optimization / Overfitting）  
+- 以 Feature 的單一結果做回測歸因（Feature Attribution ≠ Profit Attribution）  
+- 以 Feature 作為模型的單一損失目標（導致 Feature 變成信號）
 
-### 6.3 Lookahead 禁止（Hard Gate）
-- 回測/研究/模擬不得使用「當時不可能知道」的值
-- 任何違反：必須在審計中標記 `SYS-PROV` 或 `SYS-AUDIT` 類違規，並阻斷進入 L5/L6/L7
-
----
-
-## 7. Feature 審計與回放（Audit / Replay）規範（無紀錄=未發生）
-
-### 7.1 Feature Audit Fields（最小集合）
-- `correlation_id`
-- `snapshot_ref`
-- `feature_id`
-- `inputs_hash`
-- `output_hash`
-- `feature_version_ref`
-- `data_provenance_ref`
-- `compute_env_ref`（LOCAL_ENV 對位）
-- `timestamp_utc`
-
-### 7.2 Replay 要求（同輸入同輸出）
-- 相同 snapshot_ref + 相同 version_ref + 相同 inputs_hash  
-  → 必須產生相同 output（容許浮點誤差需明示規格）
+### 4.3 治理違規（Governance Violations）
+- Feature 直接輸出到 Execution  
+- Feature 繞過 Evidence / Regime / Risk Gate  
+- 缺審計物仍允許 Feature 參與決策鏈  
+- Feature 被以 UI 或文字暗示為「推薦行為」  
 
 ---
 
-## 8. Feature 與 Risk/Compliance 的互動（可否決）
+## 5. Feature 的標準資料結構（Feature Meta Schema｜最大完備）
 
-### 8.1 Risk/Compliance 可以否決 Feature 使用的典型情境
-- 資料來源不可追溯（SYS-PROV）
-- 版本不一致（SYS-VERSION）
-- 審計缺失（SYS-AUDIT）
-- 資料延遲或不在可用時點（CMP/ SYS 類）
-- 制度狀態禁止交易（CMP-*：停牌/分盤/處置等）
+> 本節為工程與治理共用：任何 Feature 必須能被「結構化」描述。  
+> 可擴充，不可縮減。
 
-### 8.2 特徵不可「反向否決」風控
-- Feature 只能提供材料，不能辯護放行  
-- 風控否決不可被 Feature/策略/人類覆寫（對齊 RISK_COMPLIANCE）
+### 5.1 FeatureMeta（最小必填）
+- `feature_id`：唯一 ID（建議：`FTR.<domain>.<family>.<name>.<version>`）  
+- `feature_name_zh`：中文名  
+- `feature_name_en`：英文名（如有）  
+- `domain`：資料面向（TECH/FUND/FLOW/SENT/MACRO/RISK/STRUCT/EXEC）  
+- `family`：家族（Trend/Momentum/Volatility/Structure/Valuation/Quality/Growth/Liquidity/Event…）  
+- `methodology_tags`：方法論標籤（GMMA/Wyckoff/ChanLun_Bodick…可多選）  
+- `timeframe`：適用週期（Tick/1m/5m/1h/1D/1W/1M…）  
+- `inputs`：所需原始欄位（對應 DATA_SOURCES 的欄位命名或 Canonical Field）  
+- `lookahead_policy`：前視禁令聲明（必填）  
+- `data_latency`：資料延遲性（即時/延遲/公告延遲/不定期）  
+- `output_type`：輸出型態（Scalar/Vector/Label/State/Distribution）  
+- `output_semantics`：描述性語義（不得含方向）  
+- `quality_checks`：品質檢查（缺值/異常/停牌/分盤）  
+- `audit_requirements`：審計要求（hash/provenance/snapshot）  
+- `allowed_uses`：允許用途（只能列本文件第3節允許項）  
+- `forbidden_uses`：禁止用途（對應第4節）  
+
+### 5.2 FeatureOutput（描述性輸出規範）
+Feature 輸出只允許：
+- **狀態（State）**：例如「趨勢結構：延續/盤整/破壞」  
+- **標籤（Label）**：例如「威科夫階段：A/B/C/D/E」  
+- **量化度量（Metric）**：例如「波動率、趨勢強度、分佈偏態」  
+- **完整度/信賴度（Completeness/Confidence）**：描述資料與結構完備程度  
+
+🚫 禁止輸出：
+- `BUY/SELL/LONG/SHORT/ENTRY/EXIT`  
+- `should_trade`（應否交易）  
+- `expected_profit`（預期獲利）  
 
 ---
 
-## 9. UI 呈現義務（Feature 層必須可解釋）
+## 6. Feature → Evidence 組裝規則（Evidence Assembly Rules｜最大完備）
 
-> UI 詳規在 UI_SPEC；本節定義特徵層必交付 UI 的最小資訊。
+### 6.1 Evidence 的最低要求（不可弱化）
+Evidence Bundle 必須：
+- 至少包含 **2 種以上不同 domain** 的 Feature（例如 TECH + FLOW，或 FUND + TECH）  
+- 至少包含 **1 個結構/狀態類（STRUCT/REGIME）** 或可替代的狀態描述  
+- 必須附帶：
+  - `snapshot_ref`（L3 快照）  
+  - `provenance_map_ref`（來源追溯）  
+  - `version_ref`（文件/政策/模型版本）  
 
-UI 必須可呈現：
-- feature_name_zh / feature_id
-- 輸入來源（provenance）
-- snapshot 時點
-- 計算窗口與參數（若有）
-- 輸出值與單位
-- 限制/禁用原因（若不可用）
-- 版本引用（feature_version_ref）
+### 6.2 常見 Evidence 組裝模板（可直接展開）
+- **趨勢延續型 Evidence**：Trend Structure（TECH/STRUCT）＋ Flow/Liquidity（FLOW/LIQ）＋ Volatility（VOL）  
+- **區間盤整型 Evidence**：Range State（STRUCT）＋ Volatility Compression（VOL）＋ Orderflow Balance（FLOW）  
+- **基本面價值型 Evidence**：Valuation（FUND）＋ Quality（FUND）＋ Technical Position（TECH）  
+- **事件風險型 Evidence**：Event Flag（EVENT）＋ Vol Spike（VOL）＋ Liquidity Stress（LIQ）  
+
+📌 以上模板**不等於策略**，只是 Evidence 的「組裝語法」。
+
+---
+
+## 7. Feature 與 Regime 的對位（Regime Alignment Map）
+
+> Regime 高於策略；Feature 只提供 Regime 判定所需的描述性輸入。
+
+### 7.1 常見 Regime 類型（示意，實際以 Regime Engine 為準）
+- Trend（趨勢延續）  
+- Range（區間盤整）  
+- Transition（結構轉換/趨勢切換）  
+- Volatility Shock（波動衝擊）  
+- Liquidity Stress（流動性壓力）  
+- Event Risk（事件期）  
+- Manipulation/Abnormal（異常/失真疑慮）  
+
+### 7.2 Feature → Regime 常見映射（描述性）
+- 趨勢結構完整度↑、均線群組有序、波動穩定 → Trend 的候選描述  
+- 波動收斂、價格在區間內均值回歸、量能偏低 → Range 的候選描述  
+- 波動突增、跳空、點差擴大、深度不足 → Volatility Shock / Liquidity Stress 候選描述  
+- 事件密度高、公告窗口內、政策時點 → Event Risk 候選描述  
+- 價量嚴重背離、撮合異常、長時間無量 → Abnormal 候選描述  
+
+📌 以上都只是「候選描述」，最終裁決由 Regime Engine 與治理規則決定。
+
+---
+
+## 8. 方法論落地：GMMA / 顧比倒數線 / 威科夫 / 鮑迪克纏論（Feature 層展開）
+
+> 本節是你選 B 的核心：把方法論「降維」成 Feature，並明確禁止信號化。
+
+---
+
+### 8.1 GMMA（顧比多重移動平均線）— Feature 化（非信號）
+
+#### 8.1.1 GMMA 的 Feature 家族
+- `FTR.TECH.TREND.GMMA_BAND_STRUCTURE.v1`（GMMA 群組結構）  
+- `FTR.TECH.TREND.GMMA_BAND_SPREAD.v1`（群組擴張/收斂幅度）  
+- `FTR.TECH.TREND.GMMA_BAND_SLOPE.v1`（群組斜率一致性）  
+- `FTR.TECH.TREND.GMMA_LONG_SHORT_RELATION.v1`（短群/長群相對關係）  
+- `FTR.TECH.STRUCT.GMMA_PHASE_LABEL.v1`（GMMA 階段標籤：描述性）  
+
+#### 8.1.2 GMMA 輸出語義（只允許描述）
+- `band_orderliness`：群組有序程度（0~1）  
+- `band_spread_state`：收斂/擴張/中性  
+- `slope_consistency`：斜率一致性（0~1）  
+- `short_vs_long_relation`：上方/交疊/下方（描述相對位置）  
+- `phase_label`：例如「擴張延續/收斂盤整/扭曲轉換」（不得寫「轉多/轉空」）
+
+#### 8.1.3 GMMA 常用 Evidence 組裝（示例）
+- Trend Evidence：GMMA 群組有序＋Flow/Liquidity 正常＋波動不失真  
+- Range Evidence：GMMA 收斂＋波動收斂＋量能偏低
+
+🚫 GMMA 禁止用法（明文）
+- 「短群上穿長群＝買」  
+- 「群組擴張＝追」  
+- 「顏色變化＝做多做空」  
+以上皆屬 `GOV-FEATURE-SIGNALIZE`。
+
+---
+
+### 8.2 顧比倒數線（你提到的「顧比倒數線」）— Feature 化
+
+> 由於市場上「顧比倒數線」存在多種實作版本（不同計算方式/參數），  
+> TAITS 在 Feature 層採「語義統一」：只定義輸出語義，不把某一種實作當作唯一真理。  
+> （具體公式可在研究層以策略擴充，但不得改寫本語義。）
+
+#### 8.2.1 Feature 家族
+- `FTR.TECH.MOMENTUM.GUPPY_COUNTDOWN_STATE.v1`（倒數狀態）  
+- `FTR.TECH.MOMENTUM.GUPPY_COUNTDOWN_INTENSITY.v1`（倒數強度/接近程度）  
+
+#### 8.2.2 輸出語義（描述性）
+- `countdown_state`：倒數進行中/完成/重置/無效  
+- `countdown_progress`：0~1（進度，不代表方向）  
+- `intensity`：0~1（強度，不代表建議）
+
+🚫 禁止用法
+- 「倒數完成＝買/賣」  
+- 「倒數快滿＝必漲/必跌」
+
+---
+
+### 8.3 威科夫操盤法（Wyckoff）— Feature 化（階段/事件，不是方向）
+
+#### 8.3.1 Wyckoff Feature 家族
+- `FTR.STRUCT.WYCKOFF.PHASE_LABEL.v1`（A/B/C/D/E 階段標籤）  
+- `FTR.STRUCT.WYCKOFF.EVENT_FLAGS.v1`（PS/SC/AR/ST/SOS/LPS…事件旗標）  
+- `FTR.STRUCT.WYCKOFF.RANGE_BOUNDARY.v1`（區間邊界與有效性）  
+- `FTR.STRUCT.WYCKOFF.SUPPLY_DEMAND_BALANCE.v1`（供需平衡度量）  
+- `FTR.STRUCT.WYCKOFF.EFFORT_RESULT_DIVERGENCE.v1`（量價努力/結果背離描述）  
+
+#### 8.3.2 輸出語義（描述性）
+- `phase_label`：A~E（不帶多空）  
+- `event_flags`：事件集合（僅標記）  
+- `range_boundary`：上界/下界/寬度/有效性（描述）  
+- `balance_score`：供需偏移度（-1~1 但不得命名為看多看空）  
+- `effort_result_div`：背離程度（0~1）
+
+#### 8.3.3 Wyckoff Evidence 組裝（示例）
+- Accumulation/Ranging Evidence：Phase B/C + Range 有效 + 量價背離描述 + 流動性正常  
+- Distribution/Ranging Evidence：Phase B/C + Range 有效 + 供需偏移描述 + 事件密度
+
+🚫 禁止用法
+- 「Phase D＝買」  
+- 「SOS 出現＝一定漲」  
+- 「LPS＝進場」  
+以上皆屬信號化違規。
+
+---
+
+### 8.4 鮑迪克纏論（ChanLun｜Bodick Variant）— Feature 化（結構、段落、背馳描述）
+
+> 纏論在 TAITS 中定位為「結構與判斷體系」，不是單一策略。  
+> 在 Feature 層，纏論只能輸出「結構描述」，不允許輸出方向。
+
+#### 8.4.1 ChanLun Feature 家族（核心）
+- `FTR.STRUCT.CHANLUN.BI_SEGMENT_STATE.v1`（筆段落狀態：形成/延伸/完成）  
+- `FTR.STRUCT.CHANLUN.ZS_CENTER_STATE.v1`（中樞狀態：形成/擴展/破壞/重構）  
+- `FTR.STRUCT.CHANLUN.TREND_STAGE_LABEL.v1`（趨勢階段標籤：描述性）  
+- `FTR.STRUCT.CHANLUN.DIVERGENCE_SCORE.v1`（背馳程度：0~1）  
+- `FTR.STRUCT.CHANLUN.STRUCTURE_COMPLETENESS.v1`（結構完備度：0~1）  
+- `FTR.STRUCT.CHANLUN.PIVOT_RELATION.v1`（中樞相對關係：上移/下移/重疊/離散）  
+
+#### 8.4.2 鮑迪克版本（Bodick Variant）備註（治理口徑）
+鮑迪克版本通常強調：
+- 結構定義更工程化（可標記、可判準、可回放）  
+- 對「段落完成/中樞有效/背馳判定」有更嚴格的一致性要求  
+
+TAITS 在 Feature 層採用原則：
+- **允許多版本算法並存（Only-Add）**  
+- **但必須輸出同一套語義欄位**（如上 Feature 家族）  
+- 版本差異只體現在 `method_version` 與 `calculation_notes`，不得改寫語義
+
+#### 8.4.3 ChanLun 輸出語義（描述性）
+- `bi_state`：forming/extending/completed（中文可寫：形成/延伸/完成）  
+- `zs_state`：forming/expanding/broken/rebuilt（形成/擴展/破壞/重構）  
+- `divergence_score`：0~1（背馳程度，不是反轉信號）  
+- `structure_completeness`：0~1  
+- `pivot_relation`：上移/下移/重疊/離散（描述相對關係）
+
+🚫 禁止用法
+- 「背馳＝買/賣」  
+- 「中樞破壞＝必跌」  
+- 「筆完成＝進場」  
+以上皆屬 `GOV-FEATURE-SIGNALIZE`。
+
+---
+
+## 9. Feature 全域分類樹（Taxonomy Tree｜最大完備）
+
+> 這是新對話「如何展開」的地圖。  
+> 每個 Family 都給出：定義、常用方法論、常見輸入、常見輸出語義、常見陷阱。
+
+---
+
+### 9.1 TECH｜技術面（Technical）
+#### A) Trend（趨勢結構）
+- 定義：描述趨勢的「結構與延續性」，非方向  
+- 常用方法論：GMMA、均線群組、趨勢線結構、結構斜率一致性  
+- 典型輸入：close/high/low/open/volume、均線序列  
+- 輸出語義：有序度、斜率一致性、延續/盤整/轉換標籤  
+- 常見陷阱：把「穿越」直接當買賣信號
+
+#### B) Momentum（動能）
+- 定義：描述加速度/動量狀態  
+- 常用方法論：動能振盪、倒數線狀態、動量分解（描述）  
+- 輸出語義：強度、過熱程度、衰減程度（不可叫多空）  
+- 陷阱：把超買超賣直接當方向
+
+#### C) Volatility（波動）
+- 定義：描述不確定性、波動程度、波動型態  
+- 常用：ATR/歷史波動/波動收斂擴張型態  
+- 輸出語義：波動水平、收斂/擴張狀態、極端標記  
+- 陷阱：波動高≠可賺；波動低≠安全（需配合流動性與制度）
+
+#### D) Structure（結構）
+- 定義：描述區間、型態、中樞、段落、階段  
+- 常用：威科夫階段、纏論結構、型態識別（描述）  
+- 輸出語義：階段標籤、區間有效性、中樞狀態、完備度  
+- 陷阱：把「形態名稱」等同策略與勝率
+
+---
+
+### 9.2 FUND｜基本面（Fundamental）
+#### A) Valuation（估值）
+- 定義：描述相對估值狀態（便宜/昂貴只能作描述性區間，不是買賣）  
+- 常用：本益比分位數、股價淨值比分位數、殖利率分位數  
+- 重要治理：公告延遲、資料可用時點、避免 lookahead  
+- 陷阱：用事後財報做回測推論（典型前視）
+
+#### B) Quality（品質）
+- 定義：描述財務品質（穩健/惡化）  
+- 常用：毛利率/營益率/ROE/現金流品質（描述）  
+- 陷阱：用單一季度劇烈變動作結論
+
+#### C) Growth（成長）
+- 定義：描述成長/衰退速度與穩定性  
+- 常用：YoY/MoM 變化率、趨勢穩定度  
+- 陷阱：季節性與基期效應造成誤判
+
+#### D) Risk（財務風險）
+- 定義：描述槓桿、償債、營運風險（描述性）  
+- 陷阱：把風險指標當作做空信號（仍需 Regime/Risk Gate）
+
+---
+
+### 9.3 FLOW｜籌碼/交易行為（Flow / Positioning）
+#### A) Participation（參與度）
+- 定義：描述參與者活躍程度  
+- 常用：成交量結構、量能分佈、換手率  
+- 陷阱：量大≠安全；量小≠不可交易（需配合點差/深度）
+
+#### B) Institutional/Dealer（法人/大戶）
+- 定義：描述資金行為，不等於方向  
+- 治理：資料延遲與可得性（多為 T+1 或更慢）  
+- 陷阱：把法人買超直接當買入指令
+
+#### C) Liquidity（流動性）
+- 定義：描述點差、深度、成交可行性  
+- 常用：委買委賣深度、點差、成交量門檻  
+- 治理：此類特徵與 RISK_COMPLIANCE 強耦合（可能觸發 VETO/RETURN）
+
+---
+
+### 9.4 EVENT｜事件/消息（Event / News / Calendar）
+- 定義：描述事件存在與強度，不做方向判斷  
+- 常用：重大公告旗標、事件密度、政策時點、財報窗口  
+- 治理：事件期可直接升級為風控禁入條件（由 RISK_COMPLIANCE 裁決）  
+- 陷阱：把消息情緒當作方向信號
+
+---
+
+### 9.5 MACRO｜宏觀（Macro）
+- 定義：描述宏觀環境（利率/匯率/景氣）  
+- 治理：多為低頻、延遲資料，僅作 Regime 背景  
+- 陷阱：用宏觀單一指標對短線交易下結論
+
+---
+
+## 10. Feature → Strategy 的「展開備註」規則（你要的「清楚」）
+
+> 本節提供「新對話如何展開」：不是告訴你買賣，而是告訴你每種策略家族通常會用到哪些 Feature、怎麼組裝 Evidence、怎麼對位 Regime。
+
+---
+
+### 10.1 Trend（趨勢類策略）常用 Feature 備註
+- 常見 Feature：
+  - GMMA 群組結構（有序度/收斂擴張）
+  - 趨勢完整度（結構完備度）
+  - 波動狀態（避免極端波動失真）
+  - 流動性狀態（點差/深度）
+- Evidence 組裝：
+  - Trend Structure（TECH/STRUCT）＋ Vol（VOL）＋ Liquidity（LIQ）
+- Regime 對位：
+  - Trend / Transition（可用）
+  - Volatility Shock / Liquidity Stress（通常禁入或降級，依 Risk）
+- 常見陷阱：
+  - 把「均線穿越」當信號
+  - 忽略流動性造成滑價與撤單風險
+
+---
+
+### 10.2 Mean Reversion（均值回歸/區間）常用 Feature 備註
+- 常見 Feature：
+  - Range 邊界有效性（STRUCT）
+  - 波動收斂（VOL）
+  - 供需平衡（Wyckoff balance）
+- Evidence 組裝：
+  - Range State（STRUCT）＋ Vol Compression（VOL）＋ Flow Balance（FLOW）
+- Regime 對位：
+  - Range（可用）
+  - Trend（多半不適用，回到 Regime 判定）
+- 陷阱：
+  - 在趨勢期硬做回歸（違反 Regime 高於策略）
+
+---
+
+### 10.3 Breakout（突破）常用 Feature 備註
+- 常見 Feature：
+  - 結構轉換標籤（Transition）
+  - 量價努力/結果背離（Wyckoff）
+  - 波動擴張（VOL）
+  - 流動性與點差（LIQ）
+- Evidence 組裝：
+  - Transition（STRUCT）＋ Effort/Result（FLOW/STRUCT）＋ Vol Expansion（VOL）
+- Regime 對位：
+  - Transition（可用，但通常風控更嚴）
+- 陷阱：
+  - 把單根長紅/長黑當突破
+  - 忽略分盤/處置等制度（TWSE_RULES 可能觸發）
+
+---
+
+### 10.4 Fundamental Tilt（基本面傾斜/因子）常用 Feature 備註
+- 常見 Feature：
+  - Valuation 分位數（FUND）
+  - Quality 指標（FUND）
+  - Growth 穩定性（FUND）
+  - 技術位置（TECH Position）
+- Evidence 組裝：
+  - Valuation＋Quality＋Technical Position（避免完全脫離交易結構）
+- Regime 對位：
+  - 多用於中長週期；短線只作背景，不可取代短週期風控
+- 陷阱：
+  - lookahead（公告延遲）
+  - 用財報「事後已知」資料做回測歸因
+
+---
+
+### 10.5 Structure-Based（結構體系：威科夫/纏論）常用 Feature 備註
+- 常見 Feature：
+  - Wyckoff Phase/Event Flags
+  - ChanLun 中樞/段落狀態、完備度、背馳程度（描述）
+- Evidence 組裝：
+  - 結構狀態（STRUCT）＋ 波動/流動性（VOL/LIQ）＋ 交易行為（FLOW）
+- Regime 對位：
+  - Range/Transition/Trend 均可能，但需明確 Regime Label
+- 陷阱：
+  - 把背馳當反轉指令
+  - 結構判定不一致（需版本一致與回放）
+
+---
+
+## 11. Feature 的審計/回放要求（Feature-Level Audit）
+
+每個 Feature 的計算與使用必須留下：
+- `correlation_id`（串起一次流程）  
+- `snapshot_id`（對應 L3）  
+- `feature_id` / `feature_version`  
+- `input_hash` / `output_hash`  
+- `provenance_map_ref`  
+- `quality_state`（資料品質狀態）  
+- `used_in_evidence`（是否被納入 Evidence）  
+- `rejected_reason_codes`（若未納入，必填原因）  
+
+📌 無審計＝不存在（治理語義）
+
+---
+
+## 12. Feature 的 Only-Add 演進規則（更嚴）
+
+允許新增：
+- 新 Feature  
+- 新 family  
+- 新 methodology_tags  
+- 新 output 欄位（不得刪舊欄位）
 
 禁止：
-- UI 把 feature 顯示成「直接買/賣」按鈕或暗示語  
-- 用模糊詞掩蓋資料延遲/不可追溯
+- 改寫既有 Feature 的 output_semantics  
+- 將描述性輸出改成方向性輸出  
+- 合併 Feature 造成語義模糊  
+- 任何「為了簡化」而刪減既有治理條文  
 
 ---
 
-## 10. 變更治理（Only-Add）與版本控管（對齊 VERSION_AUDIT）
+## 13. 終極治理宣告（不可改寫）
 
-### 10.1 Feature 版本策略（不可覆寫）
-- 新增 feature：新增 feature_id（或在同 feature_id 下新增 version_ref，但不得改舊語義）
-- 修改定義：只能以新版本追加，不得覆寫舊文件段落
+> Feature 的存在，是為了把世界描述清楚，  
+> 不是為了讓系統更容易下決策。  
+> 只要 Feature 被用來「直接做交易」，它就已經被用錯了。
 
-### 10.2 Change Ledger（變更帳本最小欄位）
+---
+
+（STRATEGY_FEATURE_INDEX｜全知識自洽最大完備版 v2025-12-19 完）
+
+# TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219
+doc_key：STRATEGY_FEATURE_INDEX  
+治理等級：B+（Feature Governance & Semantic Boundary Charter｜全知識自洽最大完備版）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（特徵層治理封頂＋可展開知識索引，Only-Add 演進）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
+平行參照：STRATEGY_UNIVERSE / ARCH_FLOW / RISK_COMPLIANCE / VERSION_AUDIT / UI_SPEC / DATA_SOURCES / TWSE_RULES  
+變更原則：Only-Add（只可新增，不可刪減、不可覆寫、不可改寫既有語義、不可弱化邊界）  
+核心宣告：Feature ≠ Signal ≠ Strategy ≠ Order（特徵非訊號、非策略、非下單）  
+
+---
+
+# Part 2｜附錄A：Feature ID 命名規範與範例全集（最大完備）
+
+> 本 Part 2 為 Part 1 的 **Only-Add 擴充**，不改寫、不覆蓋任何既有語義。  
+> 目的：讓 TAITS 在「新增特徵」時能保持跨版本一致、跨 Agent 一致、跨模式一致（Research/Backtest/Sim/Paper/Live）。
+
+---
+
+## A0. 附錄定位（為什麼一定要有命名規範）
+
+若沒有嚴格命名規範，會出現下列治理災難（必須避免）：
+- 同一個 Feature 被不同人/不同 Agent 用不同名字重複發明（版本混亂）
+- 不同 Feature 被叫同一個名字（語義污染）
+- Feature 被「偷偷信號化」：在命名中暗示買賣與方向（治理違規但難被抓）
+- 回放時無法知道當時到底計算的是哪一個版本、哪一個公式（Replay 失效）
+- UI/審計無法可靠聚合（Evidence 缺口）
+
+因此本附錄的定位是：  
+> **命名本身就是治理的一部分**（Naming is Governance）。
+
+---
+
+## A1. Feature ID 的正式格式（不可縮減）
+
+### A1.1 標準 Feature ID
+推薦格式（必須遵守欄位意義；分隔符可以 Only-Add 增強但不可改寫語義）：
+
+`FTR.<DOMAIN>.<FAMILY>.<NAME>.<VER>`
+
+- `FTR`：固定前綴（Feature）
+- `DOMAIN`：資料面向域（見 A2）
+- `FAMILY`：家族分類（見 A3）
+- `NAME`：特徵名稱（描述性、無方向性）
+- `VER`：語義版本（例如 `v1`, `v2`；不可省略）
+
+範例：  
+- `FTR.TECH.TREND.GMMA_BAND_STRUCTURE.v1`
+- `FTR.STRUCT.WYCKOFF.PHASE_LABEL.v1`
+- `FTR.STRUCT.CHANLUN.DIVERGENCE_SCORE.v1`
+
+### A1.2 可選擴充段（Only-Add）
+若需更精確管理，可加上「可選擴充段」，但不得破壞標準欄位語義：
+
+`FTR.<DOMAIN>.<FAMILY>.<NAME>.<VER>__<IMPL>__<TF>__<SRC>`
+
+- `IMPL`：實作標記（僅標記演算法實作版本，不得影響語義）
+- `TF`：週期標記（例如 `1D`, `5m`）
+- `SRC`：來源標記（例如 `TWSE`, `TAIFEX`, `BROKER`, `ALT`）
+
+範例（更嚴格版本管理）：  
+- `FTR.TECH.VOL.ATR_LEVEL.v1__implA__1D__TWSE`
+- `FTR.FUND.VAL.PE_PERCENTILE.v2__implB__1D__MOPS`
+- `FTR.FLOW.LIQ.SPREAD_LEVEL.v1__implA__Tick__BROKER`
+
+---
+
+## A2. DOMAIN（資料面向域）標準字典（最大完備）
+
+> DOMAIN 是 Feature 的「法定領域」；用錯 DOMAIN 視為語義污染。
+
+- `TECH`：技術面（價格/量能衍生）
+- `STRUCT`：結構（區間/段落/中樞/階段等）
+- `FUND`：基本面（財報/估值/品質/成長）
+- `FLOW`：籌碼/交易行為（參與度、法人、流向）
+- `LIQ`：流動性（深度/點差/成交可行性）
+- `VOL`：波動（波動水平、波動型態）
+- `EVENT`：事件/公告/時間窗（非方向）
+- `SENT`：情緒/文本（僅描述，需證據追溯）
+- `MACRO`：宏觀（利率、匯率、景氣、政策）
+- `RISK`：風險描述（曝險度量、壓力狀態描述；不得變成 gate）
+- `EXEC`：執行觀測（延遲、拒單率、對帳一致性描述；不得作策略）
+- `GOV`：治理觀測（完整度、缺口、版本一致性描述）
+- `QA`：資料品質（缺值率、延遲、異常標記）
+- `META`：元特徵（feature_of_feature；嚴禁方向化）
+
+📌 注意：  
+- `LIQ` 與 `VOL` 可視為 `TECH` 的子域，但在治理上必須可獨立引用，所以保留獨立 DOMAIN。  
+- `RISK`/`EXEC`/`GOV`/`QA` 只能描述狀態，絕不可取代 Gate 或下單判斷。
+
+---
+
+## A3. FAMILY（家族分類）標準字典（最大完備）
+
+> FAMILY 用來統一語義聚合（UI/審計/研究）；同一 Feature 家族下不得混入方向性。
+
+### A3.1 TECH/STRUCT 常用 FAMILY
+- `TREND`：趨勢結構（描述延續性/有序性）
+- `MOM`：動能（描述加速度/衰減）
+- `VOL`：波動（描述水平/型態）
+- `RANGE`：區間/盤整（描述區間邊界與有效性）
+- `BREAK`：結構破壞/轉換（描述轉換狀態，不是突破信號）
+- `PATTERN`：型態（描述辨識結果與完備度）
+- `LEVEL`：位置/價位相對關係（描述相對位置）
+- `DIVERGE`：背離/背馳（描述程度，不是反轉）
+- `PHASE`：階段（描述階段標籤）
+- `CENTER`：中樞/樞紐（描述狀態與關係）
+
+### A3.2 FUND 常用 FAMILY
+- `VAL`：估值
+- `QUAL`：品質
+- `GROW`：成長
+- `LEV`：槓桿/償債
+- `CASH`：現金流
+- `MARGIN`：毛利/營益等
+- `STAB`：穩定性（波動、連續性）
+
+### A3.3 FLOW/LIQ 常用 FAMILY
+- `PARTIC`：參與度（換手、量能結構）
+- `INST`：法人/大戶（描述流向）
+- `DEPTH`：深度
+- `SPREAD`：點差
+- `IMPACT`：衝擊成本（估計）
+- `BAL`：供需平衡（描述）
+- `RATE`：速率（成交/委託/取消等，描述）
+
+### A3.4 EVENT/SENT/MACRO 常用 FAMILY
+- `CAL`：日曆/窗口（財報/除權息/公告）
+- `FLAG`：事件旗標（存在與否）
+- `DENS`：密度（事件密度/新聞密度）
+- `POL`：政策/制度時點（描述）
+- `MOOD`：情緒狀態（描述）
+- `TOPIC`：主題（描述）
+- `SURP`：驚喜/偏離（描述）
+
+### A3.5 QA/GOV/EXEC 常用 FAMILY
+- `MISS`：缺失（缺值/缺檔）
+- `DELAY`：延遲
+- `ANOM`：異常
+- `CONSIS`：一致性（版本/對帳）
+- `HEALTH`：健康度（通道/服務）
+- `COVER`：覆蓋度（審計覆蓋/證據覆蓋）
+- `REPLAY`：可回放度（描述）
+
+---
+
+## A4. NAME（特徵名稱）治理規則（硬門檻）
+
+### A4.1 必須是描述性（Descriptive）
+名稱只能描述「狀態/關係/程度/標籤」，不得描述行為或方向。
+
+✅ 合法例：  
+- `BAND_STRUCTURE`、`PHASE_LABEL`、`DIVERGENCE_SCORE`、`SPREAD_LEVEL`、`DEPTH_STRESS`
+
+❌ 非法例（方向化/行為化）：  
+- `BUY_SIGNAL`、`SELL_SIGNAL`、`LONG_ENTRY`、`SHORT_EXIT`、`STRONG_BUY`、`MUST_RISE`
+
+違規碼（本文件內部，用於審計標記）：  
+- `GOV-FTR-NAME-DIRECTIONAL`：命名含方向  
+- `GOV-FTR-NAME-ACTION`：命名含行為  
+- `GOV-FTR-NAME-PERF`：命名含績效承諾（win/profit等）
+
+### A4.2 不得把策略/方法論當成方向
+可以寫方法論標籤（tags），但名稱仍需保持描述性。
+
+✅ 合法：`WYCKOFF_PHASE_LABEL` / `CHANLUN_CENTER_STATE`  
+❌ 非法：`WYCKOFF_BUY_ZONE` / `CHANLUN_REVERSAL_SIGNAL`
+
+---
+
+## A5. VER（語義版本）規則（必須可回放）
+
+### A5.1 什麼情況要升 VER（語義版本）
+只要改到以下任一項，就必須升 `v#`：
+- output_semantics（輸出語義）  
+- output_type（輸出型態）  
+- 欄位定義（例如 score 的範圍從 0~1 改成 -1~1）  
+- 品質檢查與缺值處理語義（會影響輸出）  
+
+### A5.2 什麼情況不能升 VER（只能改 impl）
+- 演算法實作優化但不改語義（例如加速、不同程式實作）  
+→ 用 `__implX` 記錄，不可用 `v#` 假裝語義有變。
+
+---
+
+## A6. FeatureMeta 必備欄位（用於新對話可展開）
+
+> 本節把 Part 1 的 schema 具體化成「建檔模板」。  
+> 任何新增 Feature，必須能寫出下面這段（可直接貼到 repo / 文檔）。
+
+### A6.1 FeatureMeta Template（可貼用）
+```yaml
+feature_id: "FTR.<DOMAIN>.<FAMILY>.<NAME>.v1"
+feature_name_zh: "<中文名稱>"
+feature_name_en: "<English Name, optional>"
+domain: "<DOMAIN>"
+family: "<FAMILY>"
+methodology_tags: ["<GMMA|Wyckoff|ChanLun_Bodick|...>"]
+timeframe: "<Tick|1m|5m|1D|1W|...>"
+inputs:
+  - "<canonical_field_or_datasource_field_1>"
+  - "<...>"
+lookahead_policy: "NO_LOOKAHEAD"
+data_latency: "<REALTIME|DELAYED|ANNOUNCEMENT_LAG|SPARSE>"
+output_type: "<Scalar|Vector|Label|State|Distribution>"
+output_semantics: "<描述性語義，不含方向>"
+quality_checks:
+  - "<missing_value_handling>"
+  - "<halt/suspension handling>"
+  - "<outlier handling>"
+audit_requirements:
+  must_have:
+    - correlation_id
+    - snapshot_ref
+    - provenance_map_ref
+    - input_hash
+    - output_hash
+allowed_uses:
+  - "EVIDENCE_INPUT"
+  - "REGIME_INPUT"
+  - "AUDIT_EXPLAIN"
+forbidden_uses:
+  - "DIRECT_SIGNAL"
+  - "DIRECT_STRATEGY"
+  - "DIRECT_ORDER"
+notes_zh: "<備註：常見陷阱、資料延遲、適用條件>"
+A7. 範例全集（最大完備｜可供 STRATEGY_UNIVERSE 直接引用）
+下列範例以「可擴充」方式提供；不是限制清單。
+你可在未來 Only-Add 新增更多 Feature，不得覆寫本段既有語義。
+
+A7.1 GMMA 範例（TECH.TREND）
+FTR.TECH.TREND.GMMA_BAND_STRUCTURE.v1
+
+zh：GMMA 群組結構有序度
+
+output_semantics：群組排列與分層的有序程度（0~1）
+
+FTR.TECH.TREND.GMMA_BAND_SPREAD_STATE.v1
+
+zh：GMMA 群組擴張/收斂狀態
+
+output_semantics：{CONTRACTING, NEUTRAL, EXPANDING}
+
+FTR.TECH.TREND.GMMA_SLOPE_CONSISTENCY.v1
+
+zh：GMMA 群組斜率一致性
+
+output_semantics：短長群斜率一致程度（0~1）
+
+FTR.TECH.STRUCT.GMMA_PHASE_LABEL.v1
+
+zh：GMMA 階段標籤（描述性）
+
+output_semantics：{ORDERLY_TREND, COMPRESSION_RANGE, DISTORTION_TRANSITION, UNKNOWN}
+
+A7.2 顧比倒數線 範例（TECH.MOM）
+FTR.TECH.MOM.GUPPY_COUNTDOWN_STATE.v1
+
+zh：顧比倒數狀態
+
+output_semantics：{RUNNING, COMPLETED, RESET, INVALID}
+
+FTR.TECH.MOM.GUPPY_COUNTDOWN_PROGRESS.v1
+
+zh：顧比倒數進度
+
+output_semantics：0~1（進度；不代表方向）
+
+FTR.TECH.MOM.GUPPY_COUNTDOWN_INTENSITY.v1
+
+zh：顧比倒數強度
+
+output_semantics：0~1（強度；不代表建議）
+
+A7.3 威科夫 範例（STRUCT.PHASE / STRUCT.EVENT）
+FTR.STRUCT.PHASE.WYCKOFF_PHASE_LABEL.v1
+
+zh：威科夫階段標籤
+
+output_semantics：{A,B,C,D,E,UNKNOWN}
+
+FTR.STRUCT.EVENT.WYCKOFF_EVENT_FLAGS.v1
+
+zh：威科夫事件旗標集合
+
+output_semantics：事件集合（PS/SC/AR/ST/SOS/LPS…）的存在標記（非方向）
+
+FTR.STRUCT.RANGE.WYCKOFF_RANGE_VALIDITY.v1
+
+zh：威科夫區間有效性
+
+output_semantics：區間邊界穩定度/有效性（0~1）
+
+FTR.STRUCT.BAL.WYCKOFF_SUPPLY_DEMAND_BALANCE.v1
+
+zh：供需平衡度量
+
+output_semantics：供需偏移程度（描述性，需明示範圍）
+
+FTR.STRUCT.DIVERGE.WYCKOFF_EFFORT_RESULT_DIVERGENCE.v1
+
+zh：努力/結果背離程度
+
+output_semantics：背離程度（0~1）
+
+A7.4 纏論｜鮑迪克版本 範例（STRUCT.CENTER / STRUCT.DIVERGE）
+FTR.STRUCT.CENTER.CHANLUN_ZS_CENTER_STATE.v1
+
+zh：纏論中樞狀態
+
+output_semantics：{FORMING, EXPANDING, BROKEN, REBUILT}
+
+FTR.STRUCT.CENTER.CHANLUN_PIVOT_RELATION.v1
+
+zh：中樞相對關係
+
+output_semantics：{UPSHIFT, DOWNSHIFT, OVERLAP, DISPERSE}
+
+FTR.STRUCT.PATTERN.CHANLUN_BI_SEGMENT_STATE.v1
+
+zh：筆段落狀態
+
+output_semantics：{FORMING, EXTENDING, COMPLETED}
+
+FTR.STRUCT.DIVERGE.CHANLUN_DIVERGENCE_SCORE.v1
+
+zh：背馳程度
+
+output_semantics：0~1（描述程度）
+
+FTR.STRUCT.META.CHANLUN_STRUCTURE_COMPLETENESS.v1
+
+zh：結構完備度
+
+output_semantics：0~1（描述完整度，不是可交易性）
+
+A7.5 波動/流動性 範例（VOL / LIQ）
+FTR.VOL.VOL.ATR_LEVEL.v1
+
+zh：ATR 波動水平
+
+output_semantics：波動水平（數值＋標準化版本）
+
+FTR.VOL.VOL.VOLATILITY_COMPRESSION_STATE.v1
+
+zh：波動收斂狀態
+
+output_semantics：{COMPRESSING, NEUTRAL, EXPANDING}
+
+FTR.LIQ.SPREAD.SPREAD_LEVEL.v1
+
+zh：點差水平
+
+output_semantics：點差（ticks / bps）
+
+FTR.LIQ.DEPTH.DEPTH_STRESS.v1
+
+zh：深度壓力
+
+output_semantics：深度不足程度（0~1 或分級）
+
+FTR.LIQ.IMPACT.PRICE_IMPACT_ESTIMATE.v1
+
+zh：衝擊成本估計
+
+output_semantics：估計衝擊成本（bps，描述）
+
+A7.6 基本面 範例（FUND.*）
+FTR.FUND.VAL.PE_PERCENTILE.v1
+
+zh：本益比分位數
+
+output_semantics：0~1（分位；需明示資料窗口）
+
+FTR.FUND.VAL.PB_PERCENTILE.v1
+
+zh：股價淨值比分位數
+
+output_semantics：0~1
+
+FTR.FUND.QUAL.ROE_LEVEL.v1
+
+zh：ROE 水平
+
+output_semantics：ROE（數值＋期間）
+
+FTR.FUND.GROW.REVENUE_YOY_RATE.v1
+
+zh：營收年增率
+
+output_semantics：YoY（描述；需公告可得時間）
+
+FTR.FUND.CASH.CFO_QUALITY_SCORE.v1
+
+zh：現金流品質分數
+
+output_semantics：品質分數（描述性）
+
+📌 FUND 類一律必填：
+
+data_latency=ANNOUNCEMENT_LAG
+
+lookahead_policy=NO_LOOKAHEAD
+並要求 available_at（何時可得）寫入 provenance/audit（不得用事後值）。
+
+A7.7 事件/情緒/宏觀 範例（EVENT/SENT/MACRO）
+FTR.EVENT.FLAG.EARNINGS_WINDOW_FLAG.v1
+
+zh：財報窗口旗標
+
+output_semantics：{IN_WINDOW, OUT_WINDOW}
+
+FTR.EVENT.DENS.NEWS_DENSITY_LEVEL.v1
+
+zh：新聞密度水平
+
+output_semantics：密度（描述性）
+
+FTR.SENT.MOOD.SENTIMENT_POLARITY_SCORE.v1
+
+zh：情緒極性分數
+
+output_semantics：-1~1（描述性；不得命名為多空）
+
+FTR.MACRO.POL.RATE_DECISION_FLAG.v1
+
+zh：利率決策時點旗標
+
+output_semantics：{UPCOMING, RECENT, NONE}
+
+A7.8 QA/GOV/EXEC 範例（治理觀測）
+FTR.QA.MISS.MISSING_RATE.v1
+
+zh：缺值率
+
+output_semantics：0~1
+
+FTR.QA.DELAY.DATA_LATENCY_MS.v1
+
+zh：資料延遲毫秒
+
+output_semantics：延遲（ms）
+
+FTR.GOV.COVER.AUDIT_COVERAGE_SCORE.v1
+
+zh：審計覆蓋分數
+
+output_semantics：0~1（描述性）
+
+FTR.EXEC.HEALTH.CHANNEL_HEALTH_STATE.v1
+
+zh：通道健康狀態
+
+output_semantics：{OK, DEGRADED, DOWN}
+
+FTR.EXEC.CONSIS.RECONCILIATION_STATE.v1
+
+zh：對帳一致性狀態
+
+output_semantics：{CONSISTENT, INCONSISTENT, UNKNOWN}
+
+A8. 命名與審計的連動規則（必須落地）
+A8.1 審計必須記錄 Feature ID（全字串）
+任何 Feature 的輸出若被納入 Evidence，審計物必須包含：
+
+feature_id（含 ver）
+
+若有擴充段：完整保留 __impl__tf__src
+
+A8.2 UI 顯示規則（最小要求）
+UI 不必顯示完整 feature_id（可顯示中文名），但必須能「展開」看到：
+
+feature_id
+
+feature_version
+
+inputs（最小集合）
+
+output_semantics
+
+A8.3 命名違規的 Gate（建議落在 GOV/QA）
+若命名違規（含方向詞、行為詞、績效詞）：
+
+必須阻止其被納入 Evidence（RETURN 或 VETO，依政策）
+
+必須留下審計原因碼：
+
+GOV-FTR-NAME-DIRECTIONAL
+
+GOV-FTR-NAME-ACTION
+
+GOV-FTR-NAME-PERF
+
+A9. Only-Add 演進規則（附錄 A 專屬）
+允許新增：
+
+新 DOMAIN（但必須補齊語義與邊界）
+
+新 FAMILY
+
+新命名範例
+
+新 FeatureMeta 欄位（不得刪舊欄位）
+
+禁止：
+
+改寫既有 DOMAIN/FAMILY 的語義
+
+把方向/行為/績效詞合法化
+
+用「簡化」名義刪除版本段（VER）
+
+（STRATEGY_FEATURE_INDEX｜Part 2：附錄A v2025-12-19 完）
+
+# TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219
+doc_key：STRATEGY_FEATURE_INDEX  
+治理等級：B+（Feature Governance & Semantic Boundary Charter｜全知識自洽最大完備版）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（特徵層治理封頂＋可展開知識索引，Only-Add 演進）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
+平行參照：STRATEGY_UNIVERSE / ARCH_FLOW / RISK_COMPLIANCE / VERSION_AUDIT / UI_SPEC / DATA_SOURCES / TWSE_RULES  
+變更原則：Only-Add（只可新增，不可刪減、不可覆寫、不可改寫既有語義、不可弱化邊界）  
+核心宣告：Feature ≠ Signal ≠ Strategy ≠ Order（特徵非訊號、非策略、非下單）  
+
+---
+
+# Part 3｜附錄B：特徵治理檢核（Feature Governance Checklist）＋違規判定（最大完備）
+
+> 本 Part 3 為 Part 1/Part 2 的 **Only-Add 擴充**。  
+> 目的：把「特徵」從研究到實盤的全生命週期，落成 **可機器審計、可人類審查、可回放** 的治理規格。  
+> 本節不新增交易建議、不新增策略、不涉下單；僅規範「特徵」如何被允許/禁止使用。
+
+---
+
+## B0. 本附錄的法律地位（治理定位）
+
+- 本附錄是 STRATEGY_FEATURE_INDEX 的治理子章，屬於 **語義邊界與可審計性** 的最高規格之一。
+- 一切「特徵可不可以進入 Evidence」的裁決，必須至少經過本附錄的 Hard Gates。
+- 若與上位約束衝突：以 MASTER_ARCH / DOCUMENT_INDEX / AI_GOV 母法裁決。
+
+---
+
+## B1. Feature 分級制度（Feature Tiering｜必須標記）
+
+> Feature 不同成熟度，能用在哪裡不同。  
+> 分級不是好壞評分，而是 **允許用途（Allowed Uses）** 的治理欄位。
+
+### B1.1 Feature Tier 定義（最小集合）
+- **T0｜Draft（草稿）**
+  - 允許：Research 局部實驗（不得入 Evidence）
+  - 禁止：Backtest/Sim/Paper/Live 的 Canonical Evidence
+- **T1｜Research-Validated（研究驗證）**
+  - 允許：Research / Backtest（可入 Evidence 但需標記實驗）
+  - 禁止：Paper/Live（除非升級到 T2）
+- **T2｜Replay-Safe（可回放安全）**
+  - 允許：Research / Backtest / Simulation / Paper
+  - 條件：provenance + version_ref + deterministic replay 成立
+- **T3｜Live-Allowed（可進實盤）**
+  - 允許：全模式（含 Live）
+  - 條件：資料延遲/缺值/異常處理被制度化；風控可理解其語義
+- **T4｜Critical（關鍵特徵）**
+  - 允許：全模式
+  - 額外要求：變更需更嚴格審批（VERSION_AUDIT 加強）
+
+### B1.2 FeatureMeta 必填欄位（新增：tier）
+任何 FeatureMeta 必須包含：
+- `tier: T0|T1|T2|T3|T4`
+
+---
+
+## B2. Feature Hard Gates（逐條寫滿｜不可省略）
+
+> 下列任一 Gate 失敗：  
+> - 至少 RETURN（禁止納入 Evidence）  
+> - 在 Live 風險鏈路中可升級為 VETO（依政策）  
+
+### B2.1 Gate-1：語義邊界（Semantic Boundary）
+檢核點（全部通過）：
+- Feature 的 `output_semantics` 只描述狀態/關係/程度/標籤
+- Feature 名稱不含方向/行為/績效承諾（見 Part 2 A4）
+- Feature 不在輸出中直接提供 `buy/sell/long/short/entry/exit` 類字段
+
+Fail → 原因碼（本文件內部用於審計標記）：
+- `GOV-FTR-SEM-DIRECTIONAL`
+- `GOV-FTR-SEM-ACTION`
+- `GOV-FTR-SEM-PERF`
+
+### B2.2 Gate-2：可追溯性（Provenance）
+檢核點（全部通過）：
+- inputs 均可追溯到 DATA_SOURCES 的來源項目
+- 必有 `provenance_map_ref`
+- 必有 `input_hash` / `output_hash`
+
+Fail → 原因碼：
+- `GOV-FTR-PROV-MISSING`
+- `GOV-FTR-PROV-BROKEN`
+- `GOV-FTR-HASH-MISSING`
+- `GOV-FTR-HASH-FAIL`
+
+### B2.3 Gate-3：無前視（No Lookahead）
+檢核點（全部通過）：
+- `lookahead_policy=NO_LOOKAHEAD`
+- FUND/EVENT 類必記錄 `available_at`（資料可得時間）
+- 回測/回放時使用「當時可得版本」
+
+Fail → 原因碼：
+- `GOV-FTR-LOOKAHEAD`
+- `GOV-FTR-AVAILABLE_AT-MISSING`
+
+### B2.4 Gate-4：回放一致性（Replay Determinism）
+檢核點（全部通過）：
+- 相同 replay bundle + 相同版本 → 相同輸出
+- 若使用隨機或外部服務：必有 deterministic 設定或快照固化
+
+Fail → 原因碼：
+- `GOV-FTR-REPLAY-NONDET`
+- `GOV-FTR-REPLAY-NOSNAPSHOT`
+
+### B2.5 Gate-5：缺值/異常處理制度化（Robustness）
+檢核點（全部通過）：
+- `quality_checks` 明確定義缺值處理語義
+- 停牌/分盤/撮合異常時的處理定義存在
+- Outlier（極端值）處理語義存在（若該 domain 需要）
+
+Fail → 原因碼：
+- `GOV-FTR-QA-MISSING`
+- `GOV-FTR-HALT-HANDLING-MISSING`
+- `GOV-FTR-OUTLIER-HANDLING-MISSING`
+
+### B2.6 Gate-6：用途白名單（Allowed Uses）
+檢核點（全部通過）：
+- `allowed_uses` 僅包含：
+  - `EVIDENCE_INPUT`
+  - `REGIME_INPUT`
+  - `AUDIT_EXPLAIN`
+  - `UI_EXPLAIN`
+  - `RISK_CONTEXT_ONLY`（若要給風控只能是上下文，不是決策）
+- `forbidden_uses` 必包含：
+  - `DIRECT_SIGNAL`
+  - `DIRECT_STRATEGY`
+  - `DIRECT_ORDER`
+
+Fail → 原因碼：
+- `GOV-FTR-USE-ILLEGAL`
+- `GOV-FTR-USE-WHITELIST-MISSING`
+
+---
+
+## B3. Feature → Evidence 的納入規則（Evidence Ingestion Rules）
+
+> Feature 進 Evidence 不是「加就好」，必須可被審計與可被解釋。
+
+### B3.1 Evidence 允許載入的 Feature 類型
+允許（示例）：
+- 描述性：結構狀態、區間有效性、波動水平、流動性壓力、估值分位數、事件旗標
+- 不允許任何含「交易行為指令」的輸出
+
+### B3.2 Evidence 必須記錄的 Feature 欄位（最小集合）
+- `feature_id`
+- `feature_version`
+- `inputs_ref`（可指向 snapshot/provenance）
+- `output_value_ref`（或 hash）
+- `computed_at`
+- `available_at`（若資料為公告型/延遲型）
+- `quality_flags`（缺值/異常標記）
+
+### B3.3 Evidence 的「禁止偷換」
+- 禁止在 Evidence 層把多個 Feature 合成「方向」字段
+- 若要合成，只能形成「更高階描述性 Feature」，且必須：
+  - 新 feature_id
+  - 新 ver
+  - 完整 FeatureMeta
+  - 通過本附錄 Hard Gates
+
+違規碼：
+- `GOV-EVD-SIGNALIZATION`
+- `GOV-EVD-UNREGISTERED-FEATURE`
+
+---
+
+## B4. Feature → Regime 的使用邊界（Regime Input Boundary）
+
+> Regime 是狀態判定，不是交易方向。  
+> Feature 在 Regime 只能貢獻「狀態證據」，不得導出買賣建議。
+
+### B4.1 Regime 可使用的 Feature 類型（示例）
+- 波動壓縮/擴張狀態（VOL）
+- 流動性壓力狀態（LIQ）
+- 結構階段（STRUCT.PHASE）
+- 趨勢有序度（TECH.TREND 的描述性指標）
+
+### B4.2 禁止的 Regime 使用方式
+- 以單一 feature 直接決定 regime（除非制度明確定義且有多證據一致性）
+- 用「策略績效最好」來調 regime 門檻（績效辯護違規）
+
+違規碼：
+- `GOV-REG-SINGLE-FTR-DECISION`
+- `GOV-REG-PERF-DRIVEN`
+
+---
+
+## B5. Feature → Risk 的使用邊界（Risk Context Only）
+
+> 風控文件定義 Gate；Feature 只能提供上下文，不能取代 Gate。  
+
+### B5.1 Risk 可引用 Feature 的合法方式
+- 作為風控計算的「上下文輸入」：
+  - 波動水平、點差水平、深度壓力、事件窗口、資料品質狀態
+- 但風控 PASS/VETO 必須由 RISK_COMPLIANCE 的條文裁決
+
+### B5.2 禁止事項
+- 以 Feature 直接宣告 PASS（Soft Pass）
+- 以 Feature 直接宣告 VETO（除非該 feature 本身是風控條文映射的一部分，且已被制度化）
+- 用 AI 模型輸出當成風控裁決（除非 RISK_COMPLIANCE 明確允許且可回放）
+
+違規碼：
+- `GOV-RISK-SOFTPASS-BY-FTR`
+- `GOV-RISK-VETO-BY-FTR-UNAUTHORIZED`
+- `GOV-RISK-AI-OVERRIDE`
+
+---
+
+## B6. Feature 生命週期（Lifecycle）與版本控管（VERSION_AUDIT 對位）
+
+### B6.1 Feature 狀態（Status）
+- `DRAFT`
+- `ACTIVE`
+- `DEPRECATED`（保留可回放，但不得用於新決策）
+- `RETIRED`（仍可回放，但需更嚴格權限）
+
+### B6.2 變更類型（Change Types）
+- `SEMANTIC_CHANGE` → 必升 `VER`
+- `IMPLEMENTATION_CHANGE` → 只能改 `__impl`
+- `DATA_SOURCE_CHANGE` → 可能升 `VER`（若影響語義）
+
+### B6.3 必備審計輸出（與 VERSION_AUDIT 對位）
+每次變更必須產生：
 - `change_id`
-- `changed_feature_ids[]`
+- `feature_id_before` / `feature_id_after`
 - `reason`
 - `approver`
 - `effective_time`
-- `backward_compatibility_note`（如何不破壞舊回放）
+- `replay_compatibility_note`
 
 ---
 
-## 11. Feature 索引主表（Index Tables｜最大完備骨架）
+## B7. 跨文件一致性要求（DOCUMENT_INDEX / STRATEGY_UNIVERSE）
 
-> 本節提供「可擴充的主表骨架」。  
-> 你可以先用這個骨架，逐步把特徵填滿；但骨架本身就是治理必要內容（不可省略）。  
-> 若特徵數量龐大，允許拆成多段 Part 1/2/3…（Only-Add）。
+### B7.1 STRATEGY_UNIVERSE 引用 Feature 的規則
+- 策略條目中可以引用 Feature ID 作為：
+  - Evidence 構成要件
+  - 適用條件描述
+  - 風控上下文提示
+- 但不得引用「未登記 Feature」（未在本文件的索引/模板管理）
 
-### 11.1 Core Technical Indicators（技術指標核心組）
-| feature_id | feature_name_zh | family | timeframe | inputs（概念） | output（概念） | constraints（概念） |
-|---|---|---|---|---|---|---|
-| F-PRICE-RET-001 | 報酬率（simple return） | Price&Return | 任意 | close | r_t | 需定義窗口/基準點 |
-| F-PRICE-RET-002 | 對數報酬率（log return） | Price&Return | 任意 | close | log r_t | 同上 |
-| F-VOL-TR-001 | True Range | Volatility | 任意 | high/low/close | TR | 需有前一收盤 |
-| F-VOL-ATR-001 | ATR（平均真實波幅） | Volatility | 任意 | TR | ATR(n) | 冷啟動期 n |
-| F-TREND-MA-001 | 簡單移動平均 MA | Trend | 任意 | close | MA(n) | 冷啟動期 n |
-| F-TREND-EMA-001 | 指數移動平均 EMA | Trend | 任意 | close | EMA(n) | 冷啟動期 n |
-| F-MOMO-RSI-001 | RSI | Momentum | 任意 | close | RSI(n) | 冷啟動期 n |
-| F-MOMO-ROC-001 | ROC | Momentum | 任意 | close | ROC(n) | 冷啟動期 n |
-| F-MR-BB-001 | 布林通道位置 | MeanReversion | 任意 | close | position | 需定義上下軌算法 |
+違規碼：
+- `GOV-STR-REF-UNKNOWN-FTR`
+- `GOV-STR-REF-NONINDEX-DOC`（若引用非 Index 文件）
 
-### 11.2 Structure Outputs（結構輸出組｜描述性）
-| feature_id | feature_name_zh | family | timeframe | inputs | output（描述性/量化） | constraints |
-|---|---|---|---|---|---|---|
-| F-STR-SR-001 | 支撐/壓力距離 | Structure | 任意 | price series | 距離/強度 | 需定義算法；不得變成買賣訊號 |
-| F-STR-RANGE-001 | 盤整箱體寬度/持續時間 | Structure | 任意 | price series | width/duration | 需定義箱體識別規則 |
-| F-STR-BREAKDESC-001 | 突破事件描述（事後） | Structure | 任意 | price/volume | breakout_desc | 僅描述，不可當入場指令 |
+### B7.2 新對話可展開的必要性（你關心的點）
+要讓「新對話」能展開，最低要做到：
+- Feature ID 命名規範固定
+- FeatureMeta template 固定
+- 舉例（A7）足夠全面，能指向 GMMA / 顧比倒數 / 威科夫 / 纏論（鮑迪克）等方法論
 
-### 11.3 Fundamental Factors（基本面因子組｜需公告延遲）
-| feature_id | feature_name_zh | family | timeframe | inputs | output | constraints |
-|---|---|---|---|---|---|---|
-| F-FUND-VAL-PE-001 | 本益比 PE | Fundamental | 季/年 | EPS/price | PE | 必須標註公告延遲與可用時點 |
-| F-FUND-VAL-PB-001 | 股價淨值比 PB | Fundamental | 季/年 | BVPS/price | PB | 同上 |
-| F-FUND-QUAL-ROE-001 | ROE | Fundamental | 季/年 | net income/equity | ROE | 同上 |
-
-### 11.4 Chips / Institutional（籌碼/法人｜需追溯）
-| feature_id | feature_name_zh | family | timeframe | inputs | output | constraints |
-|---|---|---|---|---|---|---|
-| F-CHIP-INS-001 | 三大法人買賣超 | Institutional | 日 | official net buy/sell | net | 必須標註發布延遲 |
-| F-CHIP-MARGIN-001 | 融資融券餘額變化 | Institutional | 日 | margin balance | delta | 必須標註可用時點 |
-
-### 11.5 Derivatives（期權衍生｜TAIFEX）
-| feature_id | feature_name_zh | family | timeframe | inputs | output | constraints |
-|---|---|---|---|---|---|---|
-| F-DER-BASIS-001 | 期貨基差狀態（描述性） | Derivatives | 日/分 | spot/future | basis_desc | 不得輸出多空指令 |
-| F-DER-PCR-001 | Put/Call Ratio | Derivatives | 日 | options volume/OI | PCR | 必須標註資料來源與延遲 |
-
-### 11.6 Compliance/Status Features（合規/狀態特徵）
-| feature_id | feature_name_zh | family | timeframe | inputs | output | constraints |
-|---|---|---|---|---|---|---|
-| F-CMP-TRADEABLE-001 | 可交易狀態旗標 | Compliance | 即時/日 | TWSE/券商狀態 | tradeable_flag | 以官方/券商狀態裁決 |
-| F-CMP-SESSION-001 | 交易時段狀態 | Compliance | 即時 | 時段規則 | session_state | 以 TWSE_RULES/官方入口裁決 |
+本 Part 3 的作用就是把上述「展開」變成可審計規則，而不是靠猜。
 
 ---
 
-## 12. STRATEGY_UNIVERSE 引用規則（Feature 引用，而非重複定義）
-
-### 12.1 策略文件必須引用 feature_id
-- 任何策略/模組若使用特徵，必須列出 `feature_refs[]`
-- 禁止在策略內重新定義特徵公式（除非以「引用本文件」方式指向同一 feature_id）
-
-### 12.2 Feature 與策略的責任切分
-- Feature：定義可重算輸出與解釋  
-- Strategy：定義如何在特定 Regime 下組合 Evidence、形成建議（仍不得下單）  
-- Risk：定義可否決條件（不可被策略反推）
-
----
-
-## 13. Mermaid｜Feature → Evidence → Strategy（治理防線示意）
+## B8. Mermaid｜Feature 治理 Gate 流程圖（完整）
 
 ```mermaid
 flowchart TB
-  L3[Snapshot] --> L4[Feature Engine]
-  L4 -->|feature_refs + audit| L5[Evidence Bundle]
-  L5 --> L6[Regime Engine]
-  L6 --> L7[Risk/Compliance Gate]
-  L7 -->|PASS| L8[Strategy Proposal]
-  L7 -->|VETO| STOP[STOP + Audit]
-  L8 --> L9[Governance Gate]
-  L9 --> L10[Human Decision]
-  L10 --> L11[Execution Control]
-14. Only-Add 演進規則（本文件專屬）
+  F0[New/Updated Feature Proposal] --> G1{Gate-1 Semantic Boundary}
+  G1 -->|FAIL| R1[RETURN: Fix Naming/Semantics<br/>Audit: GOV-FTR-SEM-*]
+  G1 -->|PASS| G2{Gate-2 Provenance + Hash}
+  G2 -->|FAIL| R2[RETURN: Fix Provenance/Hash<br/>Audit: GOV-FTR-PROV/HASH-*]
+  G2 -->|PASS| G3{Gate-3 No Lookahead + Available_at}
+  G3 -->|FAIL| R3[RETURN: Fix Lookahead/Available_at<br/>Audit: GOV-FTR-LOOKAHEAD]
+  G3 -->|PASS| G4{Gate-4 Replay Determinism}
+  G4 -->|FAIL| R4[RETURN: Snapshot/Determinism Required<br/>Audit: GOV-FTR-REPLAY-*]
+  G4 -->|PASS| G5{Gate-5 Robust QA Handling}
+  G5 -->|FAIL| R5[RETURN: Define QA/Halt/Outlier Handling<br/>Audit: GOV-FTR-QA-*]
+  G5 -->|PASS| G6{Gate-6 Allowed/Forbidden Uses}
+  G6 -->|FAIL| R6[RETURN: Fix Uses Whitelist/Blacklist<br/>Audit: GOV-FTR-USE-*]
+  G6 -->|PASS| A1[APPROVE: Feature Eligible for Evidence/Regime Use<br/>Tier Controls Apply]
+B9. Only-Add 演進規則（Part 3 專屬）
 允許新增：
 
-新 feature_id（新增家族/新增市場資料/新增結構輸出）
+新的 Gate 檢核點（更嚴格）
 
-新欄位（增加審計、增加 provenance、增加 UI 可解釋資訊）
+新的違規原因碼（reason_code）
 
-新索引分段（Part 1/2/3…）
+新的 Feature Tier（但不得放寬既有 Tier 的限制）
+
+新的範例與模板欄位（不得移除既有欄位）
 
 禁止：
 
-刪除既有 feature 定義或改寫其語義
+刪除任何 Hard Gate
 
-把 feature 變成買賣建議或下單指令
+把方向化命名合法化
 
-以「簡化」為由移除 provenance/audit/version 字段
+允許 Feature 直接成為策略或下單指令
 
-以研究方便為由忽略公告延遲與可用時點
+以「研究方便」為理由跳過 provenance / replay / no-lookahead
 
-15. 封版宣告（不可更改）
-TAITS 的 Feature/Factor/Indicator 只負責「可追溯的描述性輸出」。
-特徵不是訊號、不是策略、不是下單；任何越界皆屬治理違規。
+（STRATEGY_FEATURE_INDEX｜Part 3：附錄B v2025-12-19 完）
 
-（STRATEGY_FEATURE_INDEX｜最大完備・治理對齊版 v2025-12-19 完）
+# TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219
+doc_key：STRATEGY_FEATURE_INDEX  
+治理等級：B+（Feature Governance & Semantic Boundary Charter｜全知識自洽最大完備版）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（特徵層治理封頂＋可展開知識索引，Only-Add 演進）  
+版本日期：2025-12-19  
+對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
+上位約束：MASTER_ARCH / MASTER_CANON / DOCUMENT_INDEX  
+平行參照：STRATEGY_UNIVERSE / ARCH_FLOW / RISK_COMPLIANCE / VERSION_AUDIT / UI_SPEC / DATA_SOURCES / TWSE_RULES  
+變更原則：Only-Add（只可新增，不可刪減、不可覆寫、不可改寫既有語義、不可弱化邊界）  
+核心宣告：Feature ≠ Signal ≠ Strategy ≠ Order（特徵非訊號、非策略、非下單）  
+
+---
+
+# Part 4｜附錄C：特徵資料結構模板（Schema）＋落地範例（Examples）＋UI/審計對位（最大完備）
+
+> 本 Part 4 為 Part 1/Part 2/Part 3 的 **Only-Add 擴充**。  
+> 目的：提供「可直接貼用」的特徵資料結構模板（FeatureMeta / FeatureValue / ProvenanceMap / QualityFlags），  
+> 並補齊 GMMA、顧比倒數線、威科夫、纏論（鮑迪克）等方法論在 TAITS 中的 **特徵化落地範例**（注意：只做描述性特徵，不輸出交易方向）。
+
+---
+
+## C0. 附錄C的使用邊界（不可越權）
+
+- 本附錄提供「結構化模板」與「描述性特徵範例」：
+  - ✅ 可用於 L4 Feature Engine / L5 Evidence Builder / UI Explain / Audit Replay
+  - ✅ 可用於 STRATEGY_UNIVERSE 的策略條目備註引用（以 feature_id 引用）
+  - ❌ 不得直接變成策略規則（策略在 STRATEGY_UNIVERSE 定義）
+  - ❌ 不得直接變成下單信號（下單在 EXECUTION_CONTROL，且需 Human + Risk Token）
+
+---
+
+## C1. FeatureMeta 模板（Canonical Template｜最小必備欄位）
+
+> FeatureMeta 是「特徵定義本體」，屬於治理物件：必須版控、可審計、可回放。  
+> 任何特徵進入 Evidence/Regime/Risk Context/UI Explain，都必須先有 FeatureMeta。
+
+```yaml
+feature_meta:
+  feature_id: "TECH.TREND.GMMA_SPREAD_RATIO"
+  feature_name_zh: "GMMA長短群均線擴散比（描述性）"
+  feature_name_en: "GMMA Spread Ratio (Descriptive)"
+  domain: "TECH"                     # TECH/FUND/NEWS/MACRO/MKT/STRUCT/LIQ/ORDERFLOW/RISK/SYS/EVENT
+  family: "TREND"                    # 族群分類：TREND/MOMENTUM/VOL/LIQ/STRUCT/VALUATION/QUALITY/...
+  subfamily: "GMMA"                  # 子族群：GMMA/WYCKOFF/CHANLUN_BODICK/...
+  description: >
+    描述長短期均線群之間的擴散程度，用於刻畫趨勢有序度與動能狀態，
+    僅輸出連續數值，不輸出買賣方向。
+  output_semantics: "ratio_non_directional"  # 必須是描述性語義
+  unit: "ratio"
+  value_type: "float"                # float/int/bool/category/struct
+  value_range: "[0, +inf)"
+  default_timeframe: "D"             # 1m/5m/15m/60m/D/W/M
+  computation:
+    formula_summary: "spread = mean(abs(short_group - long_group))/price"
+    lookahead_policy: "NO_LOOKAHEAD"
+    required_inputs:
+      - "PRICE.CLOSE"
+      - "TECH.MA(3,5,8,10,12,15,30,35,40,45,50,60)"
+    dependencies:
+      - "DATA_SOURCES:TWSE_OHLCV"
+      - "FEATURES:TECH.MA_GROUPS"
+  tier: "T3"                         # T0/T1/T2/T3/T4
+  status: "ACTIVE"                   # DRAFT/ACTIVE/DEPRECATED/RETIRED
+  allowed_uses:
+    - "EVIDENCE_INPUT"
+    - "REGIME_INPUT"
+    - "AUDIT_EXPLAIN"
+    - "UI_EXPLAIN"
+  forbidden_uses:
+    - "DIRECT_SIGNAL"
+    - "DIRECT_STRATEGY"
+    - "DIRECT_ORDER"
+  quality_checks:
+    missing_policy: "FLAG"           # FLAG/IMPUTE/STOP (STOP 必須升級治理)
+    outlier_policy: "WINSORIZE"      # NONE/WINSORIZE/FLAG/STOP
+    halt_handling: "FREEZE_LAST"     # FREEZE_LAST/FLAG/STOP/NA
+  provenance_requirements:
+    require_provenance_map: true
+    require_input_hash: true
+    require_output_hash: true
+    require_available_at: false      # FUND/EVENT/NEWS 類通常 true
+  audit_requirements:
+    audit_layer: "L4"
+    must_emit_artifacts:
+      - "FeatureValueRecord"
+      - "ProvenanceMapRef"
+      - "QualityFlags"
+  versioning:
+    feature_version: "1.0.0"
+    impl_version: "impl_2025-12-19_001"
+    change_policy: "SEMANTIC_CHANGE=>bump_feature_version"
+  ui_explain:
+    explain_level: "L2"              # L1/L2/L3（UI_SPEC 對位）
+    display_hint: "可視化為趨勢有序度/擴散程度，禁止顯示買賣箭頭"
+C2. FeatureValueRecord 模板（值紀錄｜必備可回放）
+FeatureValueRecord 是「某一次計算出的特徵值」：必須可回放、可稽核。
+
+json
+複製程式碼
+{
+  "record_type": "FeatureValueRecord",
+  "correlation_id": "CID-20251219-000001",
+  "session_id": "SID-20251219-000009",
+  "timestamp_utc": "2025-12-19T00:01:23Z",
+  "market_time": "2025-12-19T13:31:00+08:00",
+  "layer_id": "L4",
+  "module_id": "FEATURE_ENGINE",
+  "feature_id": "TECH.TREND.GMMA_SPREAD_RATIO",
+  "feature_version": "1.0.0",
+  "impl_version": "impl_2025-12-19_001",
+  "instrument": "TWSE:2330",
+  "timeframe": "D",
+  "value_type": "float",
+  "value": 0.0375,
+  "value_ref": null,
+  "quality_flags": {
+    "missing": false,
+    "halted": false,
+    "outlier": false,
+    "source_degraded": false
+  },
+  "available_at": null,
+  "input_hash": "sha256:....",
+  "output_hash": "sha256:....",
+  "provenance_map_ref": "PROV-20251219-000001",
+  "version_ref": {
+    "doc_key": ["STRATEGY_FEATURE_INDEX@251219", "DATA_SOURCES@251219"],
+    "policy": ["RISK_POLICY@..."],
+    "rulebook": ["TWSE_RULES@251219"]
+  },
+  "status": "SUCCESS",
+  "reason_codes": []
+}
+C3. ProvenanceMap 模板（來源可追溯圖｜必備）
+ProvenanceMap 將「特徵值」追溯到「資料來源」與「原始輸入範圍」。
+沒有 provenance_map_ref → Part 3 Gate-2 失敗。
+
+json
+複製程式碼
+{
+  "record_type": "ProvenanceMap",
+  "provenance_id": "PROV-20251219-000001",
+  "correlation_id": "CID-20251219-000001",
+  "created_at_utc": "2025-12-19T00:01:23Z",
+  "instrument": "TWSE:2330",
+  "timeframe": "D",
+  "inputs": [
+    {
+      "field": "PRICE.CLOSE",
+      "source": "DATA_SOURCES:TWSE_OHLCV",
+      "source_priority": "OFFICIAL_PRIMARY",
+      "time_range": ["2025-10-01", "2025-12-19"],
+      "raw_ref": "RAWSET-...-CLOSE",
+      "transform_chain": ["canonicalize", "adjust_corporate_actions"]
+    },
+    {
+      "field": "TECH.MA_GROUPS",
+      "source": "FEATURES:TECH.MA_GROUPS",
+      "source_priority": "INTERNAL_DERIVED",
+      "time_range": ["2025-10-01", "2025-12-19"],
+      "raw_ref": "FTRSET-...-MA",
+      "transform_chain": ["ma_calc", "group_aggregate"]
+    }
+  ],
+  "integrity": {
+    "input_hashes": ["sha256:...","sha256:..."],
+    "provenance_hash": "sha256:..."
+  }
+}
+C4. QualityFlags / Degrade Policy（品質旗標與降級語義）
+注意：降級只影響「可用性」與「標記」，不得偷偷修正成方向或掩蓋缺失。
+
+C4.1 QualityFlags（最小集合）
+missing：缺值（含任一關鍵輸入缺失）
+
+halted：停牌/不可交易狀態
+
+outlier：極端值
+
+source_degraded：來源降級（官方→備援）
+
+stale：資料過舊（延遲超過門檻）
+
+late_available：公告型資料尚未可得（FUND/EVENT）
+
+C4.2 降級語義（示例）
+FLAG：保留值或設為 null，但必標記並在 Evidence 顯示不完整
+
+STOP：停止輸出，Evidence 不得使用（可 RETURN）
+
+IMPUTE：僅限研究/回測且明示（Live 不建議，除非制度化）
+
+C5. 方法論落地範例（Descriptive Feature Examples｜最大完備）
+本節是你最在意的「備註可展開」落地：
+把 GMMA / 顧比倒數線 / 威科夫 / 纏論（鮑迪克）各自拆成「描述性特徵」可引用。
+這些特徵不產生買賣方向，只提供可解釋的狀態刻畫，供 Evidence/Regime/策略條目備註引用。
+
+C5.1 GMMA（顧比均線群）特徵族（TECH.TREND.GMMA_*）
+GMMA 本質：短期群與長期群的相對位置、擴散、收斂、斜率狀態（全部描述性）。
+
+GMMA-A：群擴散程度（已於 C1 範例）
+TECH.TREND.GMMA_SPREAD_RATIO
+
+語義：短群 vs 長群的擴散程度（越大代表趨勢有序度可能更強，但不等於做多/做空）
+
+GMMA-B：群相對位階（短群在上/下）
+TECH.TREND.GMMA_STACKING_STATE
+
+value_type：category（SHORT_ABOVE_LONG / MIXED / SHORT_BELOW_LONG）
+
+禁止：把 SHORT_ABOVE_LONG 直接當買進
+
+GMMA-C：群收斂狀態（壓縮/擴張）
+TECH.TREND.GMMA_COMPRESSION_STATE
+
+value_type：category（COMPRESSING / EXPANDING / NEUTRAL）
+
+可用於 Regime：趨勢狀態/盤整狀態的證據之一
+
+GMMA-D：長群斜率穩定性（趨勢穩定）
+TECH.TREND.GMMA_LONG_SLOPE_STABILITY
+
+value_type：float（例如斜率變異係數）
+
+用途：描述「趨勢是否穩定」，非方向
+
+C5.2 顧比倒數線（Guppy Countdown）特徵族（TECH.MOMENTUM.COUNTDOWN_*）
+倒數線常用於「節奏」與「耗竭」的描述：用倒數進度而非訊號。
+
+CD-A：倒數進度（0~N）
+TECH.MOMENTUM.COUNTDOWN_PROGRESS
+
+value_type：int
+
+語義：當前處於倒數序列的進度（例如 0..13）
+
+禁止：進度達到 N 直接視為反轉訊號（那是策略層）
+
+CD-B：倒數條件完整度
+TECH.MOMENTUM.COUNTDOWN_CONDITION_COVERAGE
+
+value_type：float（0..1）
+
+語義：倒數必要條件滿足比例（描述性）
+
+CD-C：倒數中斷原因（若中斷）
+TECH.MOMENTUM.COUNTDOWN_INTERRUPT_REASON
+
+value_type：category
+
+語義：倒數為何中斷（缺資料/狀態不符/停牌等）
+
+C5.3 威科夫（Wyckoff）特徵族（STRUCT.WYCKOFF_*）
+威科夫屬「結構/階段」：以階段、事件、供需特徵刻畫，不輸出方向。
+
+WY-A：階段標籤（Phase）
+STRUCT.WYCKOFF_PHASE_LABEL
+
+category：ACCUMULATION / MARKUP / DISTRIBUTION / MARKDOWN / UNKNOWN
+
+注意：此為「結構推定狀態」，必須多證據一致性（Volume/Range/Trend/Support/Resistance 等）
+
+WY-B：供需不平衡強度（Supply-Demand Imbalance）
+STRUCT.WYCKOFF_SDI_SCORE
+
+float：供需不平衡程度（描述性 score）
+
+WY-C：事件旗標（事件不等於交易）
+STRUCT.WYCKOFF_EVENT_FLAG
+
+category（可多值）：SC/AR/ST/SPRING/UTAD/NONE
+
+禁止：把 SPRING 直接當買進信號（策略層才能決定）
+
+WY-D：成交量-價差關係（VSA 風格的描述）
+STRUCT.WYCKOFF_VOLUME_SPREAD_RELATION
+
+category：WIDE_SPREAD_HIGH_VOL / NARROW_SPREAD_HIGH_VOL / ...
+
+用途：Evidence 或 UI Explain
+
+C5.4 纏論（鮑迪克纏論）特徵族（STRUCT.CHANLUN_BODICK_*）
+纏論（作為結構與判斷體系）在 TAITS 中落地方式：
+以「結構段落、筆/線段/中樞、背離狀態、級別一致性」等描述性特徵輸出。
+
+CLB-A：結構級別（Level）
+STRUCT.CHANLUN_BODICK_LEVEL
+
+category：MINOR/MAJOR/MULTI_LEVEL（或你在母法中定義的級別體系）
+
+用途：標記當前結構解析所屬級別
+
+CLB-B：中樞存在性與範圍
+STRUCT.CHANLUN_BODICK_ZS_EXISTS
+
+bool：是否存在有效中樞（描述性）
+
+STRUCT.CHANLUN_BODICK_ZS_RANGE
+
+struct：{low, high, width_ratio}（描述性）
+
+CLB-C：筆/線段方向（僅結構方向，不是交易方向）
+STRUCT.CHANLUN_BODICK_SEGMENT_DIRECTION
+
+category：UP_SEGMENT / DOWN_SEGMENT / UNKNOWN
+
+禁止：把 UP_SEGMENT 直接視為買入（策略層再用）
+
+CLB-D：背離狀態（Divergence State）
+STRUCT.CHANLUN_BODICK_DIVERGENCE_STATE
+
+category：NONE/WEAK/STRONG/UNDETERMINED
+
+必須記錄：使用的動能/量能/價格結構依據（provenance）
+
+CLB-E：多級別一致性（Alignment）
+STRUCT.CHANLUN_BODICK_MULTI_LEVEL_ALIGNMENT
+
+float：0..1（各級別結構一致程度）
+
+用途：Regime / Evidence（描述性）
+
+C6. UI_EXPLAIN 對位（與 UI_SPEC 的接口欄位）
+本節定義 Feature 在 UI 上的最小呈現義務（不取代 UI_SPEC，只提供接口一致性）。
+
+C6.1 UI 必須能顯示（可展開）
+feature_name_zh
+
+feature_value（含 unit）
+
+quality_flags
+
+provenance_map_ref（可點開顯示來源）
+
+computed_at / market_time
+
+feature_version / impl_version
+
+C6.2 UI 禁止顯示方式
+禁止直接以箭頭/顏色暗示買賣（除非 UI 明確標示「這是描述性狀態」且不作交易引導）
+
+禁止把 Feature 當作 PASS/VETO（Risk 仍由 RISK_COMPLIANCE 裁決）
+
+C7. 審計輸出（Audit Artifacts）最小清單（對位 ARCH_FLOW / VERSION_AUDIT）
+Feature 層（L4）至少必須輸出：
+
+FeatureValueRecord（每個 feature 每次計算）
+
+ProvenanceMap（可聚合但不可缺）
+
+QualityFlags
+
+VersionRef（doc_key/policy/rulebook/impl）
+
+Hash（input/output/provenance）
+
+若缺任一項：
+
+在 Live/Paper 可升級為風控否決（SYS-AUDIT / SYS-PROV）
+
+C8. Mermaid｜Feature → Evidence → Regime 的合法流（完整）
+mermaid
+複製程式碼
+flowchart TB
+  L3[Snapshot Ready] --> L4[Feature Engine<br/>Compute FeatureValueRecords]
+  L4 --> P[ProvenanceMap + Hash + QualityFlags]
+  P --> G{Feature Governance Gates<br/>Part3 Gate-1..6}
+  G -->|FAIL| R[RETURN: Fix Feature Meta/Provenance/Replay]
+  G -->|PASS| L5[Evidence Builder<br/>Assemble Evidence Bundle]
+  L5 --> L6[Regime Engine<br/>State Classification]
+  L6 --> L7[Risk & Compliance Gate<br/>PASS/VETO]
+C9. Only-Add 演進規則（Part 4 專屬）
+允許新增：
+
+新的 FeatureMeta 欄位（不得刪舊欄位）
+
+新的方法論特徵族（如新增新的 ChanLun 子系）
+
+新的 UI 提示欄位（不得弱化風險揭露）
+
+新的品質旗標與來源映射
+
+禁止：
+
+任何把描述性特徵偷換成方向/信號/策略/下單意圖的改動
+
+刪除 Provenance / Hash / Replay 必備欄位
+
+以「簡化」之名移除方法論特徵拆解（若要簡化只能在 UI 層折疊呈現）
+
+（STRATEGY_FEATURE_INDEX｜Part 4：附錄C v2025-12-19 完）
