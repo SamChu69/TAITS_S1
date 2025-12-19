@@ -186,18 +186,19 @@ TAITS 採用：
 
 ### 4.1 主幹資料流（不含退回）
 
+flowchart TB
   D1[Data Domain<br/>L1-L2] --> S1[State/Snapshot<br/>L3]
-  S1 --> A1[Analysis Domain<br/>L4]
-  A1 --> E1[Evidence Domain<br/>L5]
-  E1 --> R1[Regime Domain<br/>L6]
-  R1 --> RC[Risk & Compliance<br/>L7]
-  RC -->|PASS| SR[Strategy & Research<br/>L8]
-  RC -->|VETO| STOP1[STOP]
-  SR --> GOV[Governance Gate<br/>L9]
-  GOV -->|PASS| UI[UI Human Decision<br/>L10]
-  GOV -->|RETURN| A1
-  UI -->|APPROVE| EXE[Execution & Control<br/>L11]
-  UI -->|REJECT| STOP2[STOP]
+S1 --> A1[Analysis Domain<br/>L4]
+A1 --> E1[Evidence Domain<br/>L5]
+E1 --> R1[Regime Domain<br/>L6]
+R1 --> RC[Risk & Compliance<br/>L7]
+RC -->|PASS| SR[Strategy & Research<br/>L8]
+RC -->|VETO| STOP1[STOP]
+SR --> GOV[Governance Gate<br/>L9]
+GOV -->|PASS| UI[UI Human Decision<br/>L10]
+GOV -->|RETURN| A1
+UI -->|APPROVE| EXE[Execution & Control<br/>L11]
+UI -->|REJECT| STOP2[STOP]
 
 ###4.2 否決鏈與阻斷（Veto/Block）
 L7 VETO：流程立即 STOP（不得進入 L8+）
