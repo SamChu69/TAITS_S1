@@ -378,6 +378,7 @@ UI 必須能區分並明示：
 
 ### 14.1 UI Decision Flow（含否決/退回）
 
+```mermaid
 flowchart TB
   A[Load Decision Workbench] --> B[Show Evidence/Regime/Risk/Gov/Strategy]
   B --> C{Risk Gate?}
