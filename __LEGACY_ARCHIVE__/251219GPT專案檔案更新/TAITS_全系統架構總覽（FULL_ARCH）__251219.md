@@ -186,8 +186,6 @@ TAITS 採用：
 
 ### 4.1 主幹資料流（不含退回）
 
-flowchart TB
-
   D1[Data Domain<br/>L1-L2] --> S1[State/Snapshot<br/>L3]
   S1 --> A1[Analysis Domain<br/>L4]
   A1 --> E1[Evidence Domain<br/>L5]
