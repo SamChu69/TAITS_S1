@@ -393,9 +393,9 @@ flowchart TB
   I --> J{Execution Preflight}
   J -->|BLOCK| K[UI: BLOCK + Reason Codes]
   J -->|OK| L[Show Execution Live Status]
-14.2 Veto Visualization Map（否決可視化地圖）
-mermaid
-複製程式碼
+
+###14.2 Veto Visualization Map（否決可視化地圖）
+```mermaid
 flowchart LR
   VETO[VETO] --> C1[CMP 合規]
   VETO --> S1[SYS 系統完整性]
@@ -409,7 +409,8 @@ flowchart LR
   L1 --> CODE1
   P1 --> CODE1
   E1 --> CODE1
-15. Only-Add 演進規則（UI_SPEC 專屬）
+
+##15. Only-Add 演進規則（UI_SPEC 專屬）
 允許新增：
 
 新面板（例如：事件面板、宏觀面板）
