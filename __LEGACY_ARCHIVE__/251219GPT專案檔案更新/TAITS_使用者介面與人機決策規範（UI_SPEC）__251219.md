@@ -410,3 +410,34 @@ flowchart LR
   L1 --> CODE1
   P1 --> CODE1
   E1 --> CODE1
+
+15. Only-Add 演進規則（UI_SPEC 專屬）
+
+允許新增：
+
+新面板（例如：事件面板、宏觀面板）
+
+新欄位（更多可視化、更多 trace）
+
+新角色（RBAC 擴充）
+
+新的回放視角（Replay Views）
+
+禁止：
+
+移除或弱化 Risk/Compliance Panel
+
+移除 VETO reason_code 顯示
+
+讓 APPROVE 在 VETO/RETURN 狀態可按
+
+移除 correlation_id / version_ref / provenance 入口
+
+任何形式的「自動批准」「無人值守」入口
+
+16. UI_SPEC 終極裁決語句（不可更改）
+
+UI 的使命不是讓交易變快，
+而是讓每一次交易在發生前都可被理解、被否決、被追溯。
+
+（UI_SPEC｜最大完備版 v2025-12-19 完）
