@@ -398,6 +398,7 @@ UI 必須可呈現：
 
 ## 18. Mermaid｜執行控制總流程圖（Execution Control Map）
 
+```mermaid
 flowchart TB
   A[Entry Check<br/>L10 APPROVE + Risk PASS Token] --> B{Pre-Execution Checks}
   B -->|FAIL| X[BLOCK & AUDIT]
