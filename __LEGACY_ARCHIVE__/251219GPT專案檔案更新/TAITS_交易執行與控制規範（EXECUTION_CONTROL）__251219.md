@@ -416,6 +416,7 @@ flowchart TB
   K --> L{Reconcile OK?}
   L -->|NO| R[STOP NEW ORDERS + REPAIR FLOW + AUDIT]
   L -->|YES| END[Complete + Replay Bundle Ref]
+
 19. Only-Add 演進規則（本文件專屬）
 允許新增：
 
