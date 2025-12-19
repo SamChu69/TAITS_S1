@@ -394,9 +394,11 @@ flowchart TB
   I --> J{Execution Preflight}
   J -->|BLOCK| K[UI: BLOCK + Reason Codes]
   J -->|OK| L[Show Execution Live Status]
+
+
 14.2 Veto Visualization Map（否決可視化地圖）
-mermaid
-複製程式碼
+
+```mermaid
 flowchart LR
   VETO[VETO] --> C1[CMP 合規]
   VETO --> S1[SYS 系統完整性]
