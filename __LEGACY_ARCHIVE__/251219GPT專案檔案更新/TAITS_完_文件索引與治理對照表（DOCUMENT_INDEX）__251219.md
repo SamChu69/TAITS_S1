@@ -118,7 +118,12 @@ DOCUMENT_INDEX **只做三件事**：
 
 （DOCUMENT_INDEX · PART 1 結束）
 
-PART 2｜文件治理位階總表 × 覆蓋／否決矩陣 × 主體可引用權限
+---
+
+# 📘 TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251219
+## PART 2｜文件治理位階總表 × 覆蓋／否決矩陣 × 主體可引用權限
+
+---
 
 ## 第 4 章｜TAITS 全文件治理位階總表（Authoritative Hierarchy）
 
@@ -135,17 +140,25 @@ PART 2｜文件治理位階總表 × 覆蓋／否決矩陣 × 主體可引用權
 | 位階 | 文件名稱 |
 |---|---|
 | **A+** | `TAITS_AI_行為與決策治理最終規則全集__251217.md` |
+| **A** | `TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251219.md` |
 | **A** | `TAITS_MASTER_ARCHITECTURE.md` |
-| **A** | `TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__251219.md` |
-| **B** | `TAITS_系統架構與流程細化說明（ARCH_FLOW）__251219.md` |
-| **B** | `TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__251219.md` |
-| **B** | `TAITS_交易執行與控制規範（EXECUTION_CONTROL）__251219.md` |
-| **B** | `TAITS_使用者介面與人機決策規範（UI_SPEC）__251219.md` |
+| **A** | `TAITS_完_完整總架構×總流程×全資訊體系（MASTER_CANON）__251219.md` |
+| **B** | `TAITS_完_全系統架構總覽（FULL_ARCH）__251219.md` |
+| **B** | `TAITS_完_系統架構與流程細化說明（ARCH_FLOW）__251219.md` |
+| **B** | `TAITS_完_治理閘門與裁決規範（GOVERNANCE_GATE_SPEC）__251219.md` |
+| **B** | `TAITS_完_風險與合規最高否決權（RISK_COMPLIANCE）__251219.md` |
+| **B** | `TAITS_完_交易執行與控制規範（EXECUTION_CONTROL）__251219.md` |
+| **B** | `TAITS_完_使用者介面與人機決策規範（UI_SPEC）__251219.md` |
 | **B** | `TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219.md` |
-| **B** | `TAITS_資料來源全集（DATA_SOURCES）__251219.md` |
-| **B** | `TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__251219.md` |
-| **B** | `TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219.md` |
-| **C** | `README.md`、新手教學、操作指引類文件 |
+| **B** | `TAITS_完_資料來源全集（DATA_SOURCES）__251219.md` |
+| **B** | `TAITS_完_策略宇宙全集（STRATEGY_UNIVERSE）__251219.md` |
+| **B** | `TAITS_完_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219.md` |
+| **B** | `TAITS_完_TWSE交易規則參考彙編（TWSE_RULES）__251219.md` |
+| **B** | `TAITS_完_本地執行與運算環境規範（LOCAL_ENV）__251219.md` |
+| **B** | `TAITS_完_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219.md` |
+| **B** | `TAITS_完_母體總憲法與核心鐵律（MASTER_ARCH）__251219.md` |
+| **C** | `TAITS_新手教學與操作引導總則（BEGINNER_GUIDE）__251219.md` |
+| **C** | `README.md` |
 
 📌 **任何不在表內之文件，不具治理效力。**
 
@@ -239,7 +252,12 @@ PART 2｜文件治理位階總表 × 覆蓋／否決矩陣 × 主體可引用權
 
 （DOCUMENT_INDEX · PART 2 結束）
 
-PART 3｜版本控管 × 引用審計 × 違規處置（最終裁決）
+---
+
+# 📘 TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251219
+## PART 3｜版本控管 × 引用審計 × 違規處置（最終裁決）
+
+---
 
 ## 第 7 章｜文件版本控管、審計與引用規範
 
@@ -354,123 +372,58 @@ PART 3｜版本控管 × 引用審計 × 違規處置（最終裁決）
 
 （DOCUMENT_INDEX · PART 3 完成）
 
-# 📘 TAITS_文件索引與治理對照表（DOCUMENT_INDEX）
-## Document Index & Governance Resolution Canon
+---
 
-doc_key：DOCUMENT_INDEX  
-治理等級：A+（文件裁決最高母法）  
-版本狀態：ACTIVE（不可被任何文件覆寫）  
-版本日期：2025-12-19  
-對齊母法：TAITS_AI_行為與決策治理最終規則全集__251217（A+）  
-變更原則：Only-Add（僅可新增，不可刪減／改寫／弱化任何治理語義）
+## 第 9 章｜治理狀態文件（Governance State Documents）｜Freeze / Unfreeze 裁決層
+
+> 本章為 **Only-Add 補遺**：新增「治理狀態文件」類別與其裁決位階。  
+> 治理狀態文件的職責不是補內容，而是裁決 **是否允許變動**（Freeze / Unfreeze）。  
+> 當治理狀態文件生效時，對所有 **B / C 級文件**具有直接約束力。
+
+### 9.1 治理狀態文件清單（Authoritative List）
+
+| 文件名稱 | doc_key | 治理等級 | 狀態 | 說明 |
+|---|---|---|---|---|
+| TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251219.md | GOVERNANCE_STATE_FREEZE_V1 | A | ACTIVE | 宣告 TAITS 進入 Freeze v1.0；對所有 B / C 級文件的「結構性變更」具有約束力 |
+
+### 9.2 使用原則（Usage Rules｜不可越權）
+
+- 治理狀態文件：
+  - **不定義內容**
+  - **不改寫母法（A+ / A）**
+  - **只裁決「是否允許變動」與「允許的變動範圍」**
+- 當治理狀態文件與 B / C 文件衝突時：
+  - **治理狀態文件優先**
+- 當治理狀態文件與 A+ / A 文件衝突時：
+  - **A+ / A 優先**（治理狀態文件不得凌駕母法）
+
+### 9.3 Freeze v1.0 的「最小硬約束」（Minimum Binding Constraints）
+
+> 具體 Freeze 條款以治理狀態文件正文為準；本節僅定義「不得缺席」的硬約束項目。
+
+- Freeze 期間，B / C 級文件的允許變更：
+  - ✅ 文字勘誤（不改語義、不改定義、不改權限）
+  - ✅ 增補（Only-Add）且 **不引入新權力/新覆蓋關係**
+  - ✅ 附錄（Appendix）形式補充審計/欄位/映射表
+- Freeze 期間，B / C 級文件的禁止變更（直接視為治理違規）：
+  - 🚫 刪除任何既有條款、章節、表格欄位（No-Slimming）
+  - 🚫 改寫既有條款語義（Semantic Swap）
+  - 🚫 調整文件位階、覆蓋關係、否決權矩陣（Authority Shift）
+  - 🚫 任何「簡化」或「摘要化」導致可裁決資訊減少
+
+### 9.4 文件索引的一致性要求（Index Integrity Requirements）
+
+- 任何治理狀態文件：
+  - 必須列入本 DOCUMENT_INDEX
+  - 必須具備 `doc_key` 且保持唯一
+  - 必須有 `ACTIVE` / `DEPRECATED` 明確狀態
+- 若治理狀態文件未列入 Index：
+  - **視為無效，不得對系統構成約束**
 
 ---
 
-## 文件前言｜Why Index Is Power
+## 第 10 章｜本次補遺之變更紀錄（Index Change Ledger｜Only-Add）
 
-在 TAITS 中，  
-**文件不是輔助說明，而是系統本身。**
-
-一套沒有清楚文件位階的系統，  
-在壓力出現時一定會：
-
-- 各說各話  
-- 策略越權  
-- AI 自我補完  
-- 人類無法追責  
-
-本文件存在目的只有一個：
-
-**終止任何形式的解釋權爭奪。**
-
----
-
-## PART 1｜文件治理憲法 × 位階裁決 × 使用原則
-
-### 1. 文件位階不可動搖原則
-- DOCUMENT_INDEX 為 TAITS 文件治理最高裁決依據  
-- 任何文件、任何 AI、任何人類  
-  **不得凌駕本文件**
-
-### 2. 文件缺失即禁止原則
-- 文件未寫 ≠ 可以推論  
-- 文件未寫 = 系統禁止  
-
-### 3. AI 禁止補完原則
-- AI 不得合理化文件缺失  
-- AI 不得猜測作者意圖  
-
----
-
-## PART 2｜文件治理位階總表（唯一有效）
-
-### 治理位階定義
-- A+：最高母法（不可覆寫）
-- A ：憲法級（定義不可動搖鐵律）
-- B ：治理級（流程、否決、邊界）
-- C ：說明級（無治理效力）
-
-### 文件位階總表
-
-| doc_key | 文件名稱 | 治理等級 | 狀態 |
-|---|---|---|---|
-| AI_GOV | TAITS_AI_行為與決策治理最終規則全集__251217.md | A+ | ACTIVE |
-| MASTER_ARCH | TAITS_母體總憲法與核心鐵律（MASTER_ARCH）__251219.md | A | ACTIVE |
-| MASTER_CANON | TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__251219.md | A | ACTIVE |
-| DOCUMENT_INDEX | 本文件 | A+ | ACTIVE |
-| ARCH_FLOW | TAITS_系統架構與流程細化說明（ARCH_FLOW）__251219.md | B | ACTIVE |
-| FULL_ARCH | TAITS_全系統架構總覽（FULL_ARCH）__251219.md | B | ACTIVE |
-| RISK_COMPLIANCE | TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__251219.md | B | ACTIVE |
-| EXECUTION_CONTROL | TAITS_交易執行與控制規範（EXECUTION_CONTROL）__251219.md | B | ACTIVE |
-| UI_SPEC | TAITS_使用者介面與人機決策規範（UI_SPEC）__251219.md | B | ACTIVE |
-| DEPLOY_OPS | TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219.md | B | ACTIVE |
-| LOCAL_ENV | TAITS_本地執行與運算環境規範（LOCAL_ENV）__251219.md | B | ACTIVE |
-| DATA_SOURCES | TAITS_資料來源全集（DATA_SOURCES）__251219.md | B | ACTIVE |
-| STRATEGY_UNIVERSE | TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__251219.md | B | ACTIVE |
-| STRATEGY_FEATURE_INDEX | TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219.md | B | ACTIVE |
-| TWSE_RULES | TAITS_TWSE交易規則參考彙編（TWSE_RULES）__251219.md | B | ACTIVE |
-| VERSION_AUDIT | TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219.md | B | ACTIVE |
-| BEGINNER_GUIDE | TAITS_新手教學與操作引導總則（BEGINNER_GUIDE）__251219.md | C | ACTIVE |
-
-**任何不在表內文件：治理上視為不存在**
-
----
-
-## PART 3｜引用權限與否決規則
-
-### 覆蓋原則
-- A+ 覆蓋一切  
-- A 覆蓋 B / C  
-- B 不得覆蓋 A+ / A  
-- C 不得作為行為依據  
-
-### 否決即生效原則
-- 否決無需協調  
-- 否決不可覆寫  
-- 否決優先於績效  
-
----
-
-## PART 4｜AI / Agent 啟動強制檢查序列
-
-任何 AI / Agent 啟動時，必須依序完成：
-
-1. 載入 DOCUMENT_INDEX  
-2. 建立 Active File Set 快照  
-3. 驗證 A+ / A 級文件存在  
-4. 拒絕引用表外文件  
-5. 禁止補完缺失條文  
-
-**任一步驟失敗 → AI 不得行為**
-
----
-
-## 最終鎖定宣告
-
-在 TAITS 中：
-
-- 文件是權力邊界  
-- AI 無解釋權  
-- 人類無越權權  
-
-**DOCUMENT_INDEX 自此版本起正式封存為最高治理母法**
+| change_id | 日期 | 變更類型 | 影響範圍 | 說明 |
+|---|---|---|---|---|
+| DOCINDEX-ADD-GOVSTATE-001 | 2025-12-19 | Only-Add | 本文件 | 新增「治理狀態文件（Governance State Documents）」章節與清單，納入 Freeze v1.0 文件之治理定位 |
