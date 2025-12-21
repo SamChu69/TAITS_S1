@@ -3,7 +3,7 @@
 文件類型：Engineering Process Anchor（Read-Only / Non-Governance）  
 適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
 治理狀態：Freeze v1.0  
-最後更新：YYYY-MM-DD  
+最後更新：2025-12-22  
 
 ---
 
@@ -196,23 +196,3 @@ Completed Phases     : Phase 0
 Next Target Phase    : Phase 1（L1–L3 Data / State Skeleton）
 Blocked Layers       : L4–L11（依法不可實作）
 Last Review Date     : YYYY-MM-DD
-7. Commit 前自我檢查
-每次提交前，必須能回答：
-
-此實作屬於哪一個 Phase
-
-對應哪一個 Canonical Layer
-
-無對話、無 AI 情況下，是否仍能證明合法
-
-三項皆成立，方可提交。
-
-8. 新對話標準開場語
-本對話工程流程請以
-《TAITS｜程式開發流程定錨文件（Unified Process Anchor）》
-作為唯一工程流程定錨依據。
-
-9. 最終定錨語
-TAITS 的流程不會因對話而改變，
-只會因治理文件而裁決。
-本文件存在，是為了讓所有工程活動站在同一個位置。
