@@ -1,7 +1,7 @@
-# TAITS_ENGINEERING_FLOW_ANCHOR.md
+# TAITS_程式開發流程定錨文件
 
-## 程式開發流程定錨文件  
-**Engineering Flow Anchor｜Canonical-Aligned｜Freeze v1.0**
+## 工程流程定錨（Engineering Flow Anchor）  
+治理對齊：Freeze v1.0｜Canonical-Aligned
 
 ---
 
@@ -48,20 +48,20 @@
 
 在 TAITS 專案中：
 
-- AI 對話不具治理效力
-- 不同對話必然產生不同流程敘述方式
+- AI 對話不具治理效力  
+- 不同對話必然產生不同流程敘述方式  
 
 若無流程定錨，將導致：
 
-- 新對話反覆討論流程
-- 工程順序理解漂移
-- 無法清楚回答「目前做到哪」
+- 新對話反覆討論流程  
+- 工程順序理解漂移  
+- 無法清楚回答「目前做到哪」  
 
 ---
 
 ## 3. 工程流程定錨總覽（Phase 0–5）
 
-> **注意**：Phase 不是流程，只是工程落地順序說明  
+> 注意：Phase 不是流程，只是工程落地順序說明  
 > 合法性裁決一律回 Canonical（L1–L11）
 
 | 工程 Phase | 對應 Canonical Layer | 工程定位一句話 |
@@ -79,9 +79,9 @@
 
 | Canonical Layer | 名稱 | 工程 Phase |
 |-----------------|------|-----------|
-| L1 | Data Source | Phase 1 / 4 |
-| L2 | Normalization | Phase 1 / 4 |
-| L3 | Snapshot & State | Phase 1 / 4 |
+| L1 | Data Source | Phase 1 / Phase 4 |
+| L2 | Normalization | Phase 1 / Phase 4 |
+| L3 | Snapshot & State | Phase 1 / Phase 4 |
 | L4 | Analysis | Phase 4 |
 | L5 | Evidence | Phase 4 |
 | L6 | Regime | Phase 4 |
@@ -107,11 +107,6 @@
 - [ ] 標註治理文件為 read-only  
 - [ ] 所有模組必須標註對應 Canonical Layer（Lx）
 
-**禁止事項**
-
-- 使用對話內容作為治理依據  
-- 未標註 L 層即開始實作  
-
 ---
 
 ## 6. Phase 1｜Canonical Flow 空殼
@@ -123,10 +118,10 @@
 
 每一層必須具備：
 
-- 可接收上一層輸入
-- 可檢查是否有權執行
-- 可輸出標準事件（PASS / VETO / RETURN / STOP）
-- 具備 correlation_id / version_ref
+- 可接收上一層輸入  
+- 可檢查是否有權執行  
+- 可輸出標準事件（PASS / VETO / RETURN / STOP）  
+- 具備 correlation_id / version_ref  
 
 ---
 
@@ -148,41 +143,41 @@
 ## 8. Phase 3｜UI（人類主權）
 
 ### 對應 Canonical
-- L10｜Human Decision
+- L10｜Human Decision  
 
 ### 最小需求
 
-- 顯示 Risk 結果
-- 顯示 Regime
-- APPROVE / REJECT
-- 決策 trace / log
+- 顯示 Risk 結果  
+- 顯示 Regime 狀態  
+- APPROVE / REJECT  
+- 決策 trace / log  
 
 ---
 
 ## 9. Phase 4｜資料 → Evidence → Regime
 
 ### 對應 Canonical
-- L1–L6
+- L1–L6  
 
 ### 必須成立
 
-- 資料可追溯
-- Snapshot 可回放
-- Evidence Bundle 完整
-- Regime 可標註可 / 不可交易
+- 資料可追溯  
+- Snapshot 可回放  
+- Evidence Bundle 完整  
+- Regime 可標註可 / 不可交易  
 
 ---
 
 ## 10. Phase 5｜策略宇宙接線
 
 ### 對應 Canonical
-- L8｜Strategy & Research
+- L8｜Strategy & Research  
 
 ### 策略模組限制
 
-- 僅輸出 Proposal / Scenario
-- 不得直連 L11
-- 不得覆寫風控
+- 僅輸出 Proposal / Scenario  
+- 不得直連 L11  
+- 不得覆寫風控  
 
 ---
 
@@ -206,8 +201,5 @@ Phase 0–5 只是工程上如何把流程做出來的說明。
 
 14. 新對話標準開場語
 以下對話請以
-TAITS_ENGINEERING_FLOW_ANCHOR.md
+TAITS_程式開發流程定錨文件.md
 作為唯一工程流程定錨文件。
-
-yaml
-複製程式碼
