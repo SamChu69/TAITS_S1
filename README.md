@@ -1,186 +1,83 @@
-# 🧠 TAITS – Taiwan Alpha Intelligence Trading System
-
-> **一套以「不被市場收割」為第一優先的台灣市場量化決策系統**
-
-TAITS（Taiwan Alpha Intelligence Trading System）  
-不是一個單一策略、不是 AI 炒股工具、也不是追逐短期績效的系統。
-
-TAITS 的核心目標只有一個：
-
-> **在對的時間，投資到對的標的，  
-> 並且避免在錯的情境下承擔不對稱風險。**
+# TAITS – Taiwan Alpha Intelligence Trading System  
+台灣阿爾法智能交易系統
 
 ---
 
-## 🎯 TAITS 解決什麼問題？
+## 專案定位（Project Positioning）
 
-大多數投資系統失敗，不是因為策略不夠聰明，而是因為：
+**TAITS** 是一套為 **台灣市場（TWSE / TPEX）** 設計的  
+**系統級量化交易母體（Trading System Canon）**。
 
-- 在 **錯的市場狀態** 使用對的策略  
-- 在 **被操盤的盤勢** 相信漂亮的訊號  
-- 在 **情緒與消息最吵的時候** 才開始行動  
-- 依賴 **單一敘事 / 單一策略 / 單一 AI 判斷**
+本專案的核心不是單一策略、不是回測工具、也不是教學範例，  
+而是一套具備以下特性的長期演進系統：
 
-TAITS 的設計出發點是：
-
-> **市場會反覆設局，  
-> 系統必須先學會「拒絕」，才有資格談「賺錢」。**
-
----
-
-## 🧩 TAITS 的核心設計哲學
-
-### ✔ Regime 高於策略  
-### ✔ Risk / Compliance 可否決一切  
-### ✔ 策略 ≠ 下單  
-### ✔ AI ≠ 唯一真理  
-### ✔ NO_TRADE 是一種成功決策  
-
-TAITS 是一套 **以「治理與風險結構」為核心的決策系統**。
+- 架構先行（Architecture-first）
+- 治理高於策略（Governance > Strategy）
+- 風控與合規可否決一切（Risk / Compliance First）
+- 可審計、可回放、可中斷再續
+- AI 僅為輔助角色，非唯一真理
 
 ---
 
-## 🏗️ TAITS 架構總覽（一頁版）
+## 專案狀態（Current Status）
 
-TAITS 採用清楚的層級架構，確保任何擴充都不會破壞整體穩定性：
-
-```
-
-L0 憲章與最高原則
-L1 架構骨幹（模組 / 流程）
-L2 資料與校驗
-L3 證據解讀（行為 / 基本 / 情緒）
-L4 Regime & 風險門控（最高否決）
-L5 策略治理（285+ 策略被「管起來」）
-L6 決策核心（唯一輸出）
-L7 執行與資金
-L8 每日 / 每週操作流程
-
-```
-
-📌 **完整層級定義請見：**  
-`docs/architecture/TAITS_Architecture_Layer_Map.md`
+- 本 Repo 為 **Canon-first 重建版本**
+- 所有歷史內容已隔離（非刪除）
+- 目前僅存放「已確認、可作為權威依據」的文件
+- **尚未進入程式實作階段（Phase 5 未啟動）**
 
 ---
 
-## 🔁 Dual-Track × Time Advantage（時間優勢）
+## 最高權威文件（Canonical Authority）
 
-TAITS 同時運作兩條軌道：
+本專案所有設計、流程、策略、AI 行為，  
+**一律以以下文件為最高依據**：
 
-### 🧭 Explore Track（研究與時間領先）
-- 消息 / 基本面 / 結構行為
-- 提早理解「什麼值得等」
-- ❌ 不下單
+### Governance（治理）
+- `docs/governance/TAITS_AI_最終完整規則全集__251217.md`
+- `docs/governance/TAITS_AI_自動審查Checklist__251217.md`
 
-### 🎯 Exploit Track（風險確認與執行）
-- Regime / 操盤風險 / 技術共識
-- 只在市場同意時出手
-- ✔ Trade / Wait / No Trade
+### Architecture / Flow（架構與流程）
+- `docs/architecture/TAITS_最新總架構__251217.md`
+- `docs/architecture/TAITS_最新總流程__251217.md`
 
-📌 **TAITS 的快，在研究；  
-TAITS 的慢，在下注。**
+### Strategy Governance（策略治理）
+- `docs/strategies/TAITS_最新策略總覽與治理__251217.md`
 
----
+### Cross-layer Specification（跨層細節）
+- `docs/TAITS_最新細節規格彙編__251217.md`
 
-## 🧠 多決策線（Multi-Lane）架構
-
-TAITS 不用固定比例分錢，而是同時維持多條「決策風格線」：
-
-- **Market Structure / Wyckoff 行為線**（保命）
-- **Value / Fundamental 價值線**（時間換報酬）
-- **Execution / Short-Term 執行線**（節奏獲利）
-
-是否啟用，由 **市場狀態與風險** 決定，而非事前分配比例。
-
-📌 詳見：  
-`docs/architecture/TAITS_Multi-Lane_Decision_Architecture.md`
+📌 **任何與上述文件衝突的內容，均視為無效。**
 
 ---
 
-## ⚠ 主力操盤與被割風險防護
+## Repo 使用原則（重要）
 
-TAITS 明確將「主力操盤風險」視為 **市場狀態**，而不是策略機會。
-
-- MR-0 ～ MR-3 操盤風險分級
-- 高風險狀態 → 強制 NO_TRADE
-- 威科夫行為僅用於 **標記與否決**
-
-📌 相關文件：
-- `TAITS_Market_Manipulation_Risk_Framework.md`
-- `TAITS_Market_Manipulation_Risk_Checklist.md`
+- 本 Repo 不是雜物倉庫
+- 不接受未經治理審查的新增檔案
+- 不接受未經確認的策略或流程
+- 所有新內容必須符合：
+  - Only-Add 原則
+  - 可審計 / 可回放
+  - 不破壞既有 Canon
 
 ---
 
-## 🗺️ 為什麼 TAITS 需要這麼多策略？
+## 舊資料處理方式（Legacy）
 
-因為每一個模組，都是在防一種「被割的情境」。
-
-TAITS 明確定義 8 大被割風險，並用不同模組交叉覆蓋：
-
-- 假突破 / 派發盤
-- 結算操盤
-- 消息配合出貨
-- 單一敘事陷阱
-- 情緒過熱最後一棒
-
-📌 全景圖請見：  
-`docs/architecture/TAITS_Risk_Blind_Spot_Coverage_Map.md`
+- 所有舊檔案已集中於 `__LEGACY_ARCHIVE__/`
+- 該資料夾已被 Cursor / AI 忽略
+- 舊內容僅作歷史保留，不參與當前設計
 
 ---
 
-## 📋 每日 / 每週實際使用方式
+## 備註
 
-TAITS 不要求頻繁交易，只要求固定節奏檢查：
-
-- **每日：**
-  - 市場狀態
-  - 操盤風險
-  - Decision Lane 是否允許
-- **每週：**
-  - Regime 是否轉換
-  - 是否出現結構性風險
-  - 是否該關掉某些線
-
-📌 實務流程：  
-`docs/operations/TAITS_Daily_Weekly_Risk_Check_Procedure.md`
+- 本專案以 **股票（STOCK）× 零股（odd-lot）** 為當前唯一啟用範圍
+- 券商 API 以 **富邦 TradeAPI** 為主要設計對象
+- 其他產品與交易方式僅作制度預留，尚未啟用
 
 ---
 
-## 📚 建議閱讀路線（重要）
-
-**新 AI / 新接手者請依序閱讀：**
-
-1. `TAITS_MASTER_ARCHITECTURE.md`
-2. `TAITS_Architecture_Layer_Map.md`
-3. `TAITS_Dual_Track_Decision_Architecture.md`
-4. `TAITS_Single_Page_Playbook.md`
-5. `TAITS_Market_Manipulation_Risk_Framework.md`
-6. `TAITS_Risk_Blind_Spot_Coverage_Map.md`
-
-👉 再依角色深入其他文件。
-
----
-
-## 🧭 TAITS 一句話總結
-
-> **TAITS 的目標不是預測市場，  
-> 而是建立一套足夠完整的決策系統，  
-> 讓自己不成為任何人的出貨對象。  
-> 只要不被割，時間自然會站在你這邊。**
-
----
-
-## 📌 專案狀態
-
-- 市場：台灣股票（TWSE / TPEX）
-- 投資方式：零股優先、保守擴充
-- 期貨 / 選擇權：已納入 Regime / Risk，未強制下單
-- 狀態：**架構穩定，可長期演進**
-
----
-
-> 若你正在尋找的是「短期暴利系統」，  
-> TAITS 不適合你。  
-> 若你在找的是「不被市場玩壞的投資系統」，  
-> 歡迎深入閱讀。
-```
+> **TAITS 的目的不是「跑得快」，  
+而是「每一步都能被完整解釋」。**
