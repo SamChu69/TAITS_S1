@@ -1,83 +1,137 @@
-# TAITS – Taiwan Alpha Intelligence Trading System  
-台灣阿爾法智能交易系統
+# TAITS — 台灣阿爾法智慧交易系統  
+**Taiwan Alpha Intelligence Trading System**
+
+文件類型：Project Entry & Governance Overview  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+治理狀態：Freeze v1.0  
+版本狀態：ACTIVE  
+最後更新：2025-12-22  
 
 ---
 
-## 專案定位（Project Positioning）
+## 一、專案定位（Project Positioning）
 
-**TAITS** 是一套為 **台灣市場（TWSE / TPEX）** 設計的  
-**系統級量化交易母體（Trading System Canon）**。
+TAITS（**台灣阿爾法智慧交易系統**，Taiwan Alpha Intelligence Trading System）是一套：
 
-本專案的核心不是單一策略、不是回測工具、也不是教學範例，  
-而是一套具備以下特性的長期演進系統：
+- 專為 **台灣市場（TWSE / TAIFEX）** 設計  
+- 可實盤、可長期演進  
+- 以 **治理（Governance）與風控（Risk / Compliance）為最高優先權**  
+- 採用 **Canonical Flow（L1–L11）** 作為唯一合法流程定義  
 
-- 架構先行（Architecture-first）
-- 治理高於策略（Governance > Strategy）
-- 風控與合規可否決一切（Risk / Compliance First）
-- 可審計、可回放、可中斷再續
-- AI 僅為輔助角色，非唯一真理
+本專案並非策略集合、回測工具或自動下單系統，  
+而是一套 **可被審計、可被否決、可由人類最終裁決的交易系統母體架構**。
 
 ---
 
-## 專案狀態（Current Status）
+## 二、不可違反的核心設計原則（Core Principles）
 
-- 本 Repo 為 **Canon-first 重建版本**
-- 所有歷史內容已隔離（非刪除）
-- 目前僅存放「已確認、可作為權威依據」的文件
-- **尚未進入程式實作階段（Phase 5 未啟動）**
+TAITS 全系統嚴格遵守以下原則：
 
----
+- 策略 ≠ 下單  
+- Agent ≠ 策略  
+- AI ≠ 決策主體  
+- **Regime 高於策略**  
+- **Risk / Compliance 具最高否決權**  
+- **Only-Add：只可新增，不可刪減或改寫語義**  
+- **Freeze 狀態下不得進行結構性變更**
 
-## 最高權威文件（Canonical Authority）
-
-本專案所有設計、流程、策略、AI 行為，  
-**一律以以下文件為最高依據**：
-
-### Governance（治理）
-- `docs/governance/TAITS_AI_最終完整規則全集__251217.md`
-- `docs/governance/TAITS_AI_自動審查Checklist__251217.md`
-
-### Architecture / Flow（架構與流程）
-- `docs/architecture/TAITS_最新總架構__251217.md`
-- `docs/architecture/TAITS_最新總流程__251217.md`
-
-### Strategy Governance（策略治理）
-- `docs/strategies/TAITS_最新策略總覽與治理__251217.md`
-
-### Cross-layer Specification（跨層細節）
-- `docs/TAITS_最新細節規格彙編__251217.md`
-
-📌 **任何與上述文件衝突的內容，均視為無效。**
+任何文件、程式碼、對話或實作，皆不得違反上述原則。
 
 ---
 
-## Repo 使用原則（重要）
+## 三、治理文件體系與裁決順序（Governance Hierarchy）
 
-- 本 Repo 不是雜物倉庫
-- 不接受未經治理審查的新增檔案
-- 不接受未經確認的策略或流程
-- 所有新內容必須符合：
-  - Only-Add 原則
-  - 可審計 / 可回放
-  - 不破壞既有 Canon
+TAITS 採用分級治理文件體系，並以以下順序作為最終裁決依據：
 
----
+1. DOCUMENT_INDEX  
+2. MASTER_ARCH  
+3. MASTER_CANON  
+4. 其餘治理／架構／執行文件  
 
-## 舊資料處理方式（Legacy）
-
-- 所有舊檔案已集中於 `__LEGACY_ARCHIVE__/`
-- 該資料夾已被 Cursor / AI 忽略
-- 舊內容僅作歷史保留，不參與當前設計
+若文件之間存在任何衝突，  
+**一律依上述順序裁決，不得以對話或實作取代文件權威。**
 
 ---
 
-## 備註
+## 四、Canonical Flow（唯一合法流程）
 
-- 本專案以 **股票（STOCK）× 零股（odd-lot）** 為當前唯一啟用範圍
-- 券商 API 以 **富邦 TradeAPI** 為主要設計對象
-- 其他產品與交易方式僅作制度預留，尚未啟用
+TAITS 的唯一合法流程定義為：
+
+> **Canonical Flow：L1–L11**
+
+- L1–L3：資料取得、正規化、狀態固化  
+- L4–L5：分析與證據組裝  
+- L6：Regime 判定  
+- L7：Risk / Compliance（最高否決權）  
+- L8–L9：策略提案與治理閘門  
+- L10：人類最終裁決  
+- L11：合規執行與控制  
+
+任何工程 Phase、流程圖或說明文件，  
+**皆不得取代 Canonical Flow 的裁決地位**。
 
 ---
 
-> **TAITS 的目的不是「跑得快」，  
-而是「每一步都能被完整解釋」。**
+## 五、工程流程定錨（Engineering Process Anchor）
+
+本專案已啟用專屬工程流程定錨文件：
+
+> **《TAITS｜程式開發流程定錨文件（Unified Process Anchor）》**
+
+用途僅限於：
+
+- 標示工程開發進度（Phase 0–5）  
+- 防止新對話、新 AI 導致流程敘述漂移  
+- 作為工程實作時的流程座標參考  
+
+📌 該文件 **不具治理裁決力**，僅為工程輔助定錨。
+
+---
+
+## 六、目前專案狀態（Current Status）
+
+- 治理文件：已齊備  
+- 工程流程定錨：已入庫  
+- 工程環境：已鎖定  
+- 歷史檔案：已封存（_LEGACY_ARCHIVE_）  
+
+目前專案階段：
+
+> **Engineering Phase 0 — 治理與版本鎖定**
+
+---
+
+## 七、Repository 結構說明（Overview）
+
+```text
+TAITS_S1/
+├─ _LEGACY_ARCHIVE_/        # 歷史封存（AI 不讀、不參與主線）
+├─ docs/
+│  └─ engineering/
+│     └─ TAITS_程式開發流程定錨文件.md
+├─ .cursorignore            # 控制 Cursor / AI 掃描範圍
+├─ .gitignore               # 控制 Git 版本追蹤
+└─ README.md                # 本文件
+八、重要聲明（Notice）
+本專案不構成任何投資建議
+
+不保證任何獲利結果
+
+所有交易行為皆須通過 人類最終裁決（L10）
+
+AI 僅為輔助分析角色，不具任何決策或執行權限
+
+九、專案使用提醒（Meta）
+若在任何對話、工具或實作中發現：
+
+流程被重新定義
+
+裁決來源不明
+
+規則與文件不一致
+
+請立即回到治理文件體系，
+以文件為準，而非以對話為準。
+
+TAITS — 建立一套在「不該交易時，會阻止你交易」的系統。
+Build the system that prevents you from trading when you should not.
