@@ -3,7 +3,7 @@
 文件類型：Engineering Process Anchor（Read-Only / Non-Governance）  
 適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
 治理狀態：Freeze v1.0  
-最後更新：2025-01-XX  
+最後更新：2025-12-22  
 
 ---
 
