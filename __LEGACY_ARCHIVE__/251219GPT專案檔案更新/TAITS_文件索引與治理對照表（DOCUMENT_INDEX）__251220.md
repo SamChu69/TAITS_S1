@@ -286,3 +286,80 @@ doc_key：DOCUMENT_INDEX
 - **任何衝突裁決以本文件為準，且必須可稽核、可回放。**
 
 （DOCUMENT_INDEX｜A+｜ACTIVE｜2025-12-20）
+
+📑 DOCUMENT_INDEX｜索引指引補充（治理指引附錄）
+
+本附錄僅用於閱讀、引用與裁決指引，
+不構成任何新規則、不改寫任何既有文件語義。
+若與任何文件產生解讀衝突，仍以 DOCUMENT_INDEX → MASTER_ARCH → AI_GOV 為最終裁決順序。
+
+一、裁決用途矩陣（Authority Usage Matrix）
+
+目的：避免在多份 A/A+ 級文件同時存在時，
+產生「誰負責裁決什麼」的誤判。
+
+文件	裁決用途定位	可裁決事項	不得裁決事項
+AI_GOV（A+）	AI 行為與決策最終治理	AI 行為邊界、AI 可否參與決策	系統架構、交易策略
+DOCUMENT_INDEX（A）	裁決索引與優先序	文件權威順序、衝突指引	任何業務邏輯
+MASTER_ARCH（A）	系統母體憲法	核心鐵律、不可違反原則	流程細節、實作
+MASTER_CANON（A）	Canonical Flow	L1–L11 流程結構	策略內容、UI 行為
+RISK_COMPLIANCE（A）	最高否決權	風險/合規否決	流程重排、UI 設計
+GOV_GATE_SPEC（A）	治理閘門	Gate 判斷條件	策略細節
+UI_SPEC（A）	人機決策主權	人類介入權限	風控裁決
+VERSION_AUDIT（A）	版本/稽核	追溯與審計	系統設計
+FULL_ARCH / ARCH_FLOW（B）	描述與展開	說明性參考	任何裁決
+README / BEGINNER_GUIDE（C）	導覽與操作	使用說明	任何裁決
+
+📌 裁決原則提醒：
+
+否決權（Risk/Compliance）永遠高於執行與策略
+
+描述文件（B/C 級）不得被視為裁決依據
+
+二、Freeze 狀態可行為清單（Index-Level）
+
+目的：避免在 Freeze 生效期間，
+操作/工程文件被誤解為可進行結構性調整。
+
+✅ Freeze 期間「允許」行為
+
+文件閱讀、引用、稽核
+
+策略/資料/因子之描述性補充（不改語義）
+
+稽核、版本標記、狀態查詢
+
+教學與導覽文件之指引性補充
+
+❌ Freeze 期間「禁止」行為
+
+任何結構性變更
+
+Canonical Flow（L1–L11）調整
+
+治理閘門、否決邏輯之改寫
+
+Agent / Strategy / Execution 的結構重排
+
+架構、流程、權限邊界之修改
+
+📌 判斷原則：
+
+若行為可能影響「誰能否決誰、流程如何走、權限如何分配」
+→ 視為結構性變更，Freeze 下禁止。
+
+三、索引使用說明（強制）
+
+本附錄僅作為 DOCUMENT_INDEX 的閱讀與引用指引
+
+不得被任何文件引用為「新規則來源」
+
+不得在未解除 Freeze 前，據此進行任何結構調整
+
+✅ 狀態確認
+
+本補充 不新增任何治理規則
+
+本補充 不改寫任何既有文件
+
+本補充 僅提升裁決鏈可讀性與一致性
