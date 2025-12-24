@@ -1,13 +1,25 @@
+<!--
+ENGINEERING_META (TAITS × Cursor)
+- 本段僅為工程拆解與審閱節奏之 Meta 資訊，不屬於系統規格、交易邏輯或運行流程
+- 文件中任何「Batch / 工程階段 / 拆解節奏」字樣，均不得作為系統語義或行為推導依據
+- 系統語義唯一合法來源：
+  1) DOCUMENT_INDEX 中列為 ACTIVE 之 Canonical 文件
+  2) 本工程檔之 Canonical 來源錨定（SOURCE_TAG）
+- engineering_batch: 3
+- engineering_role: governance_execution
+-->
+
 # 20_execution_control_boundaries__交易執行控制邊界.md
 
 doc_key：EXECUTION_CONTROL_BOUNDARIES  
-工程層級：Batch 3｜Governance Execution  
+工程層級：Governance Execution（工程轉譯層）  
 文件性質：Engineering Translation（非 Canonical）  
 治理狀態：GOVERNANCE_STATE = Freeze v1.0  
 變更原則：Only-Add  
 版本狀態：ENGINEERING_ACTIVE  
 版本日期：2025-12-25  
 上位約束：DOCUMENT_INDEX / MASTER_ARCH / MASTER_CANON  
+
 Canonical 來源錨定：
 - TAITS_治理閘門與裁決規範（GOVERNANCE_GATE_SPEC）
 - TAITS_交易執行與控制規範（EXECUTION_CONTROL）
@@ -18,7 +30,7 @@ Canonical 來源錨定：
 
 ## 一、工程檔定位說明（不可替代）
 
-本工程檔為 **Batch 3｜Governance Execution** 階段之  
+本工程檔為治理制度落地層之  
 **交易執行控制邊界（Execution Control Boundaries）工程轉譯檔**。
 
 本檔唯一職責：
@@ -60,7 +72,8 @@ Canonical 來源錨定：
 
 ## 三、交易執行的「禁止性邊界」工程定義（Hard No-Go Zones）
 
-以下邊界屬 **一票否決（Hard Block）**，不可被任何工程便利性、效能或例外情境繞過。
+以下邊界屬 **一票否決（Hard Block）**，  
+不可被任何工程便利性、效能或例外情境繞過。
 
 ### 3.1 Strategy ≠ Execution 邊界
 
@@ -91,10 +104,6 @@ Canonical 來源錨定：
 - 工程僅驗證其存在與一致性
 - 不得推論其產生邏輯或替代其角色
 
-**Canonical 來源：**
-- EXECUTION_CONTROL
-- VERSION_AUDIT
-
 ---
 
 ### 3.3 無 Human APPROVE 之執行禁止
@@ -108,9 +117,6 @@ Canonical 來源錨定：
   - 背景自動批准
   - UI 暗示取代裁決
 
-**Conditional 來源（Batch 1 歸位）：**
-- 03_ai_decision_scope_boundaries__AI決策權限邊界.md
-
 ---
 
 ### 3.4 Kill Switch 不可用即禁止執行
@@ -122,14 +128,9 @@ Canonical 來源錨定：
   → **Execution 層必須完全阻斷**
 
 此阻斷屬：
-
-- 工程級 Hard Block
-- 不依賴 UI 顯示結果
-- 不可延遲生效
-
-**Canonical 來源：**
-- EXECUTION_CONTROL
-- GOVERNANCE_STATE_FREEZE_V1
+- 工程級 Hard Block  
+- 不依賴 UI 顯示  
+- 不可延遲生效  
 
 ---
 
@@ -159,16 +160,9 @@ Canonical 來源錨定：
 - 未經 UI 呈現的人類決策內容
 - 任一無法回放之欄位來源
 
-此屬 **治理語義防線**，非資料結構最佳化問題。
-
-**Conditional 來源（Batch 1 歸位）：**
-- 02_ai_behavior_constraints__AI行為限制與禁止事項.md
-
 ---
 
 ## 五、Execution 前阻斷邊界（Pre-Execution Block Boundaries）
-
-### 5.1 必須同時成立之工程條件集合
 
 工程系統在嘗試進入任何 Execution 行為前，必須確認：
 
@@ -189,14 +183,12 @@ Canonical 來源錨定：
 
 ### 6.1 狀態不可跳轉邊界
 
-- Order / Execution State：
+- Execution State：
   - 必須遵循定義狀態轉移
   - 禁止：
     - 跳轉
     - 回填
     - 事後修正
-
-此為 **可稽核性邊界**，非實作選項。
 
 ---
 
@@ -216,8 +208,6 @@ Canonical 來源錨定：
 
 ## 七、Execution 後的不可回寫邊界（Post-Execution Boundary）
 
-### 7.1 不可回寫原則
-
 Execution 層在工程語義上：
 
 - **不得**回寫：
@@ -226,12 +216,9 @@ Execution 層在工程語義上：
   - Evidence 結果
 
 僅允許：
-
 - 審計
 - 回放
 - 狀態記錄
-
-此為 **Canonical 層級邊界的工程化落地**。
 
 ---
 
@@ -239,31 +226,19 @@ Execution 層在工程語義上：
 
 ### 8.1 Batch 1 Conditional 歸位
 
-- AI 行為限制  
-- AI 決策權限邊界  
+AI 行為限制與決策權限邊界，  
+於本工程檔中僅被視為：
 
-於本工程檔中，僅被視為：
-
-> **交易執行層之「禁止事項與越權防線示例」**
-
-不構成：
-- 技術檢查清單
-- 自動化決策條件
+> **交易執行層之禁止事項與越權防線示例**
 
 ---
 
 ### 8.2 Batch 2 Conditional 歸位
 
-- Canonical Flow L8–L11  
-- L11 合法性條件  
-
-於本工程檔中，僅被視為：
+Canonical Flow L8–L11 與 L11 合法性條件，  
+於本工程檔中僅被視為：
 
 > **執行行為的治理語義前提**
-
-不構成：
-- 實作細節
-- 檢查項目最佳化
 
 ---
 
@@ -272,11 +247,8 @@ Execution 層在工程語義上：
 本工程檔至此完成以下任務：
 
 - 明確定義交易執行之 **工程級邊界**
-- 將 Canonical 治理制度轉譯為：
-  - 可阻斷
-  - 可否決
-  - 可稽核
-  - 可回放  
+- 將 Canonical 治理制度轉譯為  
+  可阻斷、可否決、可稽核、可回放  
   的工程結構語義
 
 ---
