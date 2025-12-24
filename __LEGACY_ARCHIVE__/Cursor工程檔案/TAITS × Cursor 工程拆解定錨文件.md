@@ -345,6 +345,140 @@ TAITS_完整總架構×總流程×全資訊體系（MASTER_CA…
 
  TAITS_全系統架構總覽（FULL_ARCH）__251219
 
+✅ TAITS｜Cursor 專用工程編輯檔案清單（Version 1｜Freeze v1.0）
+
+原則：
+
+這些檔案是「給 Cursor 編輯／依據的」
+
+舊 Canonical / Governance 檔案 不在此清單（它們是法律，不是施工圖）
+
+每一個檔案 未來都會被實際編輯，不是只看
+
+一、工程基線（Phase 0｜必須先有）
+
+📁 cursor_engineering/00_foundation/
+
+ENGINEERING_CONTRACT.md
+
+ENGINEERING_WORKFLOW.md
+
+FILE_OWNERSHIP_MAP.md
+
+CURSOR_EDIT_RULES.md
+
+ENGINEERING_GLOSSARY.md
+
+二、資料與狀態層（Phase 1｜L1–L3）
+
+📁 cursor_engineering/01_data_layer/
+
+data_sources.contract.md
+
+normalization.contract.md
+
+snapshot_state.contract.md
+
+data_events.schema.md
+
+data_failure_modes.md
+
+三、分析與證據層（Phase 2｜L4–L5）
+
+📁 cursor_engineering/02_analysis_layer/
+
+features.contract.md
+
+feature_registry.md
+
+evidence_bundle.contract.md
+
+evidence_completeness.rules.md
+
+analysis_forbidden_patterns.md
+
+四、市場狀態與風控層（Phase 3｜L6–L7）
+
+📁 cursor_engineering/03_regime_risk_layer/
+
+regime_state.contract.md
+
+regime_transition.rules.md
+
+risk_gate.contract.md
+
+risk_reason_codes.md
+
+risk_pass_token.spec.md
+
+五、策略提案與治理層（Phase 4｜L8–L9）
+
+📁 cursor_engineering/04_strategy_governance_layer/
+
+strategy_proposal.contract.md
+
+strategy_output_constraints.md
+
+governance_gate.contract.md
+
+governance_return_reasons.md
+
+cross_layer_violation_rules.md
+
+六、人類裁決與執行層（Phase 5｜L10–L11）
+
+📁 cursor_engineering/05_ui_execution_layer/
+
+decision_workbench.contract.md
+
+ui_required_fields.md
+
+execution_intent.contract.md
+
+execution_control.contract.md
+
+kill_switch_and_circuit_breaker.md
+
+七、共用工程契約與工具檔（跨層共用）
+
+📁 cursor_engineering/_contracts/
+
+event_contract_base.md
+
+reference_and_hashing.rules.md
+
+version_and_replay.contract.md
+
+📁 cursor_engineering/_checklists/
+
+PHASE_0_CHECKLIST.md
+
+PHASE_1_CHECKLIST.md
+
+PHASE_2_CHECKLIST.md
+
+PHASE_3_CHECKLIST.md
+
+PHASE_4_CHECKLIST.md
+
+PHASE_5_CHECKLIST.md
+
+📁 cursor_engineering/_templates/
+
+contract_template.md
+
+schema_template.md
+
+checklist_template.md
+
+📌 總結（這一步你只要確認三件事）
+
+以上 42 個檔案 =「Cursor 專用工程檔案全集 v1」
+
+每一檔 之後都會被實際寫內容，不是裝飾
+
+這套檔案 可以完全不看 GPT 專案，也能把 TAITS 落地
+
 📘 TAITS｜18 份 Canonical 文件 Group 歸類表
 
 （僅治理角色 × 驗證用途，不涉內容判斷）
