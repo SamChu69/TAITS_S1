@@ -108,9 +108,6 @@ Version: Freeze v1.0
 ### 命名規則
 NN_<english_snake_case>__<中文語義>.md
 
-yaml
-複製程式碼
-
 - NN：01–42，不得跳號
 - 檔名一經確認，不得更名
 - 一檔 = 一個治理責任單元 = 一個 Cursor 新對話
