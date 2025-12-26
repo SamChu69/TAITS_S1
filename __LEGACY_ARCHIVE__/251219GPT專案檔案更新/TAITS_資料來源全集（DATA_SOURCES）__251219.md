@@ -1,5 +1,5 @@
-# TAITS_資料來源全集（DATA_UNIVERSE）__251219
-doc_key：DATA_UNIVERSE  
+# TAITS_資料來源全集（DATA_SOURCES）__251219
+doc_key：DATA_SOURCES 
 治理等級：D（DataSources Universe｜官方優先 × 多層Fallback × 可追溯Provenance）  
 適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
 版本狀態：ACTIVE（資料來源全集可 Only-Add 擴充；不得弱化官方優先與可追溯）  
@@ -2123,3 +2123,4 @@ DATA_UNIVERSE 的存在目的，是把「資料是否可靠、是否可追溯、
 - `reason_codes[]`（不得含機敏）
 
 （Appendix C｜敏感資料脫敏與最小揭露規範｜Freeze v1.0｜Only-Add）
+
