@@ -11,6 +11,19 @@ doc_key：DATA_UNIVERSE
 核心鐵律：官方資料優先；多層Fallback；Provenance 可追溯；Snapshot 可回放；資料品質可審計；缺證據不得裁決
 
 ---
+> 【文件閱讀與 Canonical 對位指引（Only-Add）】
+>
+> 本文件主體內容定義 TAITS DATA_SOURCES（DATA_UNIVERSE）之資料來源分類、
+> 來源優先序與基本資料治理規範。
+> 自文件最末之「Appendix A｜DATA_UNIVERSE 對位 MASTER_CANON 補充附錄」起，
+> 為依據 MASTER_CANON（Canonical Flow L1–L11）
+> 所新增之資料層責任邊界、可回放性與稽核對位說明。
+>
+> 本指引僅作閱讀與治理定位用途，
+> 不構成對主文條款之修改，
+> 所有裁決優先序仍依 DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON 為準。
+
+---
 
 ## 0. 文件定位（DataSources Universe Charter）
 
@@ -1539,3 +1552,245 @@ flowchart TB
 不能回放，就不允許宣稱可追溯。
 
 （DATA_UNIVERSE｜最大完備版 v2025-12-19 · Part 4 完）
+
+---
+
+# Appendix A｜Only-Add：DATA_UNIVERSE 對位 MASTER_CANON 之附錄（Freeze v1.0）
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_資料來源全集（DATA_UNIVERSE）__251219（doc_key：DATA_UNIVERSE）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON  
+> 目的：補齊 DATA_UNIVERSE 與 MASTER_CANON 的「差異／分工界線」與「Canonical 對位」，確保資料治理規格可被納入 Canonical Flow（L1–L11）且不造成跨層越權。
+
+---
+
+## A.1 DATA_UNIVERSE 與 MASTER_CANON 的「差異」與「分工」界線（對位總結）
+
+### A.1.1 MASTER_CANON 是「最高母法與層級語義」；DATA_UNIVERSE 是「資料入口全集與可追溯治理」
+
+- MASTER_CANON：
+  - 定義 TAITS 的 Canonical Flow（L1–L11）之**唯一合法層級語義**與**不可越權邊界**。
+  - 定義跨層裁決秩序、角色權限、人機分工與衝突裁決順序。
+  - 屬「法源與裁決母體」，不可被任何子文件改寫。
+
+- DATA_UNIVERSE：
+  - 定義「可被使用的資料來源宇宙」：官方優先、授權次之、多層 fallback，且必須**可追溯（Provenance）**、**可回放（Replay）**、**可稽核（Audit）**。
+  - 其使命是讓 L1/L2 的 ingest/normalize 具備制度化、可稽核的最低標準，並把「資料不足」制度化為降級／退回／中止行為。
+  - 屬「資料治理與來源清單」，不得升格為流程裁決母法。
+
+> 硬性界線（不可跨界）  
+> DATA_UNIVERSE 只能回答：  
+> 「資料從哪裡來？是否合法？品質如何？是否可用於裁決鏈？缺什麼？如何降級？」  
+> DATA_UNIVERSE **不得**回答：  
+> 「方向判斷、策略好壞、應不應該進出、該下什麼單」等任何跨 L1–L2 的裁決議題。
+
+---
+
+### A.1.2 DATA_UNIVERSE 對 Canonical Flow（L1–L11）的責任邊界（層級對位）
+
+- L1（Data Ingestion｜資料取得）
+  - DATA_UNIVERSE 提供：source_id 選擇規格、官方優先鏈、擷取與快照規範、來源證據要求（provenance）。
+  - 禁止：用第三方來源做制度裁決、或在 ingest 階段引入「分析結論」。
+
+- L2（Validation & Normalization｜校驗/正規化）
+  - DATA_UNIVERSE 提供：schema/domain/temporal 檢核規範、quality flags、欄位映射（field_map）、語義鎖定（unit/timezone/CA adjust 留痕）。
+  - 禁止：靜默補值改寫語義、或用「方便」理由改動 canonical 欄位含義。
+
+- L3（Snapshot & State Build｜快照/狀態）
+  - DATA_UNIVERSE 提供：L1/L2 產出之 `source_snapshot_ref / raw_payload_ref / hash_manifest_ref / quality_report_ref` 等可回放依據。
+  - 禁止：在資料層自行決定「哪一種狀態（Regime）」或「風控放行」。
+
+- L4–L11（Feature/Evidence/Regime/Risk/Strategy/Governance/UI/Execution）
+  - DATA_UNIVERSE 只提供「輸入合法性」與「品質/完整度」的客觀訊號（quality、completeness、trust），不得越權成為 PASS/VETO。
+  - 真正的裁決仍必須由 L7（Risk/Compliance）與 L9（Governance Gate）及 L10（Human Decision）完成。
+
+---
+
+## A.2 Canonical 對位：DATA_UNIVERSE 必須輸出之「最小不可降工件」（L1–L3）
+
+> 本節為「最小不可降」：若缺任一項，視為 Evidence Chain 不完整，下游必須觸發降級、退回或否決（由 L7/L9 裁決）。
+
+### A.2.1 L1：Data Ingestion（Raw Artifact + Provenance）
+
+每次 ingest（不論 Research/Backtest/Simulation/Paper/Live）必須生成：
+
+1. `source_id`（唯一主鍵；必須存在於 DATA_UNIVERSE）
+2. `source_tier_used`（PRIMARY / SECONDARY / FALLBACK）
+3. `provenance_ref`（至少包含：官方/端點/頁面、擷取時間 captured_at、回應/頁面識別資訊）
+4. `raw_payload_ref`（原始回應保存位置引用）
+5. `source_snapshot_ref`（來源快照引用：可回放、可稽核）
+6. `hash_manifest_ref`（至少 raw_payload 與 snapshot 的雜湊清單引用）
+
+> 禁止：  
+> - 省略 provenance / snapshot / hash  
+> - 以第三方資料替代官方制度入口來做任何制度裁決  
+> - 以「後續會補」為理由讓資料進入裁決鏈
+
+---
+
+### A.2.2 L2：Validation & Normalization（Canonical Artifact + Field Map + Quality）
+
+每次 normalize 必須生成：
+
+1. `canonical_schema_id`（標準化後 schema ID）
+2. `normalization_ruleset_version`（正規化規則版本）
+3. `field_map_ref`（原欄位 → canonical 欄位）
+4. `unit_transform_ref`、`timezone_transform_ref`（若有轉換必留痕）
+5. `quality_grade`（QG-A/B/C/D…）
+6. `quality_flags[]`（缺值、延遲、異常、疑似尖峰、與官方不一致…）
+7. `quality_report_ref`（品質報告引用）
+
+> 禁止：  
+> - 偷換欄位語義（volume/amount/price/turnover 等不得混用）  
+> - 靜默修補（任何補值或插補必須留痕並標記旗標）  
+> - 把「交叉一致性檢核」當作裁決（只能標記，不裁決）
+
+---
+
+### A.2.3 L3：Snapshot & Replay Determinism（可回放一致性）
+
+DATA_UNIVERSE 必須保證下游能做到：
+
+- Replay 時可重建「同一份 canonical data」（或能解釋差異）
+- Evidence Bundle 的 provenance map 不斷裂（每個關鍵輸入可追溯回 source_snapshot_ref）
+- 版本一致性：`active_version_map_ref` 可指出當次運行使用的來源/規則版本集合
+
+---
+
+## A.3 對位：資料品質（QG）與證據完整度（EC）對下游的「可用性宣告」
+
+> DATA_UNIVERSE 的任務是「宣告資料可用性」，不是「裁決是否交易」。  
+> 其輸出必須能被 UI / Log / Audit 明確呈現，避免下游或人類誤以為資料是完整可靠的。
+
+### A.3.1 必備可用性欄位（下游可讀）
+
+每次資料流轉到 L3（或更下游）時，必須附帶：
+
+- `source_tier_used`：PRIMARY/SECONDARY/FALLBACK
+- `trust_level`：HIGH/MEDIUM/LOW
+- `compliance_eligible`：true/false（第三方通常為 false；是否可用於制度裁決鏈）
+- `evidence_completeness`：EC-A/EC-B/EC-C/EC-D…（或等價枚舉）
+- `degradation_reason_codes[]`：降級原因（缺欄位、延遲、疑似異常、官方不可得…）
+- `notes_ref`：降級說明與追蹤引用
+
+### A.3.2 強制規則（不可降）
+
+- 任何降級（fallback 或品質不足）不得靜默，必須可見（UI/Log/Audit）。
+- Quality/Completeness 只做「宣告」，不得直接變成 PASS/VETO；裁決歸屬 L7/L9/L10。
+
+---
+
+## A.4 對位：DATA_UNIVERSE 與 RISK/COMPLIANCE、GOVERNANCE 的互鎖關係（不改既有權限）
+
+### A.4.1 與 L7（Risk & Compliance）之互鎖
+
+DATA_UNIVERSE 不執行否決，但必須提供「可被否決」的客觀依據：
+
+- 缺 official snapshot（或不可回放） → 必須讓下游可偵測（compliance_eligible=false / reason_codes）
+- QG 降級或 EC 不足 → 必須顯性標記（quality_grade / evidence_completeness / flags）
+- 任何「制度裁決所需的官方依據」缺失 → 必須標記為不可用於合規裁決鏈
+
+### A.4.2 與 L9（Governance Gate）之互鎖
+
+- 若資料 provenance/版本/快照缺失，L9 可要求 RETURN 回 L1/L2/L3 重新補齊（由治理門裁決）。
+- DATA_UNIVERSE 必須能讓 L9 讀到：資料來源版本、規則版本、hash manifest 引用。
+
+---
+
+## A.5 Freeze v1.0 下的 Only-Add 新增規則模板（DATA_UNIVERSE 專用）
+
+> 本模板用於新增 source_id / subcategory_id / schema / validation rules / fallback_chain。  
+> 只能新增，不得改寫或覆寫既有條目語義；更嚴格可，放寬不可。
+
+### A.5.1 新增 source_id（模板）
+
+- 新增項目類型：source_id
+- source_id：`<唯一ID>`
+- source_name：`<名稱>`
+- source_tier：PRIMARY / SECONDARY / FALLBACK
+- official_priority_rationale：`<為何屬官方/授權/第三方>`
+- access_method：API / Web / File / Vendor Feed
+- canonical_schema_targets：`[<canonical_schema_id...>]`
+- required_provenance：
+  - source_urls_or_endpoints：`[ ... ]`
+  - captured_at：REQUIRED
+  - raw_payload_ref：REQUIRED
+  - source_snapshot_ref：REQUIRED
+  - hash_manifest_ref：REQUIRED
+- validation_ruleset：
+  - schema_validation：REQUIRED
+  - domain_validation：REQUIRED
+  - temporal_validation：REQUIRED
+  - cross_source_consistency：OPTIONAL（僅標記）
+- fallback_chain：
+  - preferred_same_tier_official：`[ ... ]`
+  - secondary_authorized：`[ ... ]`
+  - last_resort_third_party：`[ ... ]`（必須降級 trust/compliance_eligible）
+- compliance_eligibility：
+  - compliance_eligible_default：true/false
+  - restrictions_notes_ref：`<限制說明引用>`
+- audit_requirements：
+  - replay_determinism：REQUIRED
+  - version_binding：REQUIRED（active_version_map_ref 必須可追溯）
+- change_log_stub：
+  - added_at：`YYYY-MM-DD`
+  - added_by：`<人類裁決者/治理記錄ID>`
+  - reason：`<新增原因>`
+  - impact_scope：`<影響範圍：哪些資料類別/層級>`
+
+---
+
+### A.5.2 新增 subcategory_id（模板）
+
+- 新增項目類型：subcategory_id
+- subcategory_id：`<唯一ID>`
+- domain：TWSE / TPEX / TAIFEX / MOPS / TDCC / Broker / Other
+- data_kind：Price / Volume / Fundamentals / CorporateActions / Lending / Margin / Position / Orders / Trades / NewsMeta / …
+- official_sources：
+  - primary_source_ids：`[ ... ]`
+  - official_urls：`[ ... ]`
+- secondary_sources：
+  - authorized_vendor_source_ids：`[ ... ]`
+- fallback_sources：
+  - third_party_source_ids：`[ ... ]`（必須降級）
+- required_fields_minimum：`[ ... ]`
+- canonical_schema_id：`<schema>`
+- quality_gate_minimum：
+  - minimum_quality_grade_for_evidence：`QG-?`
+  - minimum_evidence_completeness：`EC-?`
+- notes_ref：`<補充說明引用>`
+
+---
+
+## A.6 稽核檢核表（Audit Checklist｜DATA_UNIVERSE 對位 Canonical）
+
+> 本表為稽核用；不新增流程、不改權限，只定義「可被檢查」的最低項。
+
+### A.6.1 L1/L2 工件完整性（必查）
+
+- 是否存在 `source_id` 且能對應 DATA_UNIVERSE？
+- 是否存在 `source_snapshot_ref / raw_payload_ref / hash_manifest_ref`？
+- 是否存在 `field_map_ref / normalization_ruleset_version`？
+- 是否存在 `quality_grade / quality_flags[] / quality_report_ref`？
+- 是否存在 `active_version_map_ref` 且可回放？
+
+### A.6.2 降級可見性（必查）
+
+- fallback 使用時，是否輸出 `source_tier_used / trust_level / compliance_eligible / reason_codes`？
+- 是否確保 UI/Log/Audit 可見（不可靜默）？
+
+### A.6.3 合規可用性宣告（必查）
+
+- 若屬第三方或不可驗證來源：是否預設 `compliance_eligible=false`？
+- 若缺官方快照/不可回放：是否明確標記不可用於制度裁決鏈？
+
+---
+
+## A.7 終局聲明（不可改寫）
+
+DATA_UNIVERSE 的存在目的，是把「資料是否可靠、是否可追溯、是否可回放」制度化。  
+它不提供交易方向、不提供策略裁決、不提供下單決策。  
+任何無法回指來源、無法生成快照、無法稽核回放的資料，都不允許進入 TAITS 的裁決鏈。
+
+（Appendix A｜DATA_UNIVERSE 對位 MASTER_CANON｜Freeze v1.0｜Only-Add）
