@@ -363,3 +363,151 @@ Agent / Strategy / Execution 的結構重排
 本補充 不改寫任何既有文件
 
 本補充 僅提升裁決鏈可讀性與一致性
+
+---
+
+# Appendix A｜Only-Add：DOCUMENT_INDEX × MASTER_CANON 對位附錄（Freeze v1.0）
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220（doc_key：DOCUMENT_INDEX）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 對位母法：MASTER_CANON（Canonical Flow L1–L11）  
+> 裁決序位：以本文件既有「衝突裁決程序」與「治理等級覆蓋規則」為準；本附錄僅補齊對位解讀與引用一致性規則（不新增新權力、不改寫既有裁決機制）。
+
+---
+
+## A.1 本附錄目的（不可省略）
+
+本附錄用於解決一個常見但高風險的治理誤讀：
+
+- MASTER_CANON 被誤當成「文件清單與有效性裁決」  
+- DOCUMENT_INDEX 被誤當成「流程母法與層級語義定義」
+
+上述誤讀會導致「引用越權」與「裁決鏈斷裂」。  
+因此本附錄以 Only-Add 方式，將 DOCUMENT_INDEX 與 MASTER_CANON 的職責做出可稽核、可操作的對位界線。
+
+---
+
+## A.2 DOCUMENT_INDEX 與 MASTER_CANON 的「不同」：權力來源與責任分工（對位總結）
+
+### A.2.1 DOCUMENT_INDEX（本文件）—「可引用性」與「文件裁決」的最高層
+
+DOCUMENT_INDEX 的職責是裁決「文件世界的合法性」：
+
+1) 什麼文件在此刻具治理效力（ACTIVE 唯一性）  
+2) 哪些文件可被引用作裁決依據（Index 裁決：未收錄＝無效）  
+3) 文件衝突時如何套用治理等級覆蓋規則（A+ > A > B > C）  
+4) 引用最小格式（doc_key / 版本日期 / 章節定位 / 引用目的）  
+5) 變更必須可稽核（VERSION_AUDIT）
+
+> 核心一句話：  
+> **DOCUMENT_INDEX 決定「誰有資格說話、哪份文件有權力被引用」。**
+
+---
+
+### A.2.2 MASTER_CANON —「層級語義」與「Canonical Flow」的最高母法
+
+MASTER_CANON 的職責是裁決「系統如何運作」：
+
+1) Canonical Flow（L1–L11）的存在性、邊界與不可越權原則  
+2) 各層的輸入/輸出契約、稽核要求、回放一致性（Replay）  
+3) 角色分工（人類/AI/系統）在流程中如何定位  
+4) 跨層互鎖（Regime/Risk/Compliance/Execution/UI）的流程語義
+
+> 核心一句話：  
+> **MASTER_CANON 決定「該怎麼走流程、什麼叫合規的層級行為」。**
+
+---
+
+### A.2.3 一句話界線（Hard Boundary）
+
+- **DOCUMENT_INDEX 管「文件是否合法、是否可引用、誰覆蓋誰」。**  
+- **MASTER_CANON 管「流程怎麼走、層級語義如何解讀、越權如何判定」。**
+
+兩者互補，不互相替代。
+
+---
+
+## A.3 與 MASTER_CANON 的「對位使用規則」（避免誤用）
+
+> 本節不改寫既有「衝突裁決程序」，只把操作順序固化成可讀規則。
+
+### A.3.1 先做「可引用性 Gate」，再做「語義裁決」
+
+所有引用與裁決，必須依序滿足：
+
+1) **Index Gate（可引用性）**  
+   - 文件是否在本文件的「治理有效文件清單」中？  
+   - 是否為該 doc_key 之唯一 ACTIVE？  
+   - 若否：直接 STOP（不得引用、不得裁決）
+
+2) **Canonical Interpretation（語義解讀）**  
+   - 若屬流程/層級/越權問題：以 MASTER_CANON 的 L1–L11 語義解讀  
+   - 若屬風控/合規否決：以 RISK_COMPLIANCE 的否決條款裁決  
+   - 若屬執行與控制：以 EXECUTION_CONTROL 的執行約束裁決  
+   - 若屬人機介面：以 UI_SPEC 的呈現與決策主權約束裁決
+
+> 重點：  
+> DOCUMENT_INDEX 不替代 MASTER_CANON 的流程語義；MASTER_CANON 不替代 DOCUMENT_INDEX 的可引用性裁決。
+
+---
+
+## A.4 「治理等級」與「文件表格」之詮釋一致性（Only-Add Clarification）
+
+### A.4.1 Index 表格的法律效力
+
+本文件第 5 章（治理有效文件清單）之表格，對以下事項具裁決效力：
+
+- 收錄與否（是否具治理效力）  
+- doc_key（唯一識別）  
+- 版本狀態（ACTIVE / ARCHIVED 等）  
+- 說明（用途摘要，不構成覆寫他文件正文）
+
+### A.4.2 治理等級欄位之一致性要求（避免「等級漂移」）
+
+若發生下列情況：
+
+- Index 表格中的「治理等級」與該文件檔頭（doc header）標示不一致  
+- 或同一文件在不同地方被標為不同等級
+
+則視為 **Metadata Discrepancy（中繼資料差異）**，必須：
+
+1) 以本文件既有「衝突裁決程序」處理引用與裁決（保守適用更上位約束）  
+2) 由 VERSION_AUDIT 建立一筆「METADATA_FIX」變更帳本（Only-Add）  
+3) 後續僅以「新增修正說明段落」方式修補一致性（不得刪改既有段落）
+
+> 目的：  
+> 確保「等級」永遠可稽核、可回放、不可被改名或誤標而繞過治理。
+
+---
+
+## A.5 FILE UPDATE MODE 下新增文件進入 Index 的「固定模板」（Only-Add）
+
+> 本節提供「新增條目」的固定寫法，用於未來擴充文件宇宙；  
+> 不改寫既有規則，只降低錯誤率。
+
+### A.5.1 新增治理文件條目（Index Entry Template）
+
+- 文件名稱：`<filename>`  
+- doc_key：`<DOC_KEY>`  
+- 治理等級：`A+ / A / B / C`  
+- 版本狀態：`ACTIVE / ARCHIVED / DEPRECATED / DRAFT`  
+- 版本日期：`YYYY-MM-DD`  
+- 對齊母法：`<上位約束>`  
+- 平行參照：`<refs...>`  
+- 說明：`<一句話定位；不得新增權力>`  
+- 新增原因：`<why>`  
+- 影響範圍：`<Research/Backtest/Simulation/Paper/Live>`  
+- 稽核要求：`必須在 VERSION_AUDIT 留存 change_id、approver、effective_time、reason`
+
+### A.5.2 Freeze v1.0 下的硬限制提醒（Index 專用）
+
+- Freeze v1.0 期間：允許新增條目（Only-Add），但不得以新增條目形式「變相改寫」既有裁決權力與覆蓋秩序。  
+- 任何新增條目若涉及「裁決序位、否決權、Canonical Flow」之變更意圖：  
+  - 一律視為結構性變更  
+  - Freeze 下不得成立  
+  - 必須回到 GOVERNANCE_STATE／母法裁決後才可處理（本文件僅收錄裁決結果，不創造裁決本體）。
+
+---
+
+（Appendix A｜DOCUMENT_INDEX × MASTER_CANON 對位附錄 · Freeze v1.0 · Only-Add 完）
