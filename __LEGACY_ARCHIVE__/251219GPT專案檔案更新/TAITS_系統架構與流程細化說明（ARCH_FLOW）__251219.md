@@ -42,7 +42,6 @@ doc_key：ARCH_FLOW
 
 ## 2. Canonical Flow 總覽（L1–L11）
 
-```text
 L1  Data Ingestion
 L2  Validation & Normalization
 L3  Snapshot & State Build
@@ -248,3 +247,4 @@ ARCH_FLOW：定義「如何按序運作」
 以效能為由省略審計
 
 （ARCH_FLOW｜最大完備整理版 完）
+
