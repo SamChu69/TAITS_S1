@@ -11,7 +11,27 @@ doc_key：STRATEGY_UNIVERSE
 核心鐵律：**策略 ≠ 下單**；**Agent ≠ 策略**；**AI ≠ 唯一真理**；**Regime 高於單一訊號**；**Risk/Compliance 可否決一切**；**策略必須白名單與可稽核**；**不得存在隱性策略鏈**
 
 ---
+---
 
+> 【文件閱讀與治理指引（Only-Add）】
+>
+> 本文件主體內容定義 STRATEGY_UNIVERSE 之策略條目、分類結構與既有治理規範。
+> 自文件最末之「Appendix Z｜STRATEGY_UNIVERSE × MASTER_CANON 對位補充附錄」起，
+> 為依據 MASTER_CANON（Canonical Flow L1–L11）所新增之治理對位補充，
+> 用於明確鎖定策略層（L8）之合法邊界、不可越權事項與全系統一致性解讀方式。
+>
+> 本指引為補充性說明，不構成對主文條款之修改，
+> 所有裁決優先序仍依 DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON 為準。
+
+---
+
+<!--
+【主文說明】
+以下主文內容為你原始之 STRATEGY_UNIVERSE 文件全文。
+依 Freeze v1.0 與 Only-Add 原則：
+- 主文內容完全不動
+- 不刪減、不重排、不合併、不重寫
+-->
 ## 0. 文件定位（Strategy Universe Charter）
 
 本文件為 TAITS 的「策略宇宙全集（Strategy Universe）」治理母表與規範文件，其目的在於：
@@ -2653,3 +2673,4 @@ STRATEGY_UNIVERSE 未來僅允許：
 ---
 
 （STRATEGY_UNIVERSE｜Appendix Z｜MASTER_CANON Alignment · Freeze v1.0 · Only-Add 完）
+
