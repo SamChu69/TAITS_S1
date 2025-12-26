@@ -2445,3 +2445,211 @@ part_id：PART_7_CROSS_MARKET_CROSS_ASSET
 ---
 
 （STRATEGY_UNIVERSE｜Part 7｜Cross-Market / Cross-Asset｜Annotation Enhanced｜最大完備 完）
+
+---
+
+# Appendix Z｜STRATEGY_UNIVERSE × MASTER_CANON 對位補充附錄  
+（Only-Add · Canonical Alignment Addendum · Freeze v1.0）
+
+doc_key：STRATEGY_UNIVERSE  
+附錄性質：Addendum / Alignment Appendix（僅補充，不改寫、不覆蓋）  
+生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+對齊母法：MASTER_CANON（Canonical Flow L1–L11）  
+裁決序位：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON  
+變更原則：Only-Add（只可新增，不可刪減、不可偷換既有語義）
+
+---
+
+## Z.0 本附錄之治理聲明（不可省略）
+
+1. 本附錄為 **STRATEGY_UNIVERSE 對位 MASTER_CANON 的治理補充**，  
+   目的在於「**語義對齊、權責釐清、邊界鎖定、稽核強化**」，  
+   **不構成任何新 Canonical Layer**，亦 **不修改既有 L1–L11 定義**。  
+
+2. 本附錄 **不引入新策略、不改寫任何既有策略條目、不調整策略邏輯**，  
+   僅補強「策略層（L8）在 Canonical Flow 中的合法地位與不可越權邊界」。  
+
+3. 若本文件主體內容與 MASTER_CANON 存在任何歧義，  
+   **一律以 MASTER_CANON 為最終裁決**，  
+   本附錄僅負責補足「STRATEGY_UNIVERSE 在母法下的正確解讀方式」。
+
+---
+
+## Z.1 MASTER_CANON 與 STRATEGY_UNIVERSE 的層級分工（法源對位）
+
+### Z.1.1 MASTER_CANON 的母法裁決角色（不可取代）
+
+MASTER_CANON 明確裁定：
+
+- Canonical Flow 固定為 **L1–L11，不得增減、不得跳層**
+- **策略 ≠ 決策 ≠ 下單**
+- **Regime 高於策略**
+- **Risk / Compliance 具最高否決權**
+- AI 僅能輔助，不得成為最終裁決主體
+- L10（Human Decision）與 L11（Execution Control）  
+  為 **不可被策略或 Agent 侵蝕的主權層**
+
+### Z.1.2 STRATEGY_UNIVERSE 的合法定位（受限授權）
+
+STRATEGY_UNIVERSE 在 Canonical Flow 中的唯一合法定位為：
+
+- **L8｜Strategy Layer（策略層）治理母表**
+- 其職責僅限於：
+  - 定義「**哪些策略可以存在**」
+  - 定義「策略的 **輸出契約（Outputs Contract）**」
+  - 定義「策略的 **Regime 前置條件、證據要求、風險輪廓**」
+  - 定義「策略的 **生命週期與審計要求**」
+
+STRATEGY_UNIVERSE **不具備、也不得取得** 以下權限：
+
+- 決策裁決權（L10）
+- 風控最終裁決權（L7）
+- 執行權或任何形式的下單能力（L11）
+
+---
+
+## Z.2 Canonical Flow 對位表（STRATEGY_UNIVERSE 視角）
+
+> 本節僅作「對位說明」，不新增任何流程。
+
+| Canonical Layer | 母法定義（MASTER_CANON） | STRATEGY_UNIVERSE 合法參與程度 |
+|---|---|---|
+| L1–L3 | 原始資料 / 清洗 / 正規化 | ❌ 不參與 |
+| L4 | 特徵（Features） | ⚠️ 僅宣告依賴，不可生成 |
+| L5 | 證據（Evidence + EC） | ⚠️ 僅宣告需求，不可裁決 |
+| L6 | Regime 判定 | ❌ 不可裁決，只能聲明適用條件 |
+| L7 | Risk / Compliance | ❌ 不可影響、不可覆寫 |
+| L8 | Strategy Layer | ✅ **唯一合法層級** |
+| L9 | Governance Gate | ⚠️ 僅接受審查，不具主動權 |
+| L10 | Human Decision | ❌ 不可介入 |
+| L11 | Execution Control | ❌ 不可介入 |
+
+---
+
+## Z.3 策略輸出與 Canonical 邊界鎖定（Hard Boundary）
+
+### Z.3.1 策略輸出之「允許集合」（重申母法）
+
+所有 STRATEGY_UNIVERSE 中的策略，**只能輸出**：
+
+- proposal_type（enter / exit / avoid / observe / risk_adjust 等）
+- direction_hint（long / short / neutral / context；**非委託**）
+- setup_conditions / invalidation_conditions（可驗證條件）
+- required_regime / required_evidence
+- recommended_constraints（模板引用，不是指令）
+- explanation / annotation（供 UI 解釋）
+
+### Z.3.2 策略輸出之「永久禁止集合」（母法鎖定）
+
+以下輸出在任何情況下皆屬 **Canonical Violation**：
+
+- 可直接送往券商 API 的委託內容
+- 價格 + 數量 + 方向 + 帳戶 組合成「可執行指令」
+- 自動跳過 L7 / L10 的執行建議
+- 任何暗示「已可下單」的語義或欄位
+
+一經發現，必須：
+
+- 由 Governance Gate 標記為 **INVALID_STRATEGY_OUTPUT**
+- 立即 BLOCK
+- 記錄於稽核鏈
+
+---
+
+## Z.4 Regime-First 原則在 STRATEGY_UNIVERSE 的強制解讀
+
+1. STRATEGY_UNIVERSE **不得定義 Regime 本身**  
+   只能宣告「策略在何種 Regime 下 *可能* 有效」。
+
+2. 若實際 Regime 與策略宣告不符：
+
+- 策略 **必須自動降級或失效**
+- 不得以「績效、勝率、AI 推薦」作為例外理由
+
+3. 任一策略若試圖：
+
+- 在 Regime 不符時仍輸出高信心建議  
+→ 視為 **Regime Override Violation**
+
+---
+
+## Z.5 Risk / Compliance 否決權的不可侵犯性（再確認）
+
+STRATEGY_UNIVERSE 在任何情況下：
+
+- 不得削弱 RISK_COMPLIANCE 的 reason codes
+- 不得包裝、稀釋、轉譯否決語義
+- 不得以「策略邏輯」對抗 Binary Compliance
+
+L7 = VETO  
+此裁決在 STRATEGY_UNIVERSE 層 **不可被重新詮釋**。
+
+---
+
+## Z.6 策略審計與回放（Replay）之 Canonical 要求
+
+對位 MASTER_CANON 的全紀錄原則，  
+STRATEGY_UNIVERSE 中每一策略必須可回放：
+
+- 使用的資料快照（DATA_UNIVERSE 引用）
+- 使用的特徵快照（FEATURE_INDEX 引用）
+- 使用的 Regime 狀態快照
+- 輸出提案與其 hash
+- 所屬 active_version_map_ref
+
+若任一策略 **無法回放到同一語義輸出**：
+
+- 視為 **不可治理策略**
+- 不得進入 ACTIVE 狀態
+
+---
+
+## Z.7 關於 Annotation（說明性備註）的母法定位
+
+1. Annotation 在 MASTER_CANON 視角下屬於：
+
+- **Human Understanding Aid**
+- **UI Explain Layer 的語義補充**
+
+2. Annotation **永久不具備**：
+
+- Feature 地位
+- Regime 地位
+- Strategy Condition 地位
+
+3. 任一把 Annotation 轉譯為：
+
+- 條件
+- 判斷
+- 啟用邏輯  
+
+皆屬 **Hidden Strategy Violation**。
+
+---
+
+## Z.8 Only-Add 演進的 Canonical 約束（最終鎖定）
+
+STRATEGY_UNIVERSE 未來僅允許：
+
+- 新增策略條目（strategy_id）
+- 新增策略版本（strategy_version）
+- 新增更嚴格的證據 / Regime / 風險門檻
+- 新增解釋性 Annotation
+
+永久禁止：
+
+- 刪除或弱化既有治理欄位
+- 將策略輸出升格為決策或執行
+- 引入任何形式的隱性策略鏈
+
+---
+
+## Z.9 終極裁決語句（對齊 MASTER_CANON，不可改寫）
+
+> **策略不是權力來源，而是被治理的對象。**  
+> **任何無法被 Regime 約束、被 Risk 否決、被人類理解與回放的策略，  
+> 在 TAITS 中一律視為非法。**
+
+---
+
+（STRATEGY_UNIVERSE｜Appendix Z｜MASTER_CANON Alignment · Freeze v1.0 · Only-Add 完）
