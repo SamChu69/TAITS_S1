@@ -581,3 +581,173 @@ DOCUMENT_INDEX 必須做到：
 - 允許模式降級審計密度  
 
 （MASTER_CANON｜Final Integrated Edition v2025-12-19 完）
+
+🔒 MASTER_CANON｜Canonical Flow（L9–L11）
+架構裁決補充條款（Analyst Narrative / Human Decision / System Maintenance）
+
+Addendum ID：MC-ADD-L9L11-202512
+適用文件：MASTER_CANON
+治理等級：S（Supreme Canon Addendum）
+變更性質：架構語義補強（Architectural Semantic Lock）
+變更原則：Only-Add（不刪減、不覆寫、不偷換既有語義）
+適用狀態：GOVERNANCE_STATE = Freeze v1.0
+
+本補充條款用以澄清並鎖定 L9、L10、L11 的人機分工、語義邊界與輸出責任。
+若與既有段落存在解讀歧義，以本 Addendum 為最終裁決依據，但不否定既有正文之存在。
+
+L9｜Analyst Narrative & Investment Rationale
+
+（分析師人話整合報告層）
+
+定義（Authoritative）
+
+L9 為 TAITS 唯一對人類輸出「投資分析敘事」的層級。
+其任務是將 L1–L8（資料、分析、證據、Regime、Risk、策略候選） 的結果，
+整合為人類可理解、可查證、可質疑的完整投資分析報告。
+
+L9 的存在目的不是下單，而是回答：
+
+為什麼要關注這個標的？
+
+是哪些因素推動或壓抑它的走勢？
+
+目前價格是否合理？高估／低估的依據是什麼？
+
+可能的進場區間、風險區間、情境分歧在哪？
+
+這是一筆偏向短線、波段、還是長期配置的機會？
+
+哪些條件一旦失效，就應該重新評估甚至放棄？
+
+核心職責（Mandatory）
+
+L9 必須：
+
+以「分析師白話敘事」方式，完整說明投資前因後果
+
+明確標示分析所依據的 Evidence（資料來源、指標、事件、制度）
+
+揭露分析假設、限制條件與潛在失效風險
+
+清楚區分「事實、推論、假設、風險提醒」
+
+產出可供人類核對、反駁、驗證的分析內容
+
+輸出（Output）
+
+Analyst Narrative Report（人話投資分析報告）
+
+Evidence Reference Map（對應 L1–L8 的證據索引）
+
+Analysis Confidence & Uncertainty Notes（不確定性說明）
+
+明確限制（Boundary）
+
+L9 不得自動做出交易批准或否決
+
+L9 不得取代人類的最終裁決權
+
+L9 的分析 必須可被人類質疑與否決
+
+L10｜Human Decision Authority
+
+（人類最終裁決層）
+
+定義
+
+L10 為 TAITS 唯一且不可取代的人類決策層。
+任何交易、回測、模擬、半自動或全自動行為，皆必須由人類在 L10 明確授權。
+
+核心職責
+
+人類決策者基於 L9 的分析報告，做出以下裁決之一：
+
+不採取任何行動
+
+僅保留觀察
+
+進行回測
+
+進行模擬交易
+
+進行半自動交易
+
+進行全自動交易（需明確授權）
+
+輸出
+
+Human Decision Record（Decision Type + 時間 + 授權範圍）
+
+Risk Disclosure Acknowledgement（風險知情紀錄）
+
+明確禁止
+
+系統或 AI 不得跳過 L10 直接進入執行
+
+AI 不得替人類做出批准或拒絕
+
+L11｜Execution, Audit & System Maintenance
+
+（執行、稽核與系統維修層）
+
+定義
+
+L11 為 純系統層（Machine-Oriented Layer），
+其目的在於 執行已被授權的行為、完整記錄、回放、診斷與維修系統。
+
+L11 不是分析層、不是決策層，也不是人類閱讀層。
+
+核心職責
+
+僅在 L10 明確授權後執行行為
+
+完整記錄：
+
+Execution Log
+
+Order State
+
+Risk / Kill Switch 狀態
+
+提供系統回放、稽核、錯誤診斷與後續優化依據
+
+明確定位
+
+L11 的主要讀者是「系統、工程師、稽核機制」
+
+L11 的輸出 不作為直接投資判斷依據
+
+全紀錄原則（Global Full-Trace Principle）
+
+TAITS 在 L1–L11 每一層所產生的資料、分析、報告、裁決與系統工件：
+
+必須全部被保存
+
+必須可追溯、可回放、可稽核
+
+任何未被記錄的行為，制度上視為未發生
+
+此原則為 TAITS 的基礎公理之一，不得被任何效能、便利或 AI 自主性理由削弱。
+
+Canonical Boundary Declaration（不可跨越聲明）
+
+分析敘事只存在於 L9
+
+決策權只存在於 L10
+
+機械執行與系統維修只存在於 L11
+
+任何層級越權，皆視為 違反 MASTER_CANON 架構母法。
+
+架構裁決說明（Final）
+
+本 Addendum 用以鎖定 TAITS 的人機分工與責任邊界，
+確保系統永遠以：
+
+人類可理解
+人類可驗證
+人類可否決
+
+為最高設計原則。
+
+AI 與系統永遠是輔助者，而非最終裁決者。
