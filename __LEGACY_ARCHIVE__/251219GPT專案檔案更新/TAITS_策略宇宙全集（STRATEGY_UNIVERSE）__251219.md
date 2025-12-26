@@ -2467,6 +2467,214 @@ part_id：PART_7_CROSS_MARKET_CROSS_ASSET
 （STRATEGY_UNIVERSE｜Part 7｜Cross-Market / Cross-Asset｜Annotation Enhanced｜最大完備 完）
 
 ---
+---
+
+# Part 8｜新增策略條目之治理模板（New Strategy Entry Template）
+（Only-Add · STRATEGY_UNIVERSE 專用 · Freeze v1.0）
+
+## 8.0 模板定位與硬性約束（不可省略）
+- 適用文件：STRATEGY_UNIVERSE（doc_key=STRATEGY_UNIVERSE）
+- 生效狀態：GOVERNANCE_STATE = Freeze v1.0
+- 補充性質：Only-Add（僅新增模板，不改寫/不刪減既有策略條目）
+- 母法對齊：MASTER_CANON（Canonical Flow L1–L11）
+- 裁決序位：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON
+- 層級鎖定：本模板僅允許 **L8（Strategy Layer）** 語義；不得包含或暗示 L9/L10/L11 權限
+- 最高原則（硬性）：
+  1) 策略 ≠ 決策 ≠ 下單  
+  2) Regime 高於策略  
+  3) Risk / Compliance 可否決一切  
+  4) AI 僅輔助，非最終裁決主體  
+  5) 無法回放（Replay）＝視同不可治理策略＝不得進入可用狀態
+
+> 使用方式（固定）：  
+> 每新增一個策略，必須在 STRATEGY_UNIVERSE 末端以「8.X」序號複製本模板並填入。  
+> 不得改動模板結構；如需補充欄位，只能以「8.X.99 補充欄位（Only-Add）」形式追加。
+
+---
+
+## 8.1 新增策略條目（複製此段開始填寫）
+> 將本段完整複製，並將「8.X」替換為下一個未使用序號（例如 8.1、8.2…）。
+
+### Part 8.X｜【策略名稱】（Strategy ID：STRAT-XXXX）
+- 策略狀態（Strategy Status）：DRAFT / REVIEW / ACTIVE / DEPRECATED / ARCHIVED  
+  （Freeze v1.0 建議：新增一律先 DRAFT → 經治理審查後才可標 ACTIVE）
+- 策略版本（Strategy Version）：v0.1（Only-Add 遞增，不覆寫舊版本）
+- 建立日期（Created At）：YYYY-MM-DD
+- 最後更新（Last Updated）：YYYY-MM-DD
+- 作者/來源（Owner/Origin）：（人類/團隊/系統模組；不得填「AI 自動決策」）
+- 對位母法（Canonical Alignment）：L8（Strategy Layer）唯一合法層
+
+#### 8.X.1 策略定位（Strategy Role & Scope）
+- 策略類型（Type）：
+  - 趨勢（Trend）
+  - 均值回歸（Mean Reversion）
+  - 事件（Event/Calendar）
+  - 套利/相對價值（Relative Value）
+  - 防禦/避險（Defensive/Hedge）
+  - 觀察/不交易（Observe / Avoid）
+- 適用市場（Market Scope）：TWSE / TPEX / TAIFEX / Mixed（僅宣告；非下單）
+- 適用商品（Instrument Scope）：現股 / 零股 / 期貨 / 選擇權 / ETF（僅宣告）
+- 策略輸出型態（Output Nature）：Proposal（提案）/ Avoid（避開）/ Observe（觀察）
+- 明確排除（Hard Exclusions）：（例如：不可用於期貨、不可用於當沖…）
+- 本策略不可產生：
+  - 決策裁決（L10）
+  - 風控裁決（L7）
+  - 執行指令（L11）
+  （此三條不得刪）
+
+#### 8.X.2 適用 Regime（Regime Preconditions｜Regime-First）
+> 本節僅「宣告前置條件」，不得定義 Regime 本身（Regime 定義與判定屬 L6）。
+
+- 必要 Regime（Required Regime）：（列出允許的 regime_id/狀態名）
+- 禁入 Regime（Blocked Regime）：（列出明確禁入狀態）
+- Regime 信心門檻（Regime Confidence Threshold）：（如有；無則填 N/A）
+- Regime 不明確時處置（Regime Uncertain Handling）：
+  - RETURN（退回補證據/待明確）
+  - AVOID（直接避開，不出提案）
+  - （不得填「仍建議執行」）
+
+#### 8.X.3 必要證據（Required Evidence｜Evidence Contract）
+> 本節定義策略要成立，最低必須具備的 Evidence（L5）型態；不得以敘事替代證據。
+
+- 資料來源需求（Data Sources Requirements｜引用 DATA_SOURCES）：
+  - 必要資料源 1：
+  - 必要資料源 2：
+  - （可新增）
+- 特徵依賴（Feature Dependencies｜引用 STRATEGY_FEATURE_INDEX）：
+  - Feature ID 1：
+  - Feature ID 2：
+  - （可新增）
+- 證據完整度門檻（Evidence Completeness Threshold）：
+  - 必要欄位清單（Required Fields）：
+  - 缺失處置（Missing Handling）：RETURN / AVOID（不得強行推論）
+- 證據時效性（Freshness / Staleness Rules）：
+  - 最大允許延遲（Max Lag）：
+  - 超時處置：RETURN / AVOID
+- 證據一致性（Consistency Rules）：
+  - 交叉驗證條件（Cross-checks）：
+  - 不一致處置：RETURN / AVOID
+
+#### 8.X.4 策略輸出契約（Output Contract｜Hard Boundary）
+> 這是模板中最重要的「越權防線」。  
+> 策略輸出只能形成「可治理提案」，不得形成「可執行委託」。
+
+**允許輸出（Allowed Outputs）— 只能在此集合內：**
+- proposal_type：enter / exit / reduce / avoid / observe / risk_adjust
+- direction_hint：long / short / neutral（僅提示方向；非委託）
+- setup_conditions：可驗證條件清單（conditions[]）
+- invalidation_conditions：失效條件清單（conditions[]）
+- required_regime_ref：Regime 狀態引用（ref）
+- required_evidence_refs：Evidence 引用清單（refs[]）
+- recommended_constraints_ref：限制建議引用（ref；例如風險上限類型、但不可給數量）
+- explanation / annotation：人類理解用文字（非決策、非命令）
+- confidence_band（可選）：LOW / MED / HIGH（僅作「可讀性分級」，不得作自動批准）
+
+**永久禁止輸出（Forbidden Outputs）— 任何出現即視為 INVALID_STRATEGY_OUTPUT：**
+- 任何可直接下單之欄位組合（例如 price + qty + tif + account）
+- 任何「立即執行」「直接下單」「已可送單」語義
+- 任何繞過 L7 / L10 的執行建議
+- 任何券商指令、API payload、委託字串、下單參數包
+- 任何把策略輸出「升格」為決策結果（APPROVE/REJECT）
+
+**違規處置（Violation Handling）— 不可更改：**
+- 標記：INVALID_STRATEGY_OUTPUT
+- 交付：Governance Gate（L9）必須 BLOCK
+- 稽核：必須寫入審計鏈（含 correlation_id + output_hash + reason_codes）
+
+#### 8.X.5 風險輪廓（Risk Profile｜供 L7 映射，不可替代 L7）
+> 本節是「風險映射資料」，用於協助 L7/RISK_COMPLIANCE 判定；本節本身不具裁決權。
+
+- 主要風險類型（Primary Risks）：
+  - 市場風險（Market）
+  - 流動性/滑價（Liquidity/Slippage）
+  - 組合曝險（Exposure/Concentration）
+  - 執行風險（Execution/Operational）
+  - 系統風險（System/Audit/Provenance）
+  - 合規風險（Compliance/Rulebook）
+- 已知失效情境（Known Failure Scenarios）：
+  1)
+  2)
+- 預期錯誤模式（Expected Failure Modes）：
+  - 誤判 Regime：
+  - Evidence 污染/延遲：
+  - 量能不足造成訊號失真：
+- 風險升級條件（Risk Escalation Triggers｜供 L7 參考）：
+  - 觸發條件：
+  - 建議處置：RETURN / AVOID（不得要求放行）
+
+#### 8.X.6 治理與審計（Governance & Audit Requirements）
+- 可否被 Risk/Compliance 否決：是（不可填否）
+- 可否被人類覆寫風控否決：否（不可填是）
+- 可回放性（Replay Requirement）：必須
+- 可追溯性（Traceability Requirement）：必須（correlation_id / version_ref / hashes）
+- 最小審計工件（Minimum Artifacts）：
+  - strategy_entry_ref（本策略條目引用）
+  - strategy_version
+  - required_evidence_refs
+  - required_regime_ref
+  - output_payload + output_hash
+  - documents_active_map_ref（本次運行 Active 文件版本映射）
+- 治理檢查點（Governance Gate Checks｜供 L9 審查）：
+  - 是否越權輸出（Forbidden Outputs）＝不得通過
+  - 是否缺證據（Evidence Completeness）＝不得通過
+  - 是否 Regime 不符仍輸出＝不得通過
+  - 是否可回放重建同一語義輸出＝不得通過
+
+#### 8.X.7 依賴與相容性（Dependencies & Compatibility）
+- 依賴模組（Dependencies）：
+  - Evidence Compiler（L5）：
+  - Regime Engine（L6）：
+  - Risk Gate（L7）：
+- 相容模式（Mode Compatibility）：
+  - Research：是/否（原則上應為是）
+  - Backtest：是/否（原則上應為是）
+  - Simulation：是/否（原則上應為是）
+  - Paper：是/否（原則上應為是）
+  - Live：是/否（需明確聲明；若否，必須寫原因）
+- 適用標的池（Universe Binding）：
+  - 標的池來源：固定清單 / 動態 Universe / 外部 Universe（僅宣告）
+  - 排除條件：停牌/處置/低流動性…（僅宣告，裁決仍由 L7/L9）
+
+#### 8.X.8 人類可理解性（Human Interpretability）
+- 一句話描述（One-liner）：
+- 使用者常見誤解（Common Misinterpretations）：
+- UI 顯示備註（UI Notes）：（不得寫成「建議下單」）
+
+#### 8.X.9 變更紀錄（Change Log｜Only-Add）
+> 僅新增紀錄，不覆寫舊紀錄。
+
+- v0.1｜YYYY-MM-DD｜建立｜原因：
+- v0.2｜YYYY-MM-DD｜（新增）｜原因：
+- （可續增）
+
+#### 8.X.99 補充欄位（Only-Add Optional Extensions）
+> 若未來需要新增欄位，只能加在此段；不得插入前段破壞模板一致性。
+- 欄位名稱：
+- 用途：
+- 不可越權聲明：
+
+---
+
+## 8.2 模板級「一致性硬檢查」清單（新增策略必過｜不可刪）
+每一個新增策略（8.X）在提交前，必須滿足以下「模板一致性硬檢查」：
+
+1) 已明確鎖定為 L8，且明確排除 L7/L10/L11 權限  
+2) 已聲明 Required Regime / Blocked Regime / Uncertain Handling  
+3) 已列出 Required Evidence（含資料源引用與特徵依賴引用）  
+4) Output Contract 已包含：
+   - Allowed Outputs
+   - Forbidden Outputs
+   - Violation Handling  
+5) Risk Profile 已提供失效情境與風險升級條件（但未越權裁決）  
+6) Governance & Audit 已列出最小工件，且可回放  
+7) 變更紀錄已建立（v0.1 起）  
+8) 未出現任何可下單參數或「立即執行」語義（零容忍）
+
+---
+
+（Part 8｜新增策略條目治理模板 · Freeze v1.0 · Only-Add 完）
+
+---
 
 # Appendix Z｜STRATEGY_UNIVERSE × MASTER_CANON 對位補充附錄  
 （Only-Add · Canonical Alignment Addendum · Freeze v1.0）
@@ -2673,4 +2881,5 @@ STRATEGY_UNIVERSE 未來僅允許：
 ---
 
 （STRATEGY_UNIVERSE｜Appendix Z｜MASTER_CANON Alignment · Freeze v1.0 · Only-Add 完）
+
 
