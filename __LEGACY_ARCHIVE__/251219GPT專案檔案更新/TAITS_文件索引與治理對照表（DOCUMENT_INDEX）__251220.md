@@ -511,3 +511,392 @@ MASTER_CANON 的職責是裁決「系統如何運作」：
 ---
 
 （Appendix A｜DOCUMENT_INDEX × MASTER_CANON 對位附錄 · Freeze v1.0 · Only-Add 完）
+
+---
+
+# Appendix 0｜DOCUMENT_INDEX 專屬附錄治理總則（Only-Add）
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220.md  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 裁決位階：不高於 DOCUMENT_INDEX 正文；僅作補齊、對齊、指引用途  
+
+## 0.1 本附錄存在理由（不可省略）
+
+DOCUMENT_INDEX 作為 **A+ 文件位階裁決母表**，  
+其正文負責「裁決本體」，而附錄（Appendix）負責：
+
+- 補齊「裁決如何被穩定使用」的操作層說明  
+- 補齊「避免誤讀、誤用、越權引用」的防呆結構  
+- 補齊 Freeze 狀態下，Index 層可合法新增的治理指引  
+
+📌 本附錄 **不新增任何新權力、不創造任何新制度**，  
+📌 僅將 DOCUMENT_INDEX 既有裁決邏輯，轉化為「不可誤用的可操作結構」。
+
+---
+
+## 0.2 DOCUMENT_INDEX 附錄的法律地位（Hard Boundary）
+
+- 本文件正文（第 0～11 章）仍為 **唯一裁決本體**
+- 任何附錄內容：
+  - 不得被引用為「新裁決依據」
+  - 不得凌駕正文
+  - 不得與正文產生競合解讀
+
+> 若附錄與正文產生任何張力或歧義：  
+> **一律以正文為準，附錄自動失效，不需宣告。**
+
+---
+
+# Appendix I｜附錄啟用索引表（Appendix Activation Index）
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+> 目的：讓「哪些附錄存在、附錄屬於誰、可否引用」可被一次性裁決
+
+## I.1 附錄存在即須被索引（Hard Rule）
+
+- **任何附錄若未被本表收錄**
+  - 視為：不存在
+  - 不得被引用
+  - 不得作為治理、裁決、稽核依據
+
+## I.2 DOCUMENT_INDEX 專屬附錄清單
+
+| Appendix 編號 | 附錄名稱 | 所屬 doc_key | 生效狀態 | 說明 |
+|---|---|---|---|---|
+| Appendix 0 | DOCUMENT_INDEX 專屬附錄治理總則 | DOCUMENT_INDEX | ACTIVE | 定義附錄法律地位與使用邊界 |
+| Appendix I | 附錄啟用索引表 | DOCUMENT_INDEX | ACTIVE | 裁決哪些附錄存在 |
+| Appendix A | DOCUMENT_INDEX × MASTER_CANON 對位附錄 | DOCUMENT_INDEX | ACTIVE | 裁決「文件裁決」與「流程母法」邊界 |
+| Appendix B | 文件引用合法性防呆附錄 | DOCUMENT_INDEX | ACTIVE | 防止模糊引用與越權 |
+| Appendix C | Freeze v1.0 下 Index 可行為清單 | DOCUMENT_INDEX | ACTIVE | Freeze 期間 Index 層允許/禁止行為 |
+
+> 註：  
+> - 本表只增不減（Only-Add）  
+> - 未來新增任何 Appendix，必須先補此表，否則該附錄治理上視為不存在
+
+---
+
+# Appendix A｜DOCUMENT_INDEX × MASTER_CANON 對位附錄（Freeze v1.0）
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+> 對位母法：MASTER_CANON（Canonical Flow L1–L11）
+
+## A.1 為何必須存在此附錄（治理風險說明）
+
+在實務中，最常見且最危險的誤用為：
+
+- 將 MASTER_CANON 當成「文件合法性裁決表」
+- 將 DOCUMENT_INDEX 誤解為「流程與層級母法」
+
+此誤用一旦發生，將直接導致：
+- AI / Agent 引用越權  
+- 人類裁決錯置  
+- 風控與流程裁決鏈斷裂  
+
+因此本附錄 **僅用來固化邊界，不創造新邊界**。
+
+## A.2 權責一句話裁決（不可簡化）
+
+- **DOCUMENT_INDEX：裁決『誰有資格被引用、誰覆蓋誰』**  
+- **MASTER_CANON：裁決『流程怎麼走、層級語義如何解讀』**
+
+兩者互補，不互相替代。
+
+## A.3 強制使用順序（Hard Sequence）
+
+任何治理引用，必須嚴格依序：
+
+1. **Index Gate**  
+   - 文件是否在 DOCUMENT_INDEX 中？  
+   - 是否為該 doc_key 唯一 ACTIVE？  
+   - 否則：STOP（不得引用）
+
+2. **Canonical Interpretation**  
+   - 僅在通過 Index Gate 後  
+   - 才可進入 MASTER_CANON 的 L1–L11 語義裁決
+
+---
+
+# Appendix B｜文件引用合法性防呆附錄（Citation Guard）
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+
+## B.1 最小合法引用格式（再次強化，不得省略）
+
+任何聲稱「依據文件」的行為，**必須同時具備**：
+
+- doc_key  
+- 文件版本日期  
+- 章節定位  
+- 引用目的（裁決 / 否決 / 流程 / UI / 稽核）
+
+缺一即視為：**未引用、未發生、不得成立**。
+
+## B.2 明確禁止的引用行為（常見誤區）
+
+- 「依母法」、「依架構」、「依規範」但無章節定位  
+- 引用 README / BEGINNER_GUIDE 作為裁決依據  
+- 引用未被 DOCUMENT_INDEX 收錄之文件  
+
+---
+
+# Appendix C｜Freeze v1.0 下 DOCUMENT_INDEX 可行為清單
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+
+## C.1 Freeze 期間允許（Index 層）
+
+- 新增附錄（Only-Add）  
+- 新增文件條目（不改裁決序位）  
+- 補齊索引、對位、引用指引  
+
+## C.2 Freeze 期間禁止（Index 層）
+
+- 改寫裁決順位  
+- 改寫治理等級  
+- 改寫 Canonical Flow 的解讀權  
+
+> 判斷原則（不可模糊）：  
+> **若行為可能影響「誰能裁決誰」→ 一律視為結構性變更 → Freeze 下禁止。**
+
+---
+
+（Only-Add｜DOCUMENT_INDEX 附錄補齊 · 第 1 批 完）
+
+---
+
+# Appendix D｜DOCUMENT_INDEX × VERSION_AUDIT 對位附錄（Freeze v1.0｜Only-Add）
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220.md（doc_key：DOCUMENT_INDEX）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 對位文件：TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219.md（doc_key：VERSION_AUDIT）  
+> 裁決位階：不高於 DOCUMENT_INDEX 正文；僅補齊「Index 變更必可稽核」之落地對位口徑
+
+---
+
+## D.1 本附錄目的（不可省略）
+
+DOCUMENT_INDEX 正文已明確宣告：  
+- Index 變更必須可稽核（VERSION_AUDIT）  
+- 無審計＝未發生（Audit Supremacy）
+
+本附錄僅補齊：  
+1) **哪些 Index 行為必須寫入 VERSION_AUDIT**  
+2) **寫入時的最小欄位集合（不可縮減）**  
+3) **Freeze v1.0 下的保守判準（避免變相改寫）**
+
+---
+
+## D.2 Index 變更類型（Change Types｜Only-Add）
+
+> 本節不改寫正文第 9 章（Index Change Ledger），僅把可稽核類型「枚舉化」以防漏報。
+
+以下行為一律視為「Index 變更」，必須在 VERSION_AUDIT 留存：
+
+### D.2.1 ADD_ENTRY（新增治理文件條目）
+- 新增任何「治理有效文件清單」之新列（任意等級 A+/A/B/C）
+
+### D.2.2 STATUS_CHANGE（版本狀態變更）
+- 任一 doc_key 的 `版本狀態` 變更（例如：ACTIVE → ARCHIVED / DEPRECATED / DRAFT）
+
+### D.2.3 METADATA_FIX（中繼資料修補）
+- 修補 doc header / Index 表格之 metadata 不一致（僅能以新增說明方式修補，不得覆寫原值）
+- 例：治理等級標示不一致、檔名日期與版本日期對齊說明等
+
+### D.2.4 APPENDIX_ADD（新增附錄）
+- 新增任何 Appendix（含新增「Appendix 啟用索引表」之條目）
+
+### D.2.5 REFERENCE_EXPAND（平行參照擴充）
+- 僅新增「平行參照」或「引用指引」之條目（不得引入新裁決權）
+
+---
+
+## D.3 VERSION_AUDIT 最小必填欄位（Hard Minimum）
+
+對於上述任一變更類型，VERSION_AUDIT 至少必須包含：
+
+- `change_id`（全域唯一）
+- `change_time`（生效時間戳）
+- `doc_key=DOCUMENT_INDEX`
+- `change_type`（ADD_ENTRY / STATUS_CHANGE / METADATA_FIX / APPENDIX_ADD / REFERENCE_EXPAND）
+- `change_scope`（Research / Backtest / Simulation / Paper / Live 影響範圍）
+- `added_items[]`（新增內容之清單；若為狀態變更則列出變更項）
+- `reason`（原因；不得以「整理」「優化」作為唯一原因）
+- `approver`（批准者；人類主權）
+- `evidence_refs[]`（對應章節定位或支持證據引用；至少能回到文段定位）
+- `backward_compatibility`（回放相容性聲明；若可能影響回放，需明示保守策略）
+
+缺任一欄位：視為 **未發生**（Audit Supremacy）。
+
+---
+
+## D.4 Freeze v1.0 下 Index 變更的保守判準（Hard Conservative Rule）
+
+Freeze v1.0 期間，即使屬 Only-Add，也必須遵守：
+
+- 任何新增若會造成「裁決序位」或「權力邊界」產生新的可解釋空間  
+  → 一律視為結構性變更意圖  
+  → Freeze 下不得成立  
+  → Index 僅可「收錄已由上位文件裁決完成之結果」，不得先行創造裁決
+
+---
+
+# Appendix E｜DOCUMENT_INDEX × GOVERNANCE_GATE_SPEC 對位附錄（Freeze v1.0｜Only-Add）
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+> 對位文件：TAITS_治理閘門與裁決規範（GOVERNANCE_GATE_SPEC）__251219.md（doc_key：GOVERNANCE_GATE_SPEC）  
+> 目的：把「文件合法性裁決（Index）」與「治理閘門裁決（L9 Gate）」的關係鎖定為單一路徑
+
+---
+
+## E.1 核心一句話（不可省略）
+
+- DOCUMENT_INDEX：裁決「文件是否可被引用」  
+- GOVERNANCE_GATE_SPEC：裁決「一次輸出/一次提案是否符合治理門檻」
+
+兩者關係必須是：  
+> **先 Index Gate，再 Governance Gate；不得反向、不得跳步。**
+
+---
+
+## E.2 L9 Gate 必須強制執行 Index Gate（Hard Binding）
+
+任何進入 L9（Governance Gate）的輸出（不論來自哪個模組/Agent/人類彙整），必須先通過：
+
+1) **Index Gate（DOCUMENT_INDEX）**
+   - 引用的 doc_key 是否存在於 Index？
+   - 是否為該 doc_key 唯一 ACTIVE？
+   - 是否提供最小引用格式（doc_key/版本/章節/目的）？
+
+2) **Gate Spec（GOVERNANCE_GATE_SPEC）**
+   - 完整性、合法性、可回放性、不可越權性之檢核
+
+若 Index Gate 失敗：  
+- L9 Gate 不得進一步審查內容優劣  
+- 必須直接 **REJECT / RETURN**（依 Gate Spec 的拒絕語義）  
+- 並要求補齊引用要件（不是補齊內容、不是補完制度）
+
+---
+
+## E.3 Gate 結果必須可回放連回 Index（Traceability Requirement）
+
+L9 Gate 任一結果（PASS / RETURN / REJECT）必須在審計輸出中包含：
+
+- `index_validation`：  
+  - `doc_keys_used[]`  
+  - `active_check_passed`（true/false）  
+  - `citation_minimum_passed`（true/false）  
+  - `index_version_ref`（DOCUMENT_INDEX 版本日期/定位）
+
+缺失則視為：  
+- Gate 結果不可成立（無審計＝未發生）
+
+---
+
+# Appendix F｜新增文件進入 Index 的固定模板（完整版｜Freeze v1.0｜Only-Add）
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+> 目的：避免新增文件條目時產生「隱性權力」或「狀態歧義」
+
+---
+
+## F.1 Index Entry（治理有效文件條目）標準模板
+
+> 本模板僅用於「新增條目」；不得用於覆寫既有條目。
+
+新增任一治理文件至 Index 時，必須同步提供以下欄位（不可縮減）：
+
+- **文件名稱（含版本標記）**：`<filename>`  
+- **doc_key**：`<DOC_KEY>`  
+- **治理等級**：`A+ / A / B / C`  
+- **版本狀態**：`ACTIVE / ARCHIVED / DEPRECATED / DRAFT / RESTRICTED`  
+- **版本日期**：`YYYY-MM-DD`（或與檔名日期一致之版本日）  
+- **對齊母法**：`AI_GOV / MASTER_ARCH / MASTER_CANON`（至少一項）  
+- **上位約束**：`<higher_constraints...>`（明列，不可省略）  
+- **平行參照**：`<peer_refs...>`（可多選）  
+- **適用範圍**：`Research / Backtest / Simulation / Paper / Live`（可多選）  
+- **變更原則聲明**：`Only-Add / Freeze v1.0`（若適用）  
+- **一句話定位說明**：不得新增未授權權力、不得改寫既有裁決鏈  
+- **納管要求**：必須建立 VERSION_AUDIT 變更帳本（change_id / approver / reason / effective_time）  
+
+---
+
+## F.2 doc_key 命名與生命週期約束（Hard Gate）
+
+### F.2.1 doc_key 命名硬規則
+- 必須全域唯一  
+- 不得以相似 key 造成混淆（視為治理風險）  
+- 不得以改 key 形式迴避 ACTIVE 唯一性與 Only-Add
+
+### F.2.2 狀態集合（Status Vocabulary）
+為避免狀態語義漂移，Index 層允許的狀態詞彙固定為：
+
+- `ACTIVE`：此刻具治理效力，唯一可引用  
+- `ARCHIVED`：歷史存檔，可回放，不可作「現行裁決」依據  
+- `DEPRECATED`：準退役，不可新啟用，可回放  
+- `DRAFT`：草稿，不具治理效力（除非上位文件另有裁決）  
+- `RESTRICTED`：受限狀態（通常由風控/合規/治理觸發），僅允許特定範圍引用或僅研究用途（具體限制仍須由上位文件裁決）
+
+> 注意：本節僅「固定詞彙」，不新增任何上位文件未授權之裁決權。
+
+---
+
+## F.3 ACTIVE 切換的固定流程（Index 層）
+
+對同一 doc_key 進行 ACTIVE 切換時（例如新版本上線）：
+
+1) 新版本文件先新增條目（不得覆寫舊條目）  
+2) 新版本設為 `ACTIVE`  
+3) 舊版本改為 `ARCHIVED`（或上位裁決之等價狀態）  
+4) VERSION_AUDIT 必須留存：
+   - `change_type=STATUS_CHANGE`
+   - 舊新版本定位
+   - 生效時間
+   - 回放相容性聲明
+
+缺任一步驟：切換無效。
+
+---
+
+# Appendix G｜Appendix / Addendum 命名與掛載規則（Freeze v1.0｜Only-Add）
+
+> 補充性質：Only-Add  
+> 生效狀態：Freeze v1.0  
+> 目的：防止附錄編號混亂、重複、或被用來「變相改寫正文」
+
+---
+
+## G.1 附錄類型詞彙（Vocabulary）
+
+- **Appendix**：附錄（治理補齊、對位、模板、指引；不得改寫正文）  
+- **Addendum**：補遺（通常指新增政策性說明或補充規範，但不得創造未授權的新權力）  
+- **Guideline**：指引（操作性說明；不得作裁決依據）  
+- **Annotation**：註解（非約束性；不得參與裁決鏈）
+
+---
+
+## G.2 掛載位置硬規則（Hard Placement Rule）
+
+- 所有 Appendix / Addendum 必須置於文件**最末端**  
+- 不得插入正文中段（避免造成「重排/改寫」之誤讀）  
+- 不得以附錄形式對正文做「替代性描述」  
+  - 若附錄與正文產生張力：附錄自動失效
+
+---
+
+## G.3 附錄啟用必須回寫 Appendix Activation Index（Hard Rule）
+
+- 新增任何 Appendix / Addendum  
+  → 必須同步更新 **Appendix I｜附錄啟用索引表**  
+  → 否則該附錄治理上視為不存在
+
+---
+
+（Only-Add｜DOCUMENT_INDEX 附錄補齊 · 第 2 批 完）
