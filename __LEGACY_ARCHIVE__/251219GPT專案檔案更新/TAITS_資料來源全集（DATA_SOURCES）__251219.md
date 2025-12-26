@@ -1794,3 +1794,332 @@ DATA_UNIVERSE 的存在目的，是把「資料是否可靠、是否可追溯、
 任何無法回指來源、無法生成快照、無法稽核回放的資料，都不允許進入 TAITS 的裁決鏈。
 
 （Appendix A｜DATA_UNIVERSE 對位 MASTER_CANON｜Freeze v1.0｜Only-Add）
+
+# Appendix B｜Only-Add：DATA_UNIVERSE 工件模板 × 欄位字典 × Reason Codes（Freeze v1.0）
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_資料來源全集（DATA_UNIVERSE）__251219（doc_key：DATA_UNIVERSE）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON  
+> 目的：補齊 DATA_UNIVERSE 在工程落地（L1/L2/L3）與稽核回放（VERSION_AUDIT / Replay）所需之「最小可檢查工件模板」、欄位字典與標準化 Reason Codes；不新增流程、不改權限、不改既有 Part 1–4 與 Appendix A 之語義。
+
+---
+
+## B.1 本附錄的法律地位與使用方式（Hard Boundary）
+
+- 本附錄僅提供「模板（Template）/ 字典（Dictionary）/ 代碼表（Codebook）」。
+- 本附錄不得被引用為：
+  - 新的裁決位階
+  - 新的風控/合規權力來源
+  - 新的 Canonical Flow 定義
+- 若本附錄任一描述與主文（Part 1–4）或 Appendix A 產生張力：
+  - 一律以主文與 Appendix A 為準
+  - 本附錄該段落自動失效，不需宣告
+
+---
+
+## B.2 Source Registry（source_id）最小模板（必填）
+
+> 用途：用「可被稽核」的方式，登記一個來源（source_id）並鎖定其語義邊界。  
+> 規則：Only-Add 可增加欄位、可加嚴檢核；不可刪減既有必填、不可放寬合規限制。
+
+### B.2.1 Source Record（最小欄位）
+
+- `source_id`：唯一識別（不可重用；不可改寫歷史語義）
+- `source_name`：來源名稱（中/英皆可；英文字必附中文說明）
+- `source_tier`：`PRIMARY / SECONDARY / FALLBACK`
+- `owner_org`：持有/發布機構（例如：TWSE、TPEX、TAIFEX、MOPS、券商、第三方供應商）
+- `legal_basis`：合法性說明（官方法定揭露/授權合約/公開資料；若有授權限制需明示）
+- `endpoint_catalog[]`：端點清單（見 B.4）
+- `update_frequency`：更新頻率與延遲窗（例如：T+0、T+1、每分鐘、事件觸發）
+- `availability_slo`：可用性最低目標（例如：99%/月；或「不承諾」但需填失效策略）
+- `data_scope`：涵蓋範圍（TWSE/TPEX/TAIFEX、商品/個股、期間）
+- `license_restrictions`：授權限制/使用限制（不得缺；無則填 `NONE`）
+- `compliance_eligible_default`：
+  - `PRIMARY/SECONDARY`：可為 `true`（仍受 rulebook_snapshot 與 QG/EC 約束）
+  - `FALLBACK`：預設 **必為 `false`**（不得用於制度裁決鏈）
+- `provenance_policy_ref`：Provenance 政策（見 B.5；可直接引用本檔章節編號）
+- `snapshot_policy_ref`：Snapshot/回放政策（見 B.6；可直接引用本檔章節編號）
+- `quality_policy_ref`：QG/EC 政策（引用 Part 3 / Hard Matrix）
+- `fallback_policy_ref`：fallback 鏈（PRIMARY→SECONDARY→FALLBACK 的順序與條件；不可顛倒官方優先）
+- `failure_modes_ref`：失效模式與降級策略（引用 Part 2 的統一骨架或其擴充）
+- `change_log_ref`：指向 VERSION_AUDIT 的變更帳本索引（最小：change_id 列表或查詢鍵）
+
+### B.2.2 Source Record（建議欄位｜Only-Add）
+
+- `contact_point`：官方/授權供應商聯絡方式（若可）
+- `rate_limit_policy`：速率限制、封鎖策略與重試退避（Backoff）
+- `data_lineage_notes`：上游依賴（例如由公告彙整而成）
+- `security_classification`：敏感等級（尤其 BROKER_API/帳務/個資）
+- `redaction_policy_ref`：脫敏規則（見 Appendix C）
+
+---
+
+## B.3 Subcategory Registry（subcategory_id）最小模板（必填）
+
+> 用途：定義「資料子類別」的語義與 canonical 最小欄位，並對應可用來源（source_id）。  
+> 規則：只增不減；不可用第三方資料取代官方制度裁決依據。
+
+### B.3.1 Subcategory Record（最小欄位）
+
+- `subcategory_id`：唯一識別（不可重用；不可改寫語義）
+- `subcategory_name`：子類別名稱（需中文；英文可附）
+- `domain`：`MARKET_DATA / CORPORATE_ACTION / FUNDAMENTAL / FLOW / REFERENCE / RULEBOOK / BROKER / OPS`
+- `primary_sources[]`：PRIMARY 的 `source_id`（至少 1；若無，必須明示 `NO_PRIMARY_AVAILABLE` 並標記不可合規裁決）
+- `secondary_sources[]`：SECONDARY 的 `source_id`（可空）
+- `fallback_sources[]`：FALLBACK 的 `source_id`（可空；若有必預設 compliance_eligible=false）
+- `canonical_min_fields[]`：canonical 最小欄位（欄位語義不可偷換）
+- `temporal_granularity`：`TICK / 1m / 5m / DAILY / EVENT / PERIODIC`
+- `timezone`：預設 `Asia/Taipei`（若不同需明示並記錄 normalize 規則）
+- `unit_convention`：數量/金額/價格單位（例如：股/張、元、點）
+- `validation_ruleset_ref`：校驗規則（schema/domain/temporal）
+- `normalization_ruleset_ref`：正規化規則（field_map 版本、填值策略、公司行動調整留痕）
+- `required_artifacts[]`（硬要求）：
+  - `raw_payload_ref`
+  - `provenance_map_ref`
+  - `hash_manifest_ref`
+  - `field_map_ref`
+  - `quality_report_ref`
+  - `active_version_map_ref`
+- `missing_behavior`：缺口行為（`RETURN / FAIL / BLOCK` 之規則引用）
+- `evidence_usage_policy`：可否進 Evidence（需受 QG/EC 與合規可用性宣告約束）
+- `audit_checks_ref`：稽核檢核表引用（可引用 Appendix A 的 A.6）
+
+### B.3.2 Subcategory Record（建議欄位｜Only-Add）
+
+- `sla_lag_window`：可接受延遲窗（例：公告/日資料 T+1）
+- `backfill_policy`：補資料政策（可否追溯補齊；補齊需留痕）
+- `parser_regression_fixture_ref`：解析器回歸測試樣本（Part 4 可引用）
+- `ui_disclosure_policy`：UI 顯示需揭露的 provenance/降級欄位（不得靜默）
+
+---
+
+## B.4 Endpoint Catalog（端點清單）模板（source_id 必填）
+
+> 用途：把「取得方式」制度化為證據的一部分（呼應 Part 4 終極裁決語句）。  
+> 注意：端點資訊屬工程資產，但其「存在與可稽核性」屬治理硬要求。
+
+### B.4.1 Endpoint Record（最小欄位）
+
+- `endpoint_id`：端點識別（同 source_id 下唯一）
+- `endpoint_type`：
+  - `HTTP_JSON / HTTP_CSV / HTTP_HTML / SFTP / FILE_DOWNLOAD / STREAM / SDK / BROKER_API`
+- `base_url_or_channel`：URL / channel / SDK 名稱（若為 BROKER_API，僅填「類型與代號」不得洩漏密鑰）
+- `auth_method`：`NONE / API_KEY / OAUTH / SESSION / CERT / CONTRACT_ONLY`
+- `access_scope`：可取得的資料範圍與限制
+- `rate_limit`：速率限制（若未知填 `UNKNOWN` 並在 failure_modes 規範保守退回）
+- `payload_retention_policy`：raw payload 保存策略（不得低於 Part 4 要求）
+- `snapshot_method`：快照方式（下載檔、擷取 HTML、保存回應、截圖等）
+- `integrity_method`：完整性方法（hash、簽章、檔案校驗碼）
+- `parser_id`：解析器識別（對應 parser 版本/規格）
+- `fallback_endpoint_id`：端點級 fallback（同 tier 內優先；跨 tier 仍須遵守官方優先）
+
+---
+
+## B.5 Provenance Manifest（來源追溯）最小欄位（必填）
+
+> 目標：任何資料點（或資料批次）都必須能回指「來源證據」。  
+> 原則：缺 provenance 不得進裁決鏈（主文既有硬規則）。
+
+### B.5.1 Provenance Map（最小欄位）
+
+- `source_id`
+- `endpoint_id`
+- `captured_at`：擷取時間（ISO-8601；含時區或明示採 Asia/Taipei）
+- `request_fingerprint`：請求指紋（不含機敏；可為 query params hash）
+- `response_fingerprint`：回應指紋（hash 或摘要）
+- `raw_payload_ref`：原始回應存放引用
+- `raw_payload_hash`：原始回應 hash
+- `content_type`：`application/json` / `text/html` 等
+- `license_note`：授權限制摘要（無則 `NONE`）
+- `redaction_applied`：是否已脫敏（`true/false`；若 true 必有 redaction_report_ref）
+- `rulebook_snapshot_ref`（如涉及制度/規則引用）：
+  - 必填：制度裁決鏈所引用之規則快照（缺失則合規用途必 veto/block）
+- `page_locator`（如來源為 HTML/公告頁）：
+  - `url`
+  - `section_or_table_id`
+  - `line_range_or_xpath`（可選，但鼓勵）
+- `notes`：補充（不可用此欄位偷換語義；僅描述取得情境）
+
+---
+
+## B.6 Snapshot / Replay（快照與回放）最小欄位（必填）
+
+> 目標：可回放（Replayable）是「能不能被用來裁決」的先決條件之一。
+
+### B.6.1 Snapshot Record（最小欄位）
+
+- `source_snapshot_ref`：快照引用（可指向檔案/物件儲存）
+- `snapshot_created_at`
+- `snapshot_scope`：涵蓋範圍（日期/商品/市場/端點）
+- `hash_manifest_ref`：hash 清單引用
+- `active_version_map_ref`：版本映射引用（至少包含：parser 版本、field_map 版本、ruleset 版本）
+- `immutability_level`：不可變更等級（例如 WORM/append-only；依環境規範）
+- `replayability_assertion`：
+  - `true`：可回放
+  - `false`：不可回放（則不得進 L5/L6/L7 裁決用途；必須 RETURN/BLOCK 由上位規則決定）
+- `missing_items[]`：若不可回放，列出缺口（不得空白）
+
+---
+
+## B.7 Quality Report（品質報告）最小欄位（必填）
+
+> 目標：把資料品質（QG）與證據完整度（EC）落地成「每批次必產出」的工件。
+
+### B.7.1 Quality Report（最小欄位）
+
+- `quality_report_ref`
+- `quality_grade`：QG-A/B/C/D（依 Part 3）
+- `quality_flags[]`：QF_*（見 B.8）
+- `evidence_completeness`：EC-0~EC-4（依 Part 3）
+- `computed_at`
+- `computed_by`：模組/版本（例如 validator vX.Y）
+- `affected_subcategory_id`
+- `coverage`：涵蓋範圍（日期/筆數）
+- `actions_enforced[]`：硬動作（RETURN/FAIL/BLOCK/VETO 等；對應 Hard Matrix）
+- `reason_codes[]`：RC_*（見 B.9；不得空白）
+- `ui_disclosure_required`：是否必須在 UI 顯示降級（缺口不得靜默）
+
+---
+
+## B.8 Quality Flags（QF_*）建議標準化字典（Only-Add 可增不可減）
+
+> 注意：此為「建議標準字典」，用於一致性；實作時可擴充更細，但不得改寫既有含義。
+
+- `QF_PROV_MISSING`：provenance 缺失或不完整
+- `QF_HASH_MISSING`：hash_manifest 或 raw_payload_hash 缺失
+- `QF_VERSION_MAP_MISSING`：active_version_map_ref 缺失
+- `QF_SCHEMA_DRIFT`：schema 漂移（欄位新增/刪除/型別改變未更新 ruleset）
+- `QF_TIMEZONE_UNKNOWN`：時區不明或未能一致化
+- `QF_UNIT_UNKNOWN`：單位不明或未能一致化
+- `QF_OUT_OF_LAG_WINDOW`：超出允許延遲窗
+- `QF_PARTIAL_COVERAGE`：資料覆蓋不完整（缺日期/缺商品）
+- `QF_DUPLICATE_OR_CONFLICT`：重複或互相矛盾
+- `QF_PARSER_ERROR`：解析器錯誤
+- `QF_AUTH_EXPIRED`：授權失效（SECONDARY/BROKER 常見）
+- `QF_FALLBACK_USED`：使用 fallback（需同步輸出 compliance_eligible=false 預設）
+
+---
+
+## B.9 Reason Codes（RC_*）建議標準化字典（Only-Add 可增不可減）
+
+> 目標：讓 RETURN/FAIL/BLOCK/VETO 都能被「一致、可檢查」地解釋，避免靜默降級或黑盒裁決。
+
+### B.9.1 RETURN 類（可補）
+
+- `RC_OFFICIAL_TEMP_UNAVAILABLE`：官方端點暫時不可用（可重試）
+- `RC_LAG_NOT_READY`：尚在官方延遲窗內（等待更新）
+- `RC_FIELDS_PARTIAL_NEED_BACKFILL`：欄位缺漏需補齊
+- `RC_CALENDAR_MISSING`：交易日曆/休市資訊缺失
+
+### B.9.2 FAIL 類（不可恢復）
+
+- `RC_ENDPOINT_DEPRECATED`：端點停用/永久變更
+- `RC_PARSER_OUTDATED`：解析器版本落後
+- `RC_LICENSE_DENIED`：授權/合約不允許
+- `RC_AUTH_INVALID`：認證無效且不可恢復
+
+### B.9.3 BLOCK 類（系統完整性不足）
+
+- `RC_PROVENANCE_INCOMPLETE`：Provenance 不完整
+- `RC_HASH_INCOMPLETE`：hash 不完整
+- `RC_VERSION_MAP_INCOMPLETE`：版本映射不完整
+- `RC_SNAPSHOT_NOT_IMMUTABLE`：快照不可保證不可變更
+- `RC_REPLAY_NOT_POSSIBLE`：不可回放（不得宣稱可追溯）
+
+### B.9.4 VETO / COMPLIANCE 類（合規不可用）
+
+- `RC_RULEBOOK_SNAPSHOT_MISSING`：規則快照缺失（合規裁決必 veto/block）
+- `RC_FALLBACK_NOT_COMPLIANCE_ELIGIBLE`：fallback 來源不可作合規裁決
+- `RC_OFFICIAL_REFERENCE_REQUIRED`：缺官方引用（制度裁決鏈需官方）
+
+---
+
+## B.10 最小「對位 Canonical 工件」映射表（工程檢核用）
+
+> 本表僅用於「檢查是否產出工件」，不改寫 MASTER_CANON 的層級定義。
+
+| Canonical Layer | DATA_UNIVERSE 必須能提供/產出之可檢查工件（最小） |
+|---|---|
+| L1（Data Ingestion） | `raw_payload_ref`、`provenance_map_ref`、`raw_payload_hash`、`endpoint_id`、`captured_at` |
+| L2（Validation/Normalization） | `field_map_ref`、`validation_ruleset_ref`、`normalization_ruleset_ref`、`quality_report_ref`（含 QG/QF/EC/RC） |
+| L3（Snapshot/State） | `source_snapshot_ref`、`hash_manifest_ref`、`active_version_map_ref`、`replayability_assertion` |
+| L5（Evidence） | 僅能提供「可用/不可用」與缺口；不得替代裁決（需遵守 QG/EC 硬矩陣） |
+| L6/L7（Regime/Risk） | 僅提供資料可信度與缺口揭露；不得越權產生 Regime 或風控裁決 |
+| L11（Execution） | 僅提供資料可用性與合規可用性宣告；不得授權下單 |
+
+---
+
+## B.11 終局聲明（不可改寫；僅重申）
+
+資料來源的「取得方式」本身就是證據的一部分。  
+不能保存原始證據與快照，就不能進入裁決鏈；  
+不能脫敏，就不能進入稽核與 UI；  
+不能回放，就不允許宣稱可追溯。
+
+（Appendix B｜DATA_UNIVERSE 工件模板 × 欄位字典 × Reason Codes｜Freeze v1.0｜Only-Add）
+
+---
+
+# Appendix C｜Only-Add：敏感資料（BROKER_API/帳務/個資）脫敏與最小揭露規範（Freeze v1.0）
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_資料來源全集（DATA_UNIVERSE）__251219（doc_key：DATA_UNIVERSE）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON  
+> 目的：補齊 Part 4 所述「不能脫敏就不能進稽核與 UI」之最小可執行規範；不新增任何權限，只定義「不得洩漏/不得落盤/不得顯示」的硬邊界。
+
+---
+
+## C.1 適用範圍（Scope）
+
+- `endpoint_type = BROKER_API / SDK` 之任何資料
+- 含有下列任一敏感元素之 raw payload / log / snapshot：
+  - API Key、Token、Secret、憑證、Session Cookie、私鑰/憑證檔指紋
+  - 身分資訊（姓名、身分證、電話、地址、Email）
+  - 帳務資訊（帳號全碼、可識別之交易明細、資金流水完整識別碼）
+  - 可回推使用者/帳戶的唯一識別碼
+
+---
+
+## C.2 硬限制（Hard Rules）
+
+- **不得**在任何可被 UI 展示或稽核閱讀的輸出中，保留可直接使用之機敏憑證。
+- raw payload 若含機敏：
+  - 允許保存「已脫敏版本」作為 `raw_payload_ref`
+  - 必須同步保存 `redaction_report_ref`（列出被遮罩欄位與遮罩規則）
+- 任何未完成脫敏之資料：
+  - 不得進入可被共享的 Evidence bundle
+  - 不得被 UI 顯示
+  - 必須被標記 `redaction_applied=false` 並觸發 `BLOCK/RETURN`（依上位硬矩陣與環境規範）
+
+---
+
+## C.3 脫敏最小規格（Minimal Redaction Spec）
+
+- Token / Key / Secret：
+  - 僅保留前 3 碼與後 3 碼，其餘以 `*` 遮罩
+  - 或僅保留 hash（不可逆）與長度資訊
+- 帳號/身份識別：
+  - 僅保留末 4 碼，其餘遮罩
+- 金額/部位：
+  - 若涉及個人帳務：僅保留區間或相對量（例如分位/區間），不得保留可重建全貌的逐筆明細
+- Session / Cookie：
+  - 全遮罩（不得留部分）
+
+---
+
+## C.4 最小稽核可見欄位（允許揭露）
+
+在不洩漏機敏前提下，允許稽核/回放留存：
+
+- `endpoint_type`
+- `captured_at`
+- `request_fingerprint`（不含機敏）
+- `response_fingerprint`
+- `raw_payload_hash`（對已脫敏 payload）
+- `parser_id`、`active_version_map_ref`
+- `quality_report_ref`
+- `reason_codes[]`（不得含機敏）
+
+（Appendix C｜敏感資料脫敏與最小揭露規範｜Freeze v1.0｜Only-Add）
