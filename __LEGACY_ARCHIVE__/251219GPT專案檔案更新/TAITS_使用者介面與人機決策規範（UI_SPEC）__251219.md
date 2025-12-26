@@ -438,3 +438,120 @@ UI 的使命不是讓交易變快，
 而是讓每一次交易在發生前都可被理解、被否決、被追溯。
 
 （UI_SPEC｜最大完備版 v2025-12-19 完）
+
+---
+
+# Appendix A｜UI_SPEC × MASTER_CANON 對齊補充（Only-Add）
+（Only-Add · Semantic Lock · Freeze v1.0）
+
+## A.1 補充性質聲明
+- 適用文件：UI_SPEC
+- 補充類型：Addendum / Alignment Guideline（對齊補充指引）
+- 生效狀態：GOVERNANCE_STATE = Freeze v1.0
+- 變更原則：Only-Add（不刪減、不覆寫、不偷換既有語義）
+- 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON
+
+## A.2 法源差異（定位差異）
+- MASTER_CANON 定義：L10 必須由人類裁決，輸入需包含「風控輸出 + UI evidence」，且禁止 UI 模糊化否決原因；並補充 L9a/L10/L11 的不可混用邊界與「人類可做裁決」清單（不行動/回測/模擬/半自動/全自動需明確授權）。
+- UI_SPEC 落地：把上述母法轉成「UI 的必顯示事實欄位」「禁止行為」「APPROVE 硬條件與雙重確認」「Trace 不可變更」「Execution 握手與 BLOCK 原因碼必顯示」等介面硬規格。
+
+## A.3 L9a / L10 / L11 的 UI 呈現分離規則（對齊 MASTER_CANON 附錄 Z）
+為確保不混用邊界（L9a=敘事、L10=裁決、L11=執行與稽核），UI 必須新增以下「呈現隔離」規則（僅補強，不改寫既有章節）：
+
+1) L9a（分析師人話敘事）輸出在 UI 中只能以「參考資料（Reference）」形態呈現  
+- 必須標示：`NON_DECISION_REFERENCE`（非裁決參考）  
+- 必須顯示：其 Evidence 可回指 ref（不得只有文字）  
+- 明確禁止：在 L9a 區塊提供任何「APPROVE 入口」或「暗示下單」文案  
+（MASTER_CANON 已明確：L9a 不具交易授權能力，僅作為 L10 參考）。
+
+2) L10（人類裁決）在 UI 中必須是唯一可產生 `human_decision` 的區域  
+- 任何可改變狀態機至 APPROVED/REJECTED/ABORTED 的操作，只能存在於 Decision Workbench 的 L10 區域  
+- 繼續遵守既有規定：進入 L10 只能透過 UI，禁止 API/腳本繞過。
+
+3) L11（執行/稽核/維修）在 UI 中只能是「狀態可視化」與「回放/稽核載入」  
+- 禁止把 L11 的執行回饋（fills/ACK）包裝為新的投資建議或替代 L10 的再次裁決  
+- 必須保持：Execution 層若回傳 BLOCK，UI 必須顯示原因碼（不可靜默），與既有 9.1 規定一致。
+
+## A.4 人類可做裁決（Mode/Action）在 UI 的必要欄位（Only-Add）
+為對齊 MASTER_CANON「人類可做裁決」清單，UI 必須在 L10 區域新增以下欄位（可擴充，不可縮減）：
+- `human_action_scope`：{NO_ACTION, BACKTEST, SIMULATION, SEMI_AUTO, FULL_AUTO}
+- `human_action_scope_ack`：使用者確認（checkbox/confirm step），用於「不可否認」的一部分
+- `human_action_scope_constraints_ref`：對應限制快照（例如：FULL_AUTO 需明確授權之聲明與版本快照引用）
+
+（母法來源：人類可做裁決清單與「未經 L10 明確裁決不得進入任何執行狀態」）。
+
+---
+
+# Appendix B｜Mermaid 渲染修復版（Only-Add，不覆寫原文）
+（Only-Add · Rendering-Safe Copy · Freeze v1.0）
+
+## B.1 補充性質聲明
+- 適用文件：UI_SPEC
+- 補充類型：Appendix（渲染修復副本；原文保留）
+- 說明：原第 14 節 Mermaid 區塊在 md 中存在「code fence 未完整關閉/段落混入」的可讀性風險；本附錄提供可直接渲染的等價副本，不替代、不覆寫原文。
+
+## B.2 UI Decision Flow（渲染安全版）
+```mermaid
+flowchart TB
+  A[Load Decision Workbench] --> B[Show Evidence/Regime/Risk/Gov/Strategy]
+  B --> C{Risk Gate?}
+  C -->|VETO| V[UI: VETO Banner + Codes + Replay]
+  C -->|PASS| D{Governance Gate?}
+  D -->|RETURN| R[UI: RETURN + Missing Items + Jump Links]
+  D -->|PASS| E{Regime Allowed?}
+  E -->|NO| X[UI: BLOCKED by Regime]
+  E -->|YES| F[Enable APPROVE (Two-step Confirm)]
+  F --> G{Human Decision}
+  G -->|REJECT| H[Record Trace + STOP]
+  G -->|APPROVE| I[Send Intent Draft + Trace Ref]
+  I --> J{Execution Preflight}
+  J -->|BLOCK| K[UI: BLOCK + Reason Codes]
+  J -->|OK| L[Show Execution Live Status]
+B.3 Veto Visualization Map（渲染安全版）
+mermaid
+複製程式碼
+flowchart LR
+  VETO[VETO] --> C1[CMP 合規]
+  VETO --> S1[SYS 系統完整性]
+  VETO --> M1[MKT 市場]
+  VETO --> L1[LIQ 流動性]
+  VETO --> P1[PTF 組合曝險]
+  VETO --> E1[EXE 執行安全]
+  C1 --> CODE1[veto_reason_codes[]]
+  S1 --> CODE1
+  M1 --> CODE1
+  L1 --> CODE1
+  P1 --> CODE1
+  E1 --> CODE1
+Appendix C｜UI × Gate × Risk 的一致性補充（Only-Add）
+（Only-Add · Freeze v1.0）
+
+C.1 補充性質聲明
+適用文件：UI_SPEC
+
+補充類型：Guideline（跨文件一致性呈現規則）
+
+目的：確保 UI 呈現不弱化 L9 Gate 與 Risk/Compliance 最高否決權，並保持「無審計=未發生」可視化一致性。
+
+C.2 Gate 與風控否決的呈現不得互相替代
+Gate 不是風控，Gate 不得弱化風控；Risk/Compliance 的 VETO 高於一切（含 Gate/策略/人類意圖）。
+
+UI 必須同屏顯示（或可一鍵切換且不丟失狀態）：
+
+risk_gate_decision + veto_reason_codes[]
+
+governance_status + missing_items[]
+
+並保持既有排序規則：Risk/Compliance 優先。
+
+C.3 對齊 ARCH_FLOW 的 L10 最小輸出語義（呈現補強）
+ARCH_FLOW 已定義 L10 輸出需包含 decision_trace / risk_disclosure，且禁止誘導下單/隱藏否決。
+因此 UI 必須補強以下「呈現不可省略」：
+
+risk_disclosure_ref：風險揭露引用（可展開）
+
+decision_trace_ref：裁決追溯引用（可回放）
+
+任何 VETO/RETURN/BLOCK 都必須可回放（Replay）或至少提供 evidence_bundle_ref / risk_gate_snapshot_ref 的可點開引用。
+
+（UI_SPEC｜Only-Add 最大完備補強：Appendix A–C · Freeze v1.0）
