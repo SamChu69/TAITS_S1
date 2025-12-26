@@ -11,6 +11,18 @@ doc_key：STRATEGY_FEATURE_INDEX
 核心宣告：Feature ≠ Signal ≠ Strategy ≠ Order（特徵非訊號、非策略、非下單）  
 
 ---
+> 【文件閱讀與 Canonical 對位指引（Only-Add）】
+>
+> 本文件主體內容定義 STRATEGY_FEATURE_INDEX 之特徵分類、語義與治理規範。
+> 自文件最末之「Appendix Y｜STRATEGY_FEATURE_INDEX × MASTER_CANON × STRATEGY_UNIVERSE 同步對位附錄」起，
+> 為依據 MASTER_CANON 與 STRATEGY_UNIVERSE（Part 8 新增策略模板）
+> 所新增之 Canonical 對位與接口一致性補充。
+>
+> 本指引僅作閱讀與治理定位說明，
+> 不構成對主文條款之修改，
+> 裁決優先序仍依 DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON 為準。
+
+---
 
 ## 0. 文件定位（最大完備｜全知識自洽）
 
@@ -1741,3 +1753,195 @@ C9. Only-Add 演進規則（Part 4 專屬）
 以「簡化」之名移除方法論特徵拆解（若要簡化只能在 UI 層折疊呈現）
 
 （STRATEGY_FEATURE_INDEX｜Part 4：附錄C v2025-12-19 完）
+
+<!-- =========================================================
+TAITS｜STRATEGY_FEATURE_INDEX｜Only-Add Canonical Alignment Addendum
+GOVERNANCE_STATE = Freeze v1.0
+變更原則：Only-Add（只可新增，不可刪減、不可覆寫、不可偷換既有語義）
+適用文件：STRATEGY_FEATURE_INDEX（本檔）＋ STRATEGY_UNIVERSE（Part 8 新增策略模板）
+對齊母法：MASTER_CANON（Canonical Flow L1–L11）
+裁決序位：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON
+========================================================= -->
+
+# Block A｜文件開頭追加：MASTER_CANON 對位指引（Only-Add · Freeze v1.0）
+
+（Only-Add · Canonical Alignment Guideline · Freeze v1.0）
+
+## A.0 本段定位與效力聲明（不可省略）
+
+1. 本段為 **STRATEGY_FEATURE_INDEX 對位 MASTER_CANON 的補充指引**，用於確保「特徵（Feature）層」在 Canonical Flow 中之合法邊界、責任歸屬與稽核可追溯性；**不構成新 Layer**，亦 **不改寫 MASTER_CANON 的 L1–L11**。  
+2. 本段 **不新增策略、不改寫策略條目、不授權任何下單語義**；STRATEGY_FEATURE_INDEX 僅規範 Feature 的語義、可用性、品質與稽核輸出。  
+3. 若本檔任一段落與 MASTER_CANON 存在歧義，**一律以 MASTER_CANON 為最終裁決**；本段僅提供「正確解讀與工程落地一致性」之對位方式。
+
+## A.1 STRATEGY_FEATURE_INDEX 與 MASTER_CANON 的「差異」與「分工」界線（對位總結）
+
+### A.1.1 MASTER_CANON 是「法源與流程」；STRATEGY_FEATURE_INDEX 是「特徵語義與輸出契約」
+
+- MASTER_CANON：定義 L1–L11 的唯一 Canonical Flow（流程裁決母法）。  
+- STRATEGY_FEATURE_INDEX：定義 L4（Feature）層之**語義邊界、計算輸出、品質旗標、來源映射（Provenance）、版本/雜湊（Hash）、可回放（Replay Determinism）**等工程與治理必備義務；並提供 Feature → Evidence → Regime 的合法流之規格化展開。  
+- **不可跨界**：Feature 不得「方向化」（不可變成 Signal），不得「策略化」（不可變成 Strategy），更不得「下單化」（不可變成 Order）。此界線屬硬性治理邊界（Hard Boundary）。:contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}
+
+### A.1.2 STRATEGY_FEATURE_INDEX 的上/下游責任邊界（Canonical 對位）
+
+- 上游（L3 Snapshot Ready）：本檔不定義 Snapshot 規則本體，但要求 Feature 計算必須能被 Snapshot 回放支持（Reproducible / Deterministic）。  
+- 本層（L4 Feature Engine）：本檔定義 FeatureValueRecord、Provenance、QualityFlags、VersionRef、Hash 等最小稽核工件；缺任一項可在 Live/Paper 升級為風控否決（SYS-AUDIT / SYS-PROV）。:contentReference[oaicite:2]{index=2}  
+- 下游（L5 Evidence / L6 Regime / L7 Risk & Compliance）：本檔允許 Feature 作為 Evidence/Regime 的輸入，但 **不得讓 Feature 直接成為 PASS/VETO 或裁決依據**；裁決權仍屬 L7（RISK_COMPLIANCE）與 L10（Decision）。:contentReference[oaicite:3]{index=3}:contentReference[oaicite:4]{index=4}
+
+## A.2 與 STRATEGY_UNIVERSE（Part 8 新增策略模板）之同步對位：唯一正確引用方式
+
+### A.2.1 STRATEGY_UNIVERSE 的 Required Evidence 必須以 Feature ID 引用（不得用自由文字替代）
+
+- STRATEGY_UNIVERSE（Part 8）在新增策略條目（8.X）中要求列出 Required Evidence，且需包含資料源引用與特徵依賴引用；本檔定義「特徵依賴引用」的唯一合法格式為：**Feature ID（feature_id）清單＋版本/來源/品質條件**。:contentReference[oaicite:5]{index=5}  
+- 禁止：用「某某指標很好」「看起來偏多」等自由敘述代替 Feature ID；禁止把 Feature 的 UI 呈現（例如箭頭/顏色）當作 Evidence 本體。:contentReference[oaicite:6]{index=6}
+
+### A.2.2 STRATEGY_UNIVERSE 的 Output Contract（Allowed/Forbidden/Void Handling）不得被 Feature/Index 內容越權
+
+- STRATEGY_UNIVERSE（Part 8）定義永久禁止輸出（Forbidden Outputs），包含任何可直接下單欄位組合、任何「立即執行」語義、任何券商指令/API payload/委託參數包，並規定違規需標記 INVALID_STRATEGY_OUTPUT、Gate 必須 BLOCK、並寫入審計鏈。:contentReference[oaicite:7]{index=7}  
+- 本檔（Feature Index）之任何新增內容 **不得** 放寬或改寫上述策略輸出禁令；Feature 僅能提供描述性輸出與稽核對位欄位。
+
+---
+
+# Block B｜文件最末端追加：Appendix Y（Only-Add · Freeze v1.0）
+
+# Appendix Y｜STRATEGY_FEATURE_INDEX × MASTER_CANON × STRATEGY_UNIVERSE（Part 8）同步對位附錄  
+（Only-Add · Canonical + Template Sync Addendum · Freeze v1.0）
+
+doc_key：STRATEGY_FEATURE_INDEX  
+附錄性質：Addendum / Alignment Appendix（僅補充，不改寫、不覆蓋）  
+生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+對齊母法：MASTER_CANON（Canonical Flow L1–L11）  
+同步對位：STRATEGY_UNIVERSE（Part 8｜新增策略條目治理模板）  
+裁決序位：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON  
+變更原則：Only-Add（只可新增，不可刪減、不可偷換既有語義）
+
+---
+
+## Y.0 附錄目的（不可省略）
+
+本附錄提供兩件事：
+
+1) **Canonical 對位**：把 Feature 層（L4）的輸出、品質、來源、版本、稽核工件，與 MASTER_CANON 的上下游責任邊界做「可驗證」對位。  
+2) **模板同步**：把 STRATEGY_UNIVERSE（Part 8）新增策略時必填的 Required Evidence / Output Contract / Governance & Audit 欄位，與本檔 Feature 規格做「硬一致」接口（interface）對位，避免新策略條目因引用不一致而失效。
+
+---
+
+## Y.1 Canonical Layer 對位表（L3–L7 最小閉環）
+
+> 本表為「工程落地檢核」用途；不改寫 MASTER_CANON 定義。
+
+| Canonical Layer | 角色定位 | STRATEGY_FEATURE_INDEX 在此層的硬義務 | 缺失後果（治理語義） |
+|---|---|---|---|
+| L3 Snapshot Ready | 可回放快照就緒 | Feature 計算須可回放；不得存在 lookahead；需能追溯 available_at（對延遲資料尤需） | Gate RETURN 或升級風控（視缺陷類型） |
+| L4 Feature | 特徵計算與語義契約 | 必輸出：FeatureValueRecord / ProvenanceMapRef / QualityFlags / VersionRef / Hash | Live/Paper 可升級否決（SYS-AUDIT / SYS-PROV）:contentReference[oaicite:8]{index=8} |
+| L5 Evidence | 證據組裝 | Feature 僅作為 Evidence Input；不得直接輸出買賣方向或「裁決」 | 語義違規（GOV-FTR-SEM-*） |
+| L6 Regime | 狀態分類 | Feature 允許作 Regime Input，但不得越權宣告可交易/不可交易 | 越權視同治理違規 |
+| L7 Risk & Compliance | 最高否決權 | Feature 不得成為 PASS/VETO；不得縮減風控揭露與稽核工件 | 觸發 VETO/BLOCK |
+
+---
+
+## Y.2 Feature 引用的「唯一合法格式」：FeatureRefBlock（供 STRATEGY_UNIVERSE Part 8 使用）
+
+> 本段定義：當 STRATEGY_UNIVERSE（8.X）要求「Required Evidence（含特徵依賴引用）」時，必須使用以下格式。  
+> 禁止用自由文字替代 Feature ID；禁止用 UI 呈現（顏色/箭頭）替代 Feature 值與品質狀態。
+
+### Y.2.1 FeatureRefBlock（必填）
+
+```yaml
+FeatureRefBlock:
+  feature_id: "TECH.GMMA_SPREAD_RATIO"      # 必須對應本檔 feature_id（唯一鍵）
+  feature_version_min: "1.0.0"             # 最低可接受版本（語義不破壞）
+  allowed_uses_required:
+    - "EVIDENCE_INPUT"
+  forbidden_uses_assert:
+    - "DIRECT_SIGNAL"
+    - "DIRECT_STRATEGY"
+    - "DIRECT_ORDER"
+  quality_requirements:
+    missing_policy: "FLAG|STOP"            # 僅允許引用本檔定義的政策集合
+    outlier_policy: "FLAG|STOP|WINSORIZE"
+    halt_handling: "FREEZE_LAST|FLAG|STOP"
+  provenance_requirements:
+    require_provenance_map: true
+    require_input_hash: true
+    require_output_hash: true
+  audit_requirements:
+    must_emit_artifacts:
+      - "FeatureValueRecord"
+      - "ProvenanceMapRef"
+      - "QualityFlags"
+      - "VersionRef"
+      - "Hash"
+  ui_explain_binding:
+    explain_level: "L1|L2|L3"               # 對位 UI_SPEC 顯示階層（僅接口，不越權 UI 規範）
+    display_prohibition:
+      - "禁止買賣箭頭/顏色暗示（除非明確標示描述性且不作交易引導）"
+上述欄位語義依循本檔既有 Feature 範例（含 allowed_uses / forbidden_uses、provenance、hash、versioning、ui_explain 等結構），不得刪減。
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+Y.3 STRATEGY_UNIVERSE（Part 8）欄位 ↔ Feature Index 對位表（同步硬規則）
+目的：確保新策略（8.X）在「Required Evidence / Governance & Audit / Output Contract」三塊，與 Feature 層輸出契約一致，且不越權。
+
+STRATEGY_UNIVERSE（8.X）欄位	必須如何引用/對位 STRATEGY_FEATURE_INDEX	硬性禁止
+Required Evidence（含特徵依賴）	必須列出 FeatureRefBlock 清單（每個 evidence 要能追溯 feature_id + provenance + quality）	以自由文字/感覺敘述取代 feature_id
+Governance & Audit（最小工件）	必須承諾：FeatureValueRecord / ProvenanceMapRef / QualityFlags / VersionRef / Hash（缺一不可）
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+刪除或弱化稽核工件；以「簡化」名義移除 provenance/hash/replay
+Output Contract（Allowed/Forbidden/Violation）	必須沿用 STRATEGY_UNIVERSE Part 8 的 Forbidden Outputs 與 Violation Handling（不可改）
+TAITS_策略宇宙全集（STRATEGY_UNIVERSE）…
+
+任何下單參數、券商指令、API payload、立即執行語義
+
+Y.4 新增/更新 Feature 的 Gate 統一要求（不得放寬）
+本段為「本檔內部一致性」要求，並對位治理 Gate 流程：Semantic Boundary → Provenance/Hash → No Lookahead/Available_at → Replay Determinism → QA Handling → Allowed/Forbidden Uses。
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+Y.4.1 Gate 最小檢核清單（提交即用）
+語義邊界：命名與輸出必為描述性；不得方向化（不可把描述性特徵偷換為信號）。
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+來源與雜湊：必有 provenance_map 與 input/output hash；不可缺省。
+
+反前視（No Lookahead）：必聲明 lookahead_policy；延遲資料需 available_at。
+
+可回放性：同一 snapshot 必須產生一致輸出（deterministic）。
+
+品質處理：缺值/離群/停牌處理需明確且可稽核。
+
+用途白名單/黑名單：allowed_uses / forbidden_uses 必須存在；禁止 DIRECT_SIGNAL / DIRECT_STRATEGY / DIRECT_ORDER。
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+Y.5 Only-Add 演進規則（本附錄專屬）
+允許新增（Only-Add）：
+
+新的 FeatureMeta 欄位（不得刪舊欄位）
+
+新的方法論特徵族（例如新增新的結構體系子族）
+
+新的 UI 提示欄位（不得弱化風險揭露）
+
+新的品質旗標與來源映射（provenance mapping）
+
+新的 Gate 檢核點與 reason_code（僅可更嚴，不可放寬）
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+禁止（硬禁）：
+
+任何把描述性特徵偷換為方向/信號/策略/下單意圖的改動
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+刪除 Provenance / Hash / Replay 相關必備欄位
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+以「簡化」名義移除方法論特徵拆解（如需簡化只能在 UI 層折疊呈現，不得刪除規格本體）
+TAITS_策略特徵與因子索引（STRATEGY_FEATUR…
+
+
+（Appendix Y｜STRATEGY_FEATURE_INDEX × MASTER_CANON × STRATEGY_UNIVERSE 同步對位補充附錄 · Freeze v1.0 · Only-Add 完）
