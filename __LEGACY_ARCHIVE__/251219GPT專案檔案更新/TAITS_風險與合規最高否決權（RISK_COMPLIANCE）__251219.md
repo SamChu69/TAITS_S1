@@ -428,3 +428,195 @@ UI 必須顯示：
 > 就算錯過機會，也必須選擇不交易。  
 
 （RISK_COMPLIANCE｜最大完備版 v2025-12-19 完）
+
+---
+
+# Appendix A｜RISK_COMPLIANCE × MASTER_CANON 對位補充（Only-Add）
+（Only-Add · Alignment Addendum · Freeze v1.0）
+
+## A.0 補充性質聲明（不可省略）
+- 適用文件：RISK_COMPLIANCE（doc_key=RISK_COMPLIANCE）
+- 補充類型：Addendum / Alignment Guideline（對位補充；不改寫 Canonical）
+- 生效狀態：GOVERNANCE_STATE = Freeze v1.0
+- 變更原則：Only-Add（只可新增，不可刪減/覆寫/偷換既有語義）
+- 衝突裁決序：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON
+- 範圍限定：僅針對本文件與 MASTER_CANON（含附錄 Z）在 **L7 Gate 職責語義、輸入輸出、否決權位階、全紀錄原則與人機分工邊界** 之一致性對位
+
+## A.1 與 MASTER_CANON 的定位差異（法源分工）
+> 本節僅用於「裁決對位」，不得被理解為新增 Canonical Flow 或改寫 L1–L11。
+
+### A.1.1 MASTER_CANON（治理等級 S）在本議題的法源角色
+MASTER_CANON 負責裁決（與本文件相關者）：
+- Canonical Flow（L1–L11）之語義不可變核心（含 L7 的存在性與輸入/輸出語義）
+- L7：Risk & Compliance 的 **PASS/VETO 二元裁決**、**禁止 Soft Pass**、**禁止以績效辯護否決**
+- L9a/L10/L11 人機分工與全紀錄原則（附錄 Z）：確保「分析敘事」「人類決策」「系統執行」三者不可混用，且所有關鍵結論必須可回指 Evidence（可驗證/可否決/可稽核）
+
+### A.1.2 RISK_COMPLIANCE（治理等級 A）在本議題的法規角色
+本文件負責把母法級要求落地為：
+- L7 Gate 的 **最高否決權（Supreme Veto）** 制度化定義（位階、不可覆寫、即刻生效）
+- 風險分類體系（Risk Taxonomy）、否決條件全集（Veto Conditions）、否決原因碼（Reason Codes）
+- Risk PASS Token（放行憑證）之結構、簽章/防偽、有效期、版本引用與審計物要求
+- Gate 與 UI 的交付義務（PASS/VETO + reason codes + Evidence/Policy 版本可追溯）
+- 審計與回放（Audit/Replay）之最小集合，並與 ARCH_FLOW / VERSION_AUDIT / EXECUTION_CONTROL 形成可對帳的工件鏈
+
+## A.2 對位結論（一致性宣告）
+- MASTER_CANON 定義「L7 是什麼、可輸出什麼、禁止什麼」；RISK_COMPLIANCE 定義「如何以制度條文把 L7 落地為可驗證、可否決、可回放」。
+- 任何歧義：一律回到 MASTER_CANON 的語義裁決，再以 Only-Add 方式在本文件附錄增補可驗證條件；不得反向改寫母法。
+
+## A.3 MASTER_CANON 的 L7 語義鎖定：對位映射（不改主文）
+MASTER_CANON 對 L7 的語義要求（摘要）：
+- 目的：對所有意圖做 PASS/VETO 裁決  
+- 輸入：Regime State + Evidence + Account/Portfolio + Rules  
+- 輸出：PASS / VETO + reason codes + token（PASS only）  
+- 禁止：Soft Pass；以績效辯護否決
+
+本文件對位落點（主文既有內容）：
+- §1.2 Binary Compliance（PASS/VETO）＝對位「禁止 Soft Pass」
+- §3.3 Gate 輸出（PASS/VETO + reason codes + token）＝對位「輸出 token（PASS only）」
+- §1.1、§7（否決條件）與 §14（禁止事項）＝對位「不得以績效/直覺/緊急性辯護否決」
+
+---
+
+# Appendix B｜對位 MASTER_CANON 附錄 Z：人機分工邊界對 L7 的限制（Only-Add）
+（Only-Add · Boundary Lock for L7 · Freeze v1.0）
+
+## B.0 補充性質聲明
+- 適用文件：RISK_COMPLIANCE
+- 補充類型：Guideline（邊界鎖定指引；不改寫 Canonical）
+- 生效狀態：GOVERNANCE_STATE = Freeze v1.0
+- 目的：將 MASTER_CANON 附錄 Z 所述「L9a 敘事 / L10 決策 / L11 執行」不可混用邊界，落到 L7 Gate 的行為限制，避免風控越權或被誤用為「決策替代」。
+
+## B.1 L7 的合法輸出形態（嚴格限制）
+L7 對外（供 L9/L10/L11）唯一合法輸出僅允許：
+- `risk_gate_decision = PASS | VETO`
+- `veto_reason_codes[]`（VETO 必填且不可空）
+- `risk_pass_token`（僅 PASS 生成）
+- `risk_evidence_snapshot_ref`（可回放）
+
+禁止 L7 輸出：
+- 任何交易方向建議、進出場條件建議、標的偏好（屬 L8/L9a 範圍）
+- 任何「替代 L10 的批准/拒絕敘事」或情緒性語句（L7 只能裁決 PASS/VETO + 理由碼）
+- 任何以 L9a 人話敘事替代 Evidence 的放行（Evidence First）
+
+## B.2 L7 不得被 L9a 影響其裁決語義（Evidence > Narrative）
+- 附錄 Z 要求：L9a 的關鍵敘述必須可回指 Evidence，且僅作 L10 參考。
+- 因此，L7 的裁決必須以 **Evidence + Rules + Account/Portfolio + Regime** 為唯一有效依據；
+- 若輸入中存在僅敘事、無可回指 Evidence 的主張，視為 Evidence 不完整：依主文 §1.4 直接觸發 SYS 類否決（SYS-AUD / SYS-PROV）。
+
+## B.3 L7 與 L10 的不可替代關係（Veto ≠ Decision）
+- L7 的 PASS 不是「建議下單」，只是「風險/合規層不否決」。
+- L7 的 VETO 不是「投資建議」，而是「制度上禁止進入執行」。
+- L10 人類裁決（APPROVE/REJECT/ABORT）不得被 L7 的 PASS 誤解為自動批准；UI 必須明確區隔「PASS」與「APPROVE」。
+
+---
+
+# Appendix C｜L7 全紀錄原則：Risk Gate 工件鏈與 Replay 最小集（Only-Add）
+（Only-Add · Audit/Replay Hardening for L7 · Freeze v1.0）
+
+## C.0 補充性質聲明
+- 適用文件：RISK_COMPLIANCE
+- 補充類型：Appendix（工件鏈補強附錄；不取代主文）
+- 生效狀態：GOVERNANCE_STATE = Freeze v1.0
+- 目的：對位 MASTER_CANON「可驗證、可否決、可稽核」之全紀錄原則，將 L7 必備工件鏈落地為可被 ARCH_FLOW / VERSION_AUDIT / EXECUTION_CONTROL 一致引用的最小集合。
+
+## C.1 L7 Gate 審計事件最小欄位集（Risk Gate Decision Minimal Fields）
+任何一次 L7 Gate 計算（無論 PASS 或 VETO）至少必須寫入：
+- `correlation_id`
+- `layer_id = L7`
+- `timestamp_utc`
+- `risk_gate_decision = PASS | VETO`
+- `veto_reason_codes[]`（PASS 可空；VETO 不可空）
+- `policy_version`
+- `rulebook_snapshot_ref`
+- `regime_state_ref`
+- `evidence_bundle_ref`（或等價引用）
+- `account_state_ref`（資金/倉位/未成交/曝險快照引用）
+- `input_hash_ref`（Evidence/State 的 hash）
+- `output_hash_ref`（決策輸出的 hash）
+- `documents_active_map_ref`（ACTIVE 文件版本映射快照）
+- `immutability_flag`（append-only/immutable）
+
+缺任一欄位 → 視為 `SYS-AUDIT-01` 或等價否決，並不得產生有效 PASS Token。
+
+## C.2 Risk PASS Token 的「不可否認性」最低要求（對位 EXECUTION_CONTROL）
+為確保 EXECUTION_CONTROL 可驗證且不可偽造，本文件主文 §10.2 之 Token 最小欄位在 Freeze v1.0 下補強如下（Only-Add）：
+- `token_id`
+- `correlation_id`
+- `policy_version`
+- `issued_at` / `expires_at`
+- `gate_decision = PASS`
+- `input_hash_ref`（指向 Evidence/Regime/Account/Rules 的 hash 清單或 manifest）
+- `documents_active_map_ref`
+- `signature`（不可否認簽章/摘要；具可驗證性）
+- `scope`（可選；若存在，至少包含 mode 與標的/帳戶範圍之限制，避免 token 跨模式濫用）
+
+Token 若缺 `signature` 或 `documents_active_map_ref` → 視為不可驗證（SYS-VERIFY-01）→ VETO。
+
+## C.3 ARCH_FLOW Replay Bundle 的 L7 子集（Risk Sub-Bundle）
+L7 必須能提供 Replay 子集（可被整體 Replay Bundle 引用）：
+- `risk_gate_decision_ref`
+- `veto_reason_codes[]`
+- `policy_version`
+- `rulebook_snapshot_ref`
+- `risk_pass_token_ref`（PASS only）
+- `regime_state_ref`
+- `evidence_bundle_ref`
+- `account_state_ref`
+- `documents_active_map_ref`
+- `hash_manifest_ref`
+
+要求：相同 Replay 子集必須可重算得到相同 PASS/VETO 結論；否則視為污染（Pollution）並必須阻斷後續同類執行，直到人工介入。
+
+---
+
+# Appendix D｜L7→L10→L11 交接契約（Handoff Contract）與 UI 呈現補強（Only-Add）
+（Only-Add · Handoff Integrity · Freeze v1.0）
+
+## D.0 補充性質聲明
+- 適用文件：RISK_COMPLIANCE
+- 補充類型：Checklist / Contract Appendix（交接契約附錄；不取代主文）
+- 生效狀態：GOVERNANCE_STATE = Freeze v1.0
+- 目的：把 L7 Gate 的輸出，規範為 UI（L10）與執行層（L11）可直接驗證的交接契約，防止「PASS 被誤當 APPROVE」「Token 被誤用」「理由碼被遮蔽」。
+
+## D.1 L7→L10（UI）交付欄位（Must-Deliver to UI）
+UI（L10）在展示給人類裁決前，必須收到且能呈現：
+- `risk_gate_decision`（PASS/VETO，禁止模糊）
+- `veto_reason_codes[]`（VETO 必須可展開、不可遮蔽）
+- `risk_evidence_snapshot_ref`（可點開回放）
+- `policy_version`（可追溯）
+- `rulebook_snapshot_ref`（制度快照版本）
+- `correlation_id`（稽核主鍵）
+- `documents_active_map_ref`（本次運行 Active 版本映射）
+
+UI 禁止：
+- 以「建議」「注意」取代 VETO
+- 以績效圖表弱化風險揭露（風險揭露優先於績效）
+- 在 VETO 時仍允許進入 APPROVE（必須硬阻斷）
+
+## D.2 L7→L11（Execution Control）交付欄位（Must-Deliver to Execution）
+當且僅當 `risk_gate_decision=PASS`，L7 必須交付：
+- `risk_pass_token_ref`（含 token 可驗證內容）
+- `policy_version`
+- `documents_active_map_ref`
+- `input_hash_ref` / `hash_manifest_ref`
+
+並且明確規範（對位 EXECUTION_CONTROL）：
+- L11 送單前必驗：token 未過期、correlation_id 一致、policy_version 存在且可回放、signature 可驗證、scope 不越界
+- 驗證失敗：視為 SYS-VERSION / SYS-VERIFY 類 VETO，並觸發執行層保護（BLOCK/SAFE MODE）
+
+## D.3 交接一致性檢查（Consistency Checks｜全部不通過＝BLOCK）
+1) PASS ≠ APPROVE  
+- UI 必須明確標示：Risk PASS 只是「未否決」，仍需 L10 人類 APPROVE 才能進入 L11。
+
+2) Token 不可跨模式濫用  
+- Simulation/Paper/Live 的 token 不得互用；任何不一致屬 `TOKEN_SCOPE_MISMATCH` → BLOCK。
+
+3) Reason Codes 不可空與不可遮蔽  
+- VETO 時 reason_codes 必須非空且 UI 可見；遮蔽視為 `SYS-AUDIT` 等價重大缺失 → VETO。
+
+4) Evidence 必須可回放  
+- risk_evidence_snapshot_ref 不可用「文字敘事」替代；不可回放視為 Evidence 不完整 → VETO。
+
+---
+
+（RISK_COMPLIANCE｜Only-Add Addendum Pack：Appendix A–D · Freeze v1.0 生效）
