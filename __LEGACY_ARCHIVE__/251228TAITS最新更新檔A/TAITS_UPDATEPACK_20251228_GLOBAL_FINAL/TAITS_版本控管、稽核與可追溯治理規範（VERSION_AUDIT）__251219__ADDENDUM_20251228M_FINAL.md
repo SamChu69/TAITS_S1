@@ -917,3 +917,31 @@ ref_notes = <可選：alias/Label 解讀備註>
 - 本 Addendum 目的僅在於消解引用歧義、避免 Gate 因 metadata/格式缺口而誤判，並確保全鏈路可稽核、可回放。
 
 （Addendum 2025-12-28｜Only-Add｜Freeze v1.0 完）
+
+---
+
+# Addendum 2025-12-28｜Only-Add：METADATA_FIX Ledger 續增（0023–0025）｜Freeze v1.0
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_版本控管、稽核與可追溯治理規範（VERSION_AUDIT）__251219__ADDENDUM_20251228M_FINAL.md（doc_key：VERSION_AUDIT）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 上位裁決序列：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（AI 行為規範仍受 AI_GOV 最高約束；衝突裁決流程依 DOCUMENT_INDEX）  
+> 目的：為本次「後稽核修補（Errata / Placeholder Norm）」補登 METADATA_FIX Ledger 條目；不改寫任何既有正文條款。
+
+---
+
+## A. METADATA_FIX Ledger（續增｜Only-Add）
+
+> 本段為 Appendix A（METADATA_FIX Ledger）之續增；不回填、不改寫既有表格內容。
+
+| fix_id | date | batch_id | scope | note | touched_docs |
+|---|---:|---|---|---|---|
+| VA-METADATA_FIX-20251228-0023 | 2025-12-28 | BATCH-20251228-POSTAUDIT-ERRATA | MASTER_CANON | Declare standalone line `...` as non-normative artifact (errata) | MASTER_CANON |
+| VA-METADATA_FIX-20251228-0024 | 2025-12-28 | BATCH-20251228-POSTAUDIT-ERRATA | PROCESS_ANCHOR | Define and gate `VA-PLACEHOLDER-0001` usage; ACTIVE requires replacement by valid Ledger ID | PROCESS_ANCHOR |
+| VA-METADATA_FIX-20251228-0025 | 2025-12-28 | BATCH-20251228-POSTAUDIT-ERRATA | VERSION_AUDIT | Ledger continuation appended (0023–0025) | VERSION_AUDIT |
+
+## B. 最終宣告
+- 本 Addendum 為 Only-Add；不改寫本文件任何既有條款。  
+- 本 Addendum 之解讀與適用，均以 DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON 為最終裁決順序；AI 行為仍以 AI_GOV 為最高約束。
+
+（Addendum 2025-12-28｜Only-Add｜Freeze v1.0 完）

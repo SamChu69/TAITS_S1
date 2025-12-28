@@ -943,3 +943,40 @@ ref_notes = <可選：alias/Label 解讀備註>
 - 本 Addendum 目的僅在於消解引用歧義、避免 Gate 因 metadata/格式缺口而誤判，並確保全鏈路可稽核、可回放。
 
 （Addendum 2025-12-28｜Only-Add｜Freeze v1.0 完）
+
+---
+
+# Addendum 2025-12-28｜Only-Add：ERRATA_PATCH_0001（占位行「...」非規範性宣告）｜Freeze v1.0
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__251219__ADDENDUM_20251227_FINAL.md（doc_key：MASTER_CANON）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 上位裁決序列：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（AI 行為規範仍受 AI_GOV 最高約束；衝突裁決流程依 DOCUMENT_INDEX）  
+> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（條目：`VA-METADATA_FIX-20251228-0023`）  
+> 目的：消解本文件「Addendum 2025-12-28｜GLOBAL_ALIGNMENT_PATCH」中出現之單行占位字元（`...`）可能造成的裁決/稽核歧義；不改寫任何既有正文條款。
+
+---
+
+## E1. 問題描述（僅限本文件內之字面占位）
+在本文件既有內容中，出現一行單獨的三點占位字元：
+
+- `...`
+
+該行屬於**編排/輸出過程的字面占位殘留**，不承載治理語義、亦不構成任何缺漏之暗示。
+
+## E2. 裁決（Non-Normative Artifact）
+自本 Addendum 生效起，對本文件之任何讀取、稽核、回放、或 Gate 解析：
+
+- 凡遇到**單獨一行且內容完全等於 `...`**者，均視為 **Non-Normative Artifact（非規範性編排殘留）**。  
+- 該行在裁決鏈中應被**忽略**，不得被解讀為：缺失段落、待補條款、或可由任何人/任何 Agent 自行補完之授權。  
+- 本文件其餘內容之可讀性與完整性不受影響；既有條款仍以原文為準。
+
+## E3. Freeze v1.0 下之處置邊界（Only-Add）
+- Freeze v1.0 期間：**不得**以「刪除該行」方式改寫既有正文；僅以本 Addendum 形式完成裁決封口。  
+- 非 Freeze（未來版本）若需進行格式層級清理，必須走 DOCUMENT_INDEX 定義之治理閘門與版本稽核流程，不得在 Freeze v1.0 內回溯改寫。
+
+## E4. 最終宣告
+- 本 Addendum 為 Only-Add；不改寫本文件任何既有條款。  
+- 本 Addendum 之解讀與適用，均以 DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON 為最終裁決順序；AI 行為仍以 AI_GOV 為最高約束。
+
+（Addendum 2025-12-28｜Only-Add｜Freeze v1.0 完）

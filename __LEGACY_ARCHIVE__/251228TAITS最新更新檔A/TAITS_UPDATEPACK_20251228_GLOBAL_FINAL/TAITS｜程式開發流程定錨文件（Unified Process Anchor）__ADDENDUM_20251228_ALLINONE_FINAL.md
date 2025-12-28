@@ -1427,3 +1427,43 @@ ref_notes = <可選：alias/Label 解讀備註>
 - 本 Addendum 目的僅在於消解引用歧義、避免 Gate 因 metadata/格式缺口而誤判，並確保全鏈路可稽核、可回放。
 
 （Addendum 2025-12-28｜Only-Add｜Freeze v1.0 完）
+
+---
+
+# Addendum 2025-12-28｜Only-Add：AUDIT_ANCHOR_PLACEHOLDER_NORM（VA-PLACEHOLDER 使用封口）｜Freeze v1.0
+
+> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  
+> 適用文件：TAITS｜程式開發流程定錨文件（Unified Process Anchor）__ADDENDUM_20251228_ALLINONE_FINAL.md（doc_key：PROCESS_ANCHOR）  
+> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  
+> 上位裁決序列：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（AI 行為規範仍受 AI_GOV 最高約束；衝突裁決流程依 DOCUMENT_INDEX）  
+> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（條目：`VA-METADATA_FIX-20251228-0024`）  
+> 目的：針對本文件中出現之 `VA-PLACEHOLDER-0001`（audit_anchor 占位值）建立最小治理語義與替換門檻，避免「占位字串」被誤視為有效稽核錨點；不改寫任何既有正文條款。
+
+---
+
+## P1. 定義（Audit Anchor Placeholder）
+本文件內出現之字串：
+
+- `VA-PLACEHOLDER-0001`
+
+其性質為 **Audit Anchor Placeholder（稽核錨點占位值）**，僅允許用於「對話草案 / 範本示例 / 尚未寫入 ACTIVE 的暫存文本」之表示用途。
+
+## P2. ACTIVE 入庫門檻（必須替換）
+凡任何內容被納入 **ACTIVE 文件集合**、或被作為 Gate 稽核依據、或被 VERSION_AUDIT 引用時：
+
+- `VA-PLACEHOLDER-0001` **不得存在**；必須替換為 VERSION_AUDIT 中可查得之有效條目 ID。  
+- 有效 ID 格式以 VERSION_AUDIT「METADATA_FIX Ledger」現行規則為準（例如：`VA-METADATA_FIX-YYYYMMDD-NNNN`）。
+
+## P3. 最小替換規則（不新增制度，只對齊既有 VERSION_AUDIT）
+- 若本次變更已對應既有 Ledger 條目：以該條目 ID 作為 `audit_anchor`。  
+- 若本次變更為新增（Only-Add）且尚無對應條目：必須於同一批次變更中，先在 VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger 追加條目，再以新增條目 ID 作為 `audit_anchor`。
+
+## P4. 裁決封口（避免誤用）
+- `VA-PLACEHOLDER-0001` 不具任何治理裁決效力；不得被用於追溯、稽核、回放、或證據鏈斷言。  
+- 任何 Agent 或工具不得基於 `VA-PLACEHOLDER-0001` 自行推導「缺少稽核資料可自行補完」之授權。
+
+## P5. 最終宣告
+- 本 Addendum 為 Only-Add；不改寫本文件任何既有條款。  
+- 本 Addendum 之解讀與適用，均以 DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON 為最終裁決順序；AI 行為仍以 AI_GOV 為最高約束。
+
+（Addendum 2025-12-28｜Only-Add｜Freeze v1.0 完）
