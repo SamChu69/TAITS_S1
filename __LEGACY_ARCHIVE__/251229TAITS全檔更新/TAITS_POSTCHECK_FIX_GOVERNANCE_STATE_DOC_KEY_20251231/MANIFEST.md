@@ -1,0 +1,13 @@
+# TAITS_POSTCHECK_FIX｜GOVERNANCE_STATE doc_key 對齊補丁（2025-12-31｜Asia/Taipei）
+
+## 目的
+- 修正 `TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251220.md` 檔首 `doc_key` 與 DOCUMENT_INDEX 對齊：
+  - 期望：`GOVERNANCE_STATE_FREEZE_V1`
+  - 現況：`GOVERNANCE_STATE`（alias，會造成 Gate/稽核引用身份失配）
+
+## 套用方式
+- 將本 zip 解壓縮後的檔案覆蓋到你的專案同名檔案：
+  - `TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251220.md`
+
+## SHA256（內容校驗）
+- TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251220.md : 0d97f34064165ef8c0fac7833d37d74fad0f4f035753fe50827be02ad939fb94
