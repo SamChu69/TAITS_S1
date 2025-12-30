@@ -1,0 +1,22 @@
+[
+  {
+    "file": "TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__251219__POSTCHECK_V6_20251229.md",
+    "sha256": "57308ac6a9fecdb6fc456735aa0acdfa9be5d5d365c59250da0227e4f69ee411",
+    "notes": "修補 Mermaid code fence 未閉合；移除占位行「...」避免吞文。"
+  },
+  {
+    "file": "TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219__POSTCHECK_V6B_20251229.md",
+    "sha256": "c30332a1ed459623081f30a5387f71445da57bf04306f40d04082e31d474e2fa",
+    "notes": "補齊檔首 doc_key stub；將示例 doc_key: LOCAL_ENV 改為 ref_doc_key 避免誤判。"
+  },
+  {
+    "file": "TAITS_AI_行為與決策治理最終規則全集__251217__POSTCHECK_V6_20251229.md",
+    "sha256": "18d10b4c09a692f47a254e4e062a9b8f15351e811a568ed82a7af67c3747f97c",
+    "notes": "補齊檔首明示 doc_key（非 blockquote），提升 Gate/Parser 抽取穩定性。"
+  },
+  {
+    "file": "TAITS｜程式開發流程定錨文件（Unified Process Anchor）__POSTCHECK_V6_20251229.md",
+    "sha256": "e89123cc29239bbb92a2f83cb4ff257108b7306f0b17346ca67c264a273704dc",
+    "notes": "補齊檔首 doc_key=PROCESS_ANCHOR（依 DOCUMENT_INDEX 映射）。"
+  }
+]
