@@ -11,8 +11,24 @@ venv/
 .DS_Store
 Thumbs.db
 
+<<<<<<< HEAD
 # executables
 *.exe
 
 # python installers / binaries
 python-*.exe
+=======
+# =====================================================
+# Binary installers / local runtime artifacts
+# =====================================================
+
+# Windows installers
+*.exe
+*.msi
+
+# Python installers
+python-*.exe
+
+# Legacy archive binaries
+__LEGACY_ARCHIVE__/*.exe
+>>>>>>> d5130cb (chore: ignore binary installers and legacy executables)
