@@ -10,3 +10,9 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# executables
+*.exe
+
+# python installers / binaries
+python-*.exe
