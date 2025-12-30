@@ -1,9 +1,0 @@
-{
-  "correlation_id": "4f40fd27-a3e9-4931-8265-35579a3c1d60",
-  "timestamp_utc": "2025-12-22T18:30:54.487591Z",
-  "mode": "RESEARCH",
-  "entry_point": "taits.main.main",
-  "version_map_ref": "audit\\active_version_map_4f40fd27-a3e9-4931-8265-35579a3c1d60.json",
-  "status": "Executed",
-  "reason_codes": []
-}
