@@ -20,7 +20,7 @@ doc_key：GOVERNANCE_STATE_FREEZE_V1
 
 本文件不定義（避免越權）：
 - 不定義任何交易策略、不定義下單、不定義風控/合規細節（其裁決仍以各母文件為準）
-- 不重排治理等級覆蓋規則（A+ > A > B > C 由 DOCUMENT_INDEX 裁決）
+- 不重排治理等級覆蓋規則（A++ >A+ > A > B > C 由 DOCUMENT_INDEX 裁決）
 
 ---
 
