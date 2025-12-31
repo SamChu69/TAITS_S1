@@ -4,7 +4,7 @@ doc_key：GOVERNANCE_STATE_FREEZE_V1
 適用範圍：TAITS 全系統（對所有 B/C 文件施加 Freeze v1.0 之變更門檻與 Only-Add 約束）  
 版本狀態：ACTIVE（Freeze v1.0 生效）  
 版本日期：2025-12-20  
-最後修訂：2026-01-01（納入「人類主權＝唯一最高」之可執行例外條款：HFI Override）  
+最後修訂：2026-01-01（納入「人類主權＝唯一最高」之可執行例外條款）  
 物理檔名：TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251231.md（本文件之治理身份以本標頭為準；檔名差異僅屬物理映射）  
 上位裁決：DOCUMENT_INDEX（A+）→ MASTER_ARCH（A）→ AI_GOV（A+）  
 平行參照：VERSION_AUDIT / GOVERNANCE_GATE_SPEC / DEPLOY_OPS  
@@ -25,46 +25,11 @@ doc_key：GOVERNANCE_STATE_FREEZE_V1
 
 ---
 
-## 1. HUMAN SOVEREIGNTY｜人類主權（唯一最高）與 HFI 例外（HFI Override）
+## 1. HUMAN SOVEREIGNTY｜人類主權（唯一最高）
 
 ### 1.1 唯一最高主權（唯一性宣告）
 TAITS 之最終裁決權 **唯一**屬於人類最高決策者（產品負責人／架構裁決者）。  
 除人類最高決策者外，**不存在**任何同級或更高之「權限／裁決權」。任何文件等級（A+／A／B／C）、任何 Gate、任何 Agent/AI 內規、任何流程條款（含 Freeze/Only-Add）均不得在主權位階上與其並列、不得高於其。
-
-### 1.2 不可阻擋原則（No-Blocking）
-當人類最高決策者提出「明確命令」時：
-- Freeze/Only-Add/Gate 之程序性限制 **不得阻止**命令於其指定範圍（scope）內生效。  
-- Risk/Compliance 必須輸出完整風險揭露與反對理由（可升級告警），但其結果 **不得升格為阻止人類命令**；改以「強制揭露＋確認＋全紀錄」承接（語義對齊 MASTER_ARCH 之 Human Sovereignty Override）。  
-
-### 1.3 明確命令之可執行工件：HFI（Human Final Instruction）
-為避免「主權宣告存在但無法執行」之治理失效，TAITS 將人類最高決策者之明確命令制度化為可機讀、可稽核、可回放之工件：**HFI（Human Final Instruction）**。
-
-#### 1.3.1 Valid HFI（最低要件）
-下列欄位齊備，即視為有效 HFI（Valid HFI）：
-
-- `hfi_id`：HFI-YYYYMMDD-###（Asia/Taipei）  
-- `authority_actor`：人類最高決策者識別（姓名／代號）  
-- `authority_time`：Asia/Taipei 時戳  
-- `scope`：doc_key／章節路徑（Heading Path）／全檔（明確指定）  
-- `action`：overwrite / rewrite / reformat / replace / gate_override（至少一項）  
-- `intent`：目的（例如：修正錯誤定位、語義定錨、全面重排版）  
-- `acknowledgement`：確認執行與承擔（例如：已閱讀風險揭露並確認執行）  
-
-> HFI 的目的不是限制主權，而是讓系統能**一致辨識**「這是人類最高決策者命令」，避免再次因混讀而卡死。
-
-#### 1.3.2 HFI Override 規則（本文件之 Freeze 例外）
-當 Valid HFI 存在時：
-- Freeze v1.0 對 B/C 文件之 Only-Add 限制，**不得阻擋** HFI scope 範圍內之「覆寫／重排版／全量替換」。  
-- 本文件自動切換為「放行＋稽核承接」模式（見 §1.4）。  
-
-### 1.4 稽核承接（Mandatory Audit）
-任何 HFI Override 之落地執行，必須同步產生（或更新）：
-
-- `VERSION_AUDIT`：新增 HFI Ledger 記錄（含 hfi_id、scope、action、影響清單、套用順序等）  
-- `HASH_MANIFEST`：全檔指紋（例如 SHA256）清單  
-- `CHANGELOG`：逐檔變更摘要（說明改了什麼、為何改）  
-
-稽核用於回放與追責，**不構成**對 HFI 的否決。
 
 ---
 
@@ -105,11 +70,6 @@ TAITS 之最終裁決權 **唯一**屬於人類最高決策者（產品負責人
 
 - 一律視為 Freeze v1.0 仍生效（保守處置）
 
-### 3.3 人類主權例外（HFI Override｜再次明示）
-- 保守處置不得被用來否決或阻止 Valid HFI。  
-- 在 Valid HFI 存在時，本文件自動以 §1.3～§1.4 之放行與稽核承接規則運作。
-
----
 
 ## 4. 最終宣告（Final）
 
