@@ -1,0 +1,196 @@
+{
+  "package_date": "2026-01-01",
+  "package_tag": "260101",
+  "version": "v4",
+  "files": [
+    {
+      "doc_key": "AI_GOV",
+      "source_file": "TAITS_AI_行為與決策治理最終規則全集__251231.md",
+      "output_file": "TAITS_AI_行為與決策治理最終規則全集__260101.md",
+      "sha256_source": "53354789820be2c856b09b7d0a64804e13ed8c5661a79968b39ceca3f43b4f3e",
+      "sha256_output": "485e02374ba066bdd3e1dcd81d32161bab63e0ca5ab640fde4b085941125b059",
+      "removed_chars": 16028,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：AI_GOV 入口快照（文件數/清單）不裁決 × Index Gate（DOCUMENT_INDEX）唯一裁決 × 引用最小格式強制（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_AI_行為與決策治理最終規則全集__251217.md（doc_key：AI_GOV）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（本文件自身為 A+；其解讀與適用仍受 DOCUMENT_INDEX 之 Index Gate 與衝突裁決程序約束）  \n> 平行對齊：DOCUMENT_INDEX｜Addendum 2025-12-27／PROJECT_PROMPT｜Addendum 2025-12-27／README｜Addendum 2025-12-27／UI_SPEC｜Addendum 2025-12-27  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0014`）  \n> 目的：在 Freeze v1.0 期間，封住 AI_GOV 內部若出現之「文件數量／文件清單／ACTIVE 文件集合」快照式描述被誤用為裁決依據的風險；固定：ACTIVE/doc_key/治理等級/版本有效性一律由 DOCUMENT_INDEX 的 Authoritative Index 表格裁決；同時強制引用最小格式，確保 AI 行為邊界與裁決依據可被 Gate/Audit 回放檢核。\n\n---\n\n## G0. 適用範圍（Hard Boundary）\n\n本 Addendum 僅補強三類治理口徑（不改寫本文件既有規則條文）：\n\n1) 本文件內若出現「文件數量/清單/ACTIVE 集合」之法律定位（Snapshot ≠ 裁決）  \n2) Index Gate 唯一裁決來源（DOCUME"
+    },
+    {
+      "doc_key": "DOCUMENT_INDEX",
+      "source_file": "TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251231.md",
+      "output_file": "TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__260101.md",
+      "sha256_source": "e1e7fd34ec00ce16f2f9f526d3c3b9dae9425ef0fb805b625116c2b5419e69f2",
+      "sha256_output": "7cd849f09a87d3a1a14f078dd1432319dc6ab3ed3ceea214a2c71eb2f41174ce",
+      "removed_chars": 182929,
+      "removed_excerpt_head": "# Appendix A｜Only-Add：DOCUMENT_INDEX × MASTER_CANON 對位附錄（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  \n> 適用文件：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220（doc_key：DOCUMENT_INDEX）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 對位母法：MASTER_CANON（Canonical Flow L1–L11）  \n> 裁決序位：以本文件既有「衝突裁決程序」與「治理等級覆蓋規則」為準；本附錄僅補齊對位解讀與引用一致性規則（不新增新權力、不改寫既有裁決機制）。\n\n---\n\n## A.1 本附錄目的（不可省略）\n\n本附錄用於解決一個常見但高風險的治理誤讀：\n\n- MASTER_CANON 被誤當成「文件清單與有效性裁決」  \n- DOCUMENT_INDEX 被誤當成「流程母法與層級語義定義」\n\n上述誤讀會導致「引用越權」與「裁決鏈斷裂」。  \n因此本附錄以 Only-Add 方式，將 DOCUMENT_INDEX 與 MASTER_CANON 的職責做出可稽核、可操作的對位界線。\n\n---\n\n## A.2 DOCUMENT_INDEX 與 MASTER_CANON 的「不同」：權力來源與責任分工（對位總結）\n\n### A.2.1 DOCUMENT_INDEX（本文件）—「可引用性」與「文件裁決」的最高層\n\nDOCUMENT_INDEX 的職責是裁決「文件世界的合法性」：\n\n1) 什麼文件在此刻具治理效力（ACTIVE 唯一性）  \n2) 哪些文件可被引用作裁決依據（Index 裁決：未收錄＝無效）  \n3) 文件衝突時如何套用治理等級覆蓋規則（A+ > A > B > C）  \n4) 引用最小格式（doc_key / 版本日期 / 章節定位 / 引用目的）  \n5) 變更必須可稽核（VERSION_AUDIT）\n\n> 核心一句話：  \n> **DOCUME"
+    },
+    {
+      "doc_key": "MASTER_ARCH",
+      "source_file": "TAITS_母體總憲法與核心鐵律（MASTER_ARCH）__251231.md",
+      "output_file": "TAITS_母體總憲法與核心鐵律（MASTER_ARCH）__260101.md",
+      "sha256_source": "0c0495f757dad931c3fd3ae959675d991f14c5bb60e4033c55f1b1156b982d93",
+      "sha256_output": "8aff93e9e67935f3ec4a5473742fd1344236dfda9062f485cc04f7ded6bc0766",
+      "removed_chars": 10828,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：MASTER_ARCH 入口快照（文件數/清單）不裁決 × Index Gate（DOCUMENT_INDEX）唯一裁決 × 治理標籤（S/B+/C+）法律定位回歸（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_母體總憲法與核心鐵律（MASTER_ARCH）__251219.md（doc_key：MASTER_ARCH）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_CANON（A）  \n> 平行對齊：DOCUMENT_INDEX｜Addendum 2025-12-27／DOCUMENT_INDEX｜Addendum 2025-12-27-B（B+/C+）／MASTER_CANON｜Addendum 2025-12-27（S=Label）／README｜Addendum 2025-12-27／PROJECT_PROMPT｜Addendum 2025-12-27  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0015`）  \n> 目的：在 Freeze v1.0 期間，封住 MASTER_ARCH 內部若出現之「文件數量／文件清單／ACTIVE 文件集合」快照式描述被誤用為治理裁決依據的風險；固定 ACTIVE/doc_key/治理等級/版本有效性一律由 DOCUMENT_INDEX 表格裁決；並將 S/B+/C+ 等標籤之法律定位明確回歸（Label ≠ 新治理層級），確保母憲法文件在新對話入口不會引入口徑漂移。\n\n---\n\n## A0. 適用範圍（Hard Boundary）\n\n本 Addendum 僅補強：\n1) 本文件內若出現「文"
+    },
+    {
+      "doc_key": "MASTER_CANON",
+      "source_file": "TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__260101.md",
+      "output_file": "TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__260101.md",
+      "sha256_source": "db1ec45152628ecdb5e4ff1584401b0b3414b9225a2de2d35fb120d55515cef2",
+      "sha256_output": "5be917a1246d912beb08e3dd521e07ce792baf45a7a2d4fe8c394da8e6776a46",
+      "removed_chars": 17582,
+      "removed_excerpt_head": "> 【ACTIVE 更新版｜ADD 內嵌修訂】本檔已將最新 Addendum 之有效口徑內嵌至正文（閱讀主線只保留最新有效規則）。\n> 原始附錄／稽核留痕仍保留於文末（如存在），僅供追溯，不作為正文裁決口徑。\n> 若出現單獨一行且內容完全等於 `...` 者，依本文件內之 ERRATA 規則視為 Non-Normative Artifact（不參與裁決）。\n> 【整合輸出｜ACTIVE 版本】本檔為「ADDENDUM 融合後之最新有效版本」。\n> 合併規則：若 ADDENDUM 與舊內容牴觸，以 ADDENDUM 為準。\n> 產出日期：2025-12-29（Asia/Taipei）\n> 來源檔案：TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）__251219__ADDENDUM_20251227_FINAL.md\n## 附錄A｜原始正文（保留不改）\n\n# TAITS_完整總架構×總流程×全資訊體系（MASTER_CANON）\n## Taiwan Alpha Intelligence Trading System\n\n---\n\n## Canonical 前言（Why This Canon Exists）\n\n本文件為 **TAITS 的 Canonical Master 文件**。\n\n若《MASTER_ARCH》回答的是：\n> **「什麼永遠不能被違反？」**\n\n那麼《MASTER_CANON》回答的是：\n> **「TAITS 是如何被正確地運作？」**\n\n本文件的存在目的不是加速交易，  \n而是確保 **任何一筆交易的生成，都經過可回放、可審計、可否決的完整過程**。\n\n---\n\n## 第 1 章｜MASTER_CANON 的法律地位與使用規則\n\n### 1.1 文件位階\n- 治理等級：**A（Canonical）**\n- 位階關係：\n  - 受制於：`MASTER_ARCH`\n  - 上位於：`ARCH_FLOW`、`FULL_ARCH`、`RISK_COMPLIANCE`、`EXECUTION_CONTROL`\n\n📌 下位文件**不得推翻**本文"
+    },
+    {
+      "doc_key": "FULL_ARCH",
+      "source_file": "TAITS_全系統架構總覽（FULL_ARCH）__251231.md",
+      "output_file": "TAITS_全系統架構總覽（FULL_ARCH）__260101.md",
+      "sha256_source": "494d5b689e51bde10edb5fa0c99fac57e1cf58629677717650956f724a545415",
+      "sha256_output": "b79d002c5edbce46f656084ce12a10c8fa7e9abca9d31440c52bf8fad2705d86",
+      "removed_chars": 28140,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：DATA_UNIVERSE（alias）封口 × FULL_ARCH 引用口徑回歸 DATA_SOURCES × source_id 欄位解讀限縮（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  \n> 適用文件：TAITS_全系統架構總覽（FULL_ARCH）__251219.md（doc_key：FULL_ARCH）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：Index Gate（DOCUMENT_INDEX）＋治理等級覆蓋（A+ > A > B > C）＋衝突裁決程序（DOCUMENT_INDEX §6）＋AI_GOV（A+）最高約束  \n> 口徑對齊：  \n> - DATA_SOURCES｜Addendum 0 / 0.1（DATA_UNIVERSE 僅為概念別名，不具 doc_key 法律效力）  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27（裁決順序字串統一 × 歧義消解）  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27-B（B+/C+ 子級標籤定義 × 覆蓋規則對位）〔檔名：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220__ADDENDUM_20251227B_FINAL.md〕  \n> - GOVERNANCE_GATE_SPEC｜Addendum 2025-12-27（字串助記定位 × 雙軌裁決消歧）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0005`）  \n> 目的：封住本文件中「DATA_UNIVERSE」被誤當成可引用治理文件（doc_key）的風險；將 FULL_ARCH 對資料來源治理的引用口徑固定回歸 `DATA_SOURCES`；並對正文"
+    },
+    {
+      "doc_key": "ARCH_FLOW",
+      "source_file": "TAITS_系統架構與流程細化說明（ARCH_FLOW）__251231.md",
+      "output_file": "TAITS_系統架構與流程細化說明（ARCH_FLOW）__260101.md",
+      "sha256_source": "d702e88c6000435e057c868a48bd0d726e5565bdfe30f0afdbee43feedb533db",
+      "sha256_output": "025fb49b8b8d038ba5520f403cac24f477f4eaf9fc7bb24316e31c45bcad32b3",
+      "removed_chars": 15418,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：B+（bucket=B）對位 × 架構裁決字串助記化 × Canonical 邊界引用模板（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  \n> 適用文件：TAITS_系統架構與流程細化說明（ARCH_FLOW）__251219.md（doc_key：ARCH_FLOW）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：Index Gate（DOCUMENT_INDEX）＋治理等級覆蓋（A+ > A > B > C）＋衝突裁決程序（DOCUMENT_INDEX §6）＋AI_GOV（A+）最高約束  \n> 口徑對齊：  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27-B（B+/C+ 子級標籤定義 × 覆蓋規則對位）〔檔名：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220__ADDENDUM_20251227B_FINAL.md〕  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27（裁決順序字串統一 × 歧義消解）  \n> - MASTER_CANON｜Addendum 2025-12-27（S 標籤定位 × 裁決字串消歧）  \n> - GOVERNANCE_GATE_SPEC｜Addendum 2025-12-27（字串助記定位 × 雙軌裁決消歧）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0003`）  \n> 目的：在不改寫正文的前提下，修補本文件「治理等級 B+」與 Index 覆蓋規則之對位歧義；將本文件內部可能出現的「裁決順序字串」明確定位為助記（Mnemonic），避免被誤讀為覆蓋規則；並提供一致的 Canonical 邊界引用模板，確保 Gate/Audit/UI Tra"
+    },
+    {
+      "doc_key": "RISK_COMPLIANCE",
+      "source_file": "TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__251231.md",
+      "output_file": "TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__260101.md",
+      "sha256_source": "344cd3cb642d86581c993601e33f681e153cce99da1b489a7b4b42605b01ec68",
+      "sha256_output": "134f737a353428392c9a1c333ed9e5faea8e4bbacf1e9a562e9c1c1e245cb7d1",
+      "removed_chars": 24622,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：MASTER_CANON「S」標籤定位 × Veto 母文件引用口徑對齊 × 裁決字串助記化（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、弱化否決權、偷換既有語義）  \n> 適用文件：TAITS_風險與合規最高否決權（RISK_COMPLIANCE）__251219.md（doc_key：RISK_COMPLIANCE）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋Index Gate（DOCUMENT_INDEX）＋治理等級覆蓋（A+ > A > B > C）＋衝突裁決程序（DOCUMENT_INDEX §6）  \n> 口徑對齊：  \n> - MASTER_CANON｜Addendum 2025-12-27（S 標籤定位：Label ≠ Governance Grade）  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27（裁決順序字串統一 × 歧義消解）  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27-B（B+/C+ 子級標籤定義 × 覆蓋規則對位）〔檔名：TAITS_文件索引與治理對照表（DOCUMENT_INDEX）__251220__ADDENDUM_20251227B_FINAL.md〕  \n> - GOVERNANCE_GATE_SPEC｜Addendum 2025-12-27（字串助記定位 × 雙軌裁決消歧）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0008`）  \n> 目的：在不改寫本文件任何風險/合規否決權語義的前提下，修補本文件對 MASTER_CANON「治理等級 S」之引用歧義；固定本文件在引用上位文件時的唯一合法口徑，使 Gate / Audit / 回放鏈一致可檢核。\n"
+    },
+    {
+      "doc_key": "GOVERNANCE_GATE_SPEC",
+      "source_file": "TAITS_治理閘門與裁決規範（GOVERNANCE_GATE_SPEC）__251231.md",
+      "output_file": "TAITS_治理閘門與裁決規範（GOVERNANCE_GATE_SPEC）__260101.md",
+      "sha256_source": "d3b7ab7fbaabc5079e8a609e2bf4cb4db112f1e73fbe720f01874adba1542dab",
+      "sha256_output": "6b802547a053a5c6daa54c031bb91c685b6ed1aee12f5c4e9af10971dad5e41f",
+      "removed_chars": 16178,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：治理等級對齊 × 裁決順序字串統一 × Gate 雙軌裁決消歧（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、弱化裁決權、偷換既有語義）  \n> 適用文件：TAITS_治理閘門與裁決規範（GOVERNANCE_GATE_SPEC）__251219.md（doc_key：GOVERNANCE_GATE_SPEC）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（並受 AI_GOV（A+）之最高約束）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（條目：`VA-METADATA_FIX-20251227-0001`）  \n> 目的：  \n> 1) 修補本文件檔頭「治理等級」標示與 DOCUMENT_INDEX 表格裁決之不一致風險（Metadata Discrepancy）；  \n> 2) 將本文件 §4.1「衝突裁決順位（高→低）」明確定位為助記字串（Mnemonic），避免被誤讀為覆蓋規則；  \n> 3) 對齊 DOCUMENT_INDEX（A+）之「衝突裁決程序」與「裁決順序字串統一口徑」，避免 Gate 出現雙軌裁決或越權裁決；  \n> 4) 以最小新增方式（Only-Add）補上 Mermaid 區塊之結尾 fence（格式性修補），避免後段章節被誤判為 code block。\n\n---\n\n## 0. 治理等級與 ACTIVE 身份之唯一裁決（Index Gate｜不可否認）\n\n### 0.1 Index 表格裁決優先\n在 TAITS 中，文件之下列「身份性中繼資料」以 **DOCUMENT_INDEX（A+｜ACTIVE）表格裁決**為準：\n\n- `doc_key`\n- `治理等級`\n- `版本狀態（ACTIVE/ARCHIVED/…）`\n\n本文件檔頭所載之 `治理"
+    },
+    {
+      "doc_key": "EXECUTION_CONTROL",
+      "source_file": "TAITS_交易執行與控制規範（EXECUTION_CONTROL）__251231.md",
+      "output_file": "TAITS_交易執行與控制規範（EXECUTION_CONTROL）__260101.md",
+      "sha256_source": "b6a3ede344e7c8b064e6d4684c8cbcdb3d636e02fd7f1c60b5fd9b177ba4ab49",
+      "sha256_output": "433a4bbc3b6dd45ad9c2dc4d387fbece9c13d006a74d55b00ccf6e353aaeaed0",
+      "removed_chars": 17389,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：MASTER_CANON「S」標籤定位 × 母法對位口徑修補 × 引用合法性鎖定（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、弱化裁決權、偷換既有語義）  \n> 適用文件：TAITS_交易執行與控制規範（EXECUTION_CONTROL）__251219.md（doc_key：EXECUTION_CONTROL）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：Index Gate（DOCUMENT_INDEX）＋治理等級覆蓋（A+ > A > B > C）＋衝突裁決程序（DOCUMENT_INDEX §6）＋AI_GOV（A+）最高約束  \n> 口徑對齊：  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27（裁決順序字串統一 × 歧義消解）  \n> - MASTER_CANON｜Addendum 2025-12-27（治理等級對齊：S 標籤定位）  \n> - GOVERNANCE_GATE_SPEC｜Addendum 2025-12-27（字串助記定位 × 雙軌裁決消歧）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0002`）  \n> 目的：修補本文件內部對「MASTER_CANON（治理等級 S）」的引用語句，避免在 Freeze v1.0 期間造成治理等級體系漂移與 doc_key/等級誤用；並固定引用端的唯一合法口徑，使 Gate / Audit / UI Trace 可一致回放。\n\n---\n\n## 0. 適用範圍（Hard Boundary）\n\n本 Addendum 僅處理「母法對位與治理等級標示」之歧義消解，**不改寫**本文件任何執行控制規則、委託流程、Kill Switch、回報格式或風控閘門語義。\n\n- 不修改 Canonical Flow"
+    },
+    {
+      "doc_key": "UI_SPEC",
+      "source_file": "TAITS_使用者介面與人機決策規範（UI_SPEC）__251231.md",
+      "output_file": "TAITS_使用者介面與人機決策規範（UI_SPEC）__260101.md",
+      "sha256_source": "e60eb4446ae6f2d93e10bfd2d7484f8552fed31b6b872c8d5571cde785c48159",
+      "sha256_output": "e0e55735645ce7d9e11d2c31cfdd7da340b2d284b6913ea555a7cda5dd083dd0",
+      "removed_chars": 16941,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：UI Trace 引用最小欄位強制 × Index Gate 唯一裁決 × Snapshot 清單不裁決（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_使用者介面與人機決策規範（UI_SPEC）__251219.md（doc_key：UI_SPEC）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_ARCH（A）＋MASTER_CANON（A）  \n> 平行對齊：  \n> - TAITS_PROJECT_PROMPT｜Addendum 2025-12-27（Index Gate First／ACTIVE 不固化／引用最小格式）  \n> - README｜Addendum 2025-12-27（清單/數量快照化；治理裁決回到 DOCUMENT_INDEX）  \n> - VERSION_AUDIT｜Addendum 2025-12-27（METADATA_FIX Ledger 批次補登）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0011`）  \n> 目的：在不改寫既有 UI 流程與人機決策規範的前提下，補強 UI Trace / 決策記錄之「引用合法性最小欄位」與「Index Gate 唯一裁決來源」要求，避免 UI 端以快照清單/固定文件數量誤判 ACTIVE 或誤用 doc_key，確保回放與稽核鏈完整。\n\n---\n\n## U0. 適用範圍（Hard Boundary）\n\n本 Addendum 僅補強：\n1) UI Trace / 決策記錄的最小引用欄位（Minimum Legal Citation Fields）  \n2) ACT"
+    },
+    {
+      "doc_key": "DEPLOY_OPS",
+      "source_file": "TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251231.md",
+      "output_file": "TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__260101.md",
+      "sha256_source": "4cee1444c6c307074aefc38638e222b029f31e9355f1d7d8274a0ecc020ea280",
+      "sha256_output": "3ffee089adb609fcdef2f1d88eeb407014a54878fcc80d85a1b8ad2f1c2cf3e1",
+      "removed_chars": 20823,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：營運/部署證據鏈最小欄位強制 × Evidence Chain 對齊 LOCAL_ENV × Index Gate 唯一裁決（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_部署、營運與日常運作規範（DEPLOY_OPS）__251219.md（doc_key：DEPLOY_OPS）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_ARCH（A）＋MASTER_CANON（A）  \n> 平行對齊：  \n> - LOCAL_ENV｜Addendum 2025-12-27（Evidence Chain Template）  \n> - UI_SPEC｜Addendum 2025-12-27（UI Trace 引用最小欄位）  \n> - PROJECT_PROMPT｜Addendum 2025-12-27（Index Gate First／ACTIVE 不固化／引用最小格式）  \n> - VERSION_AUDIT｜Addendum 2025-12-27（METADATA_FIX Ledger 批次補登）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0012`）  \n> 目的：在不改寫既有部署/營運流程與責任分工的前提下，補強「營運與部署產物」的可回放、可稽核最低欄位；將 Evidence Chain 輸出格式對齊 LOCAL_ENV；並固定 ACTIVE/doc_key/治理等級之唯一裁決來源為 DOCUMENT_INDEX，避免營運現場因快照清單/固定文件數量而誤用治理法源。\n\n---\n\n## D0. 適用範圍（Hard Boundary）\n"
+    },
+    {
+      "doc_key": "LOCAL_ENV",
+      "source_file": "TAITS_本地執行與運算環境規範（LOCAL_ENV）__251231.md",
+      "output_file": "TAITS_本地執行與運算環境規範（LOCAL_ENV）__260101.md",
+      "sha256_source": "a7f23ecb108f7ea7c17c3b51df3c9ab6f48839d0c255dc95ba33de6cda251e6f",
+      "sha256_output": "4f94f5b0ff89be4030de1c175fac42229f30ff5dc1683500a5d97f651342f4f3",
+      "removed_chars": 5518,
+      "removed_excerpt_head": "# Addendum 2025-12-28｜Only-Add：Evidence Chain Template（LOCAL_ENV）對齊 DEPLOY_OPS D3 × 回放必需最小結構（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_本地執行與運算環境規範（LOCAL_ENV）__251219.md（doc_key：LOCAL_ENV）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：DOCUMENT_INDEX（A+）＋MASTER_ARCH（A）＋MASTER_CANON（A）＋AI_GOV（A+）  \n> 平行對齊：DEPLOY_OPS｜Addendum 2025-12-27（D3：Evidence Chain 最小結構）  \n> 目的：補齊 LOCAL_ENV 之「Evidence Chain Template」章節，使部署/營運/稽核在引用 LOCAL_ENV 時具備唯一可指向之段落；不改寫既有環境規範，只新增模板。\n\n---\n\n## LE-EC1. Evidence Chain Template（最小結構｜欄位可多不可少）\n\n### LE-EC1.1 環境指紋（Environment Fingerprint）\n```text\nenv_fingerprint:\n  os: <例如 Ubuntu 22.04>\n  cpu: <型號/核心數>\n  ram_gb: <數值>\n  gpu: <可選>\n  runtime: <例如 python 3.11 / node 20>\n  package_manager: <pip/conda/uv/npm>\n  repo_commit: <git hash>\n  local_env_doc_ref:\n    doc_key: LOCAL_ENV\n    ref_section: LE-EC1.1\n```\n\n### LE-EC1.2 依賴清單（Dependency Manifest）\n```tex"
+    },
+    {
+      "doc_key": "DATA_SOURCES",
+      "source_file": "TAITS_資料來源全集（DATA_SOURCES）__251231.md",
+      "output_file": "TAITS_資料來源全集（DATA_SOURCES）__260101.md",
+      "sha256_source": "0a197c01b6c85b6ff33e00c85e3a1a046283309cdae112338344ac4f098628a9",
+      "sha256_output": "9a990149d22b2ba6f323e381bb62d564b247135ba3492d5bdecd627a95d4c22d",
+      "removed_chars": 68328,
+      "removed_excerpt_head": "# Addendum 0｜Only-Add：METADATA_FIX（DATA_SOURCES × DATA_UNIVERSE 名詞對齊與引用合法性鎖定｜Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  \n> 適用文件：TAITS_資料來源全集（DATA_SOURCES）__251219.md  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON  \n> 目的：修補本文件內部「中繼資料（doc header/附錄標示）」與 DOCUMENT_INDEX 裁決表之不一致，並鎖定引用規則，避免 Gate 命中「引用非法」而導致 BLOCK。\n\n---\n\n## 0.1 裁決來源（不可否認）\n依 DOCUMENT_INDEX（治理有效文件清單）之裁決，本文件之唯一合法身份為：\n- doc_key：DATA_SOURCES\n- 治理等級：B\n- 版本狀態：ACTIVE\n\n> 以上三項為 Index 表格裁決效力範圍（doc_key / 治理等級 / 版本狀態），不得以文件內文自改或自封更高/不同位階。\n\n---\n\n## 0.2 本文件內「DATA_UNIVERSE」之法律定位（名詞 ≠ doc_key）\n本文件既有段落中出現之「DATA_UNIVERSE」：\n- 一律視為「資料來源宇宙（Data Universe）」之概念名詞／閱讀用別名（alias）\n- **不得**被解讀為新的 doc_key\n- **不得**被用作任何系統引用、Gate 檢核引用、稽核引用之 doc_key\n\n---\n\n## 0.3 引用合法性硬規則（Gate 對齊｜不可放寬）\n在 FILE UPDATE MODE 與 Freeze v1.0 下，所有系統與文件引用一律遵守：\n- 任何引用本文件時，唯一合法 doc_key = `DATA_SOURCES`\n- 任何出現 `doc_key：DATA_SOURCES` 之舊標示"
+    },
+    {
+      "doc_key": "TWSE_RULES",
+      "source_file": "TAITS_TWSE交易規則參考彙編（TWSE_RULES）__251231.md",
+      "output_file": "TAITS_TWSE交易規則參考彙編（TWSE_RULES）__260101.md",
+      "sha256_source": "3dfe33220600d3deec64137d04a9f742006a691b7d378eea8a506c87f1ab4583",
+      "sha256_output": "80bbfd4a258eee54b164a3ed70c608191cb0d4984326b5054164cd8b89d9b5f6",
+      "removed_chars": 14697,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：DATA_UNIVERSE 別名映射 × 引用合法性鎖定 × Rulebook/Trigger Map 之 doc_key 對位（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減/覆寫/偷換制度語義）  \n> 適用文件：TAITS_TWSE交易規則參考彙編（TWSE_RULES）__251219.md（doc_key：TWSE_RULES）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：Index Gate（DOCUMENT_INDEX）＋治理等級覆蓋（A+ > A > B > C）＋衝突裁決程序（DOCUMENT_INDEX §6）＋AI_GOV（A+）最高約束  \n> 口徑對齊：DOCUMENT_INDEX｜Addendum 2025-12-27（裁決順序字串統一 × 歧義消解）  \n> Gate 對齊：GOVERNANCE_GATE_SPEC｜Addendum 2025-12-27（字串助記定位 × 雙軌裁決消歧）  \n> 資料治理對位：DATA_SOURCES｜Addendum 0 / 0.1（DATA_UNIVERSE 僅為概念別名，不具 doc_key 法律效力）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（條目：`VA-METADATA_FIX-20251227-0001`）  \n> 目的：修補本文件檔頭「平行參照：… / DATA_UNIVERSE / …」可能造成的 doc_key 誤用風險；固定本文件在引用 DATA 層時的唯一合法 doc_key 口徑，避免 Gate 命中「引用非法」而 BLOCK。\n\n---\n\n## 0. 適用範圍（Hard Boundary）\n\n本 Addendum 僅處理「引用端」歧義，不改寫本文件對官方制度來源、Rulebook Snapshot、Trigger Map 的任何語義：\n\n- 本文件仍可使用「DATA_U"
+    },
+    {
+      "doc_key": "STRATEGY_UNIVERSE",
+      "source_file": "TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__251231.md",
+      "output_file": "TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__260101.md",
+      "sha256_source": "4b7f6c871f4ffe5dbbc0c8297a1dae6d475519584de9818f0d3e67506ff4cee6",
+      "sha256_output": "88d8eb08089a477cec5d10871e9a36540971d01453a7f0401e2eee59311abd89",
+      "removed_chars": 70260,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：DATA_UNIVERSE（alias）封口 × STRATEGY_UNIVERSE 對資料治理引用回歸 DATA_SOURCES × data_requirements / evidence_requirements 解讀限縮（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減、覆寫、偷換既有語義）  \n> 適用文件：TAITS_策略宇宙全集（STRATEGY_UNIVERSE）__251219.md（doc_key：STRATEGY_UNIVERSE）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（衝突裁決與保守處置依 DOCUMENT_INDEX §6）  \n> 平行對齊：DATA_SOURCES（資料來源全集）／FULL_ARCH（架構總覽之資料引用口徑）／VERSION_AUDIT（可追溯與稽核）  \n> 稽核對位：建議登錄 VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議條目：`VA-METADATA_FIX-20251227-0006`）  \n> 目的：封住本文件中「DATA_UNIVERSE」被誤解為可引用治理文件（doc_key）的風險；將策略層對資料來源治理的引用口徑固定回歸 `DATA_SOURCES`；並對主文中 data_requirements / evidence_requirements 涉及「DATA_UNIVERSE」之語句做唯一合法解讀（Only-Add，不改原文），避免新對話載入、Gate 審查與稽核鏈產生引用歧義。\n\n---\n\n## A0. 適用範圍（Hard Boundary）\n\n本 Addendum 僅處理：\n1) 文件內「DATA_UNIVERSE」之法律定位（alias ≠ doc_key）  \n2) 策略層（L8）對資料治理文件之引用口徑（統一回歸"
+    },
+    {
+      "doc_key": "STRATEGY_FEATURE_INDEX",
+      "source_file": "TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251231.md",
+      "output_file": "TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__260101.md",
+      "sha256_source": "01d564ba369e8ab3633b298dfff77f7cfecc2227eecaba48b25ea335de7ac6b6",
+      "sha256_output": "bdcf93ffad8eb9dd83756b8a06c690f6ca24c2b31118b8845d570b710fa58dce",
+      "removed_chars": 53411,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：B+「子級標籤」法律定位 × Index Gate 對齊 × 引用/裁決字串助記化（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_策略特徵與因子索引（STRATEGY_FEATURE_INDEX）__251219.md（doc_key：STRATEGY_FEATURE_INDEX）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋Index Gate（DOCUMENT_INDEX）＋MASTER_ARCH（A）＋MASTER_CANON（A）  \n> 口徑對齊：  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27（治理等級 bucket 與裁決規則）  \n> - DOCUMENT_INDEX｜Addendum 2025-12-27-B（B+/C+ 子級標籤定義：Label ≠ Governance Grade）  \n> - MASTER_CANON｜Addendum 2025-12-27（S 為 Label；治理等級回歸 Index）  \n> - GOVERNANCE_GATE_SPEC｜Addendum 2025-12-27（裁決字串助記化定位）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0009`）  \n> 目的：在不改寫本文件任何既有治理條款與內容的前提下，消解「治理等級：B+」可能被誤讀為新治理層級之歧義；將本文件之治理身份、引用合法性、裁決序列字串全面對齊 DOCUMENT_INDEX；確保 Freeze v1.0 下跨文件引用一致、可稽核、可回放。\n\n---\n\n## A0. B+ 的法律定位（Label ≠ Governance Grade｜不可誤讀）\n\n### A0.1 統一裁決："
+    },
+    {
+      "doc_key": "BEGINNER_GUIDE",
+      "source_file": "TAITS_新手教學與操作引導總則（BEGINNER_GUIDE）__251231.md",
+      "output_file": "TAITS_新手教學與操作引導總則（BEGINNER_GUIDE）__260101.md",
+      "sha256_source": "2ea9efdfcc4cee207a9bbdf831df22bfa6653e05849f0e699610e03356d1b1e0",
+      "sha256_output": "3ffee089adb609fcdef2f1d88eeb407014a54878fcc80d85a1b8ad2f1c2cf3e1",
+      "removed_chars": 9133,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：新手入口 Snapshot 不裁決 × Index Gate（DOCUMENT_INDEX）唯一裁決 × 新對話啟動最小引用格式（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_新手教學與操作引導總則（BEGINNER_GUIDE）__251219.md（doc_key：BEGINNER_GUIDE）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_ARCH（A）＋MASTER_CANON（A）  \n> 平行對齊：README｜Addendum 2025-12-27／PROJECT_PROMPT｜Addendum 2025-12-27／UI_SPEC｜Addendum 2025-12-27／DEPLOY_OPS｜Addendum 2025-12-27  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0013`）  \n> 目的：在 Freeze v1.0 期間，修補新手入口最常見的誤用：把「文件數量/清單」當裁決依據。自本 Addendum 起，BEGINNER_GUIDE 內所有文件清單/數量一律視為 Snapshot（導覽用途），ACTIVE/doc_key/治理等級一律以 DOCUMENT_INDEX 表格裁決為準；並提供新對話啟動的最小引用格式，使新手操作不會從入口繞過治理封口。\n\n---\n\n## B0. 本文件定位（Scope Lock）\n\nBEGINNER_GUIDE 為「操作指引文件」，其用途為：\n- 引導使用者進入嚴格對齊模式（Strict Alignment）  \n- 告知如何載入上位治理文件並完成啟動確認  \n- 提供可複製"
+    },
+    {
+      "doc_key": "README",
+      "source_file": "README__251231.md",
+      "output_file": "README__260101.md",
+      "sha256_source": "11d42db1475ec4e1aabec59ee90bb78ea37ac53599a02e092c28b6978c87cf92",
+      "sha256_output": "c081257c457037944504b546b82f20630a5b2320a88f1b57a49ef1de812f0f88",
+      "removed_chars": 11448,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：README「文件數量/清單」快照化 × Index Gate（DOCUMENT_INDEX）唯一裁決來源 × 新對話載入最小規格（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_專案總覽與使用說明（README）__251220.md（doc_key：README）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_ARCH（A）＋MASTER_CANON（A）  \n> 平行對齊：TAITS_PROJECT_PROMPT｜Addendum 2025-12-27（Index Gate 載入優先 × ACTIVE 不固化 × 引用最小格式）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0010`）  \n> 目的：修補 README 中「文件數量/清單」的歷史快照性描述，避免被誤用為治理裁決依據；將本 README 之導覽用途明確限縮為「入口導覽」，並固定：ACTIVE/doc_key/治理等級一律以 DOCUMENT_INDEX 表格裁決為準；提供新對話載入的最小規格，使使用者不會因 README 的快照資訊而載入錯誤文件宇宙。\n\n---\n\n## R0. 本 README 的法律地位（Scope Lock）\n\n### R0.1 統一裁決：README 為「入口導覽」，非治理裁決來源\n本 README 的唯一合法用途為：\n- 讓使用者快速理解 TAITS 專案定位、文件群組、啟動方式與基本操作路徑  \n- 引導使用者進入「嚴格對齊模式」並載入上位治理文件完成啟動確認\n\n本 README **不得**：\n- 裁決 ACTIVE 文件集合  \n- "
+    },
+    {
+      "doc_key": "PROJECT_PROMPT",
+      "source_file": "TAITS_PROJECT_PROMPT__251231.md",
+      "output_file": "TAITS_PROJECT_PROMPT__260101.md",
+      "sha256_source": "c58e3fde8f97713914b13681ba2a621383ddd341dbc509a2782ebd4d3778b184",
+      "sha256_output": "7c3f94381aa38c1a4c48d65759b1fbe9b6231d866537663beb0239f7230aed09",
+      "removed_chars": 11975,
+      "removed_excerpt_head": "# Addendum 2025-12-27｜Only-Add：Index Gate 載入優先 × 本文件法律地位限縮 × ACTIVE 清單「不固化」× 引用/稽核最小格式強化（Freeze v1.0）\n\n> 補充性質：Only-Add（只可新增，不可刪減／覆寫／偷換既有語義）  \n> 適用文件：TAITS_PROJECT_PROMPT.md（doc_key：PROJECT_PROMPT）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0  \n> 上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+）＋MASTER_ARCH（A）＋MASTER_CANON（A）  \n> 稽核對位：VERSION_AUDIT｜Appendix A｜METADATA_FIX Ledger（建議新增條目：`VA-METADATA_FIX-20251227-0007`）  \n> 目的：在 Freeze v1.0 期間，將「新對話啟動」的文件載入與引用規則完全對齊 Index Gate（DOCUMENT_INDEX），避免本文件內部之歷史快照（例如固定文件數量/清單）被誤用為治理裁決依據；並強化最小引用格式與稽核錨點，使新對話可穩定回放、可稽核。\n\n---\n\n## A0. 本文件的法律地位（Scope Lock｜不可越權）\n\n### A0.1 統一裁決：本文件為「操作契約」，非文件有效性裁決來源\n本文件（PROJECT_PROMPT）之唯一合法用途為：  \n- 提供「新對話啟動與嚴格對齊」的操作流程、提示語與引用格式模板  \n- 促使新對話優先載入上位治理文件並完成啟動確認\n\n本文件 **不得**：  \n- 自行定義/改寫「ACTIVE 文件清單」  \n- 自行裁決文件位階、doc_key 合法性、版本狀態  \n- 以「本文件內的清單/數量」取代 DOCUMENT_INDEX 的 Authoritative Index 表格裁決\n\n### A0.2 若本文件未列入 DOCUMENT_INDEX 的治理有效清單\n若 DOCUMENT_INDEX 的「治理"
+    },
+    {
+      "doc_key": "PROCESS_ANCHOR",
+      "source_file": "TAITS｜程式開發流程定錨文件（Unified Process Anchor）__251231.md",
+      "output_file": "TAITS｜程式開發流程定錨文件（Unified Process Anchor）__260101.md",
+      "sha256_source": "ee5ae3eb19bbe6ce09497929fb01cf41445265bc1defb8eafa712d01eb8be6cb",
+      "sha256_output": "21d00cb8b39d9860254a92fe199a42ab028acb7bb5d142f44386a34190e3e418",
+      "removed_chars": 32052,
+      "removed_excerpt_head": "## 附錄 A｜工程操作總手冊（合併版）全文內嵌\n\n# TAITS｜工程操作總手冊（合併版：GPT 續編 × Cursor 落地 × 雙錨）__ADDENDUM_20251228_FINAL\n\n> 文件定位：Master Operating Runbook（合併版總手冊；供 GPT 專案與 Cursor 工程共同使用）  \n> 文件屬性：SUPPORT / Non-Governance（工程/操作支援文件；**不具治理裁決效力**）  \n> 生效狀態：GOVERNANCE_STATE = Freeze v1.0（Only-Add）  \n> 版本日期：2026-01-01  \n> 合併目的：在不違反 Freeze v1.0 / Only-Add 的前提下，把「日常操作流程」集中到**一份文件**，避免檔案過多造成新手困擾與新對話斷線。  \n\n---\n\n## 0. Scope Lock（Freeze v1.0 下的硬邊界）\n\n### 0.1 本合併手冊可以做什麼\n- 給你一套「**不用靠記憶**」也能長期續編的 GPT 編輯流程\n- 給你一套可落地的 Cursor 工程開發流程（不跳層、不跨層合併）\n- 把「雙錨」使用方式一次說清楚，並附上模板與檢核清單\n- 在檔案過多時，提供「**合併而不取代**」的治理合規做法\n\n### 0.2 本合併手冊不得做什麼\n- 不得裁決：ACTIVE 文件集合、doc_key 合法性、治理等級、版本有效性、覆蓋順位\n- 不得改寫／重排 Canonical Flow（L1–L11）或任何治理文件語義\n- 不得弱化或繞過 Risk/Compliance 的最高否決權\n- 不得以「合併」名義取代既有 PROCESS_ANCHOR 或覆寫既有治理文件\n\n> 涉及裁決：一律回到 DOCUMENT_INDEX → MASTER_ARCH → AI_GOV（A+）之裁決序。\n\n---\n\n## 1. 你現在的問題：檔案太多，要合併——最佳作法（合規且最省事）\n\n### 1.1 Freeze v1.0 下「合併」的正確定義\n- **允許**：新增一份「合併版總"
+    },
+    {
+      "doc_key": "GOV_STATE_FREEZE",
+      "source_file": "TAITS_GOVERNANCE_STATE__FREEZE_v1.0__251231__單一檔.md",
+      "output_file": "TAITS_GOVERNANCE_STATE__FREEZE_v1.0__260101.md",
+      "sha256_source": "060ea5572ab34c3641e38acc5812544831a74197c89572d5a0e6f78e6c72506a",
+      "sha256_output": "1bb86bfefbe4ba809516c1c3a6a07d4bb7aae6a4a94aaa1fae880f633c5644c2",
+      "removed_chars": 0,
+      "removed_excerpt_head": ""
+    }
+  ]
+}
