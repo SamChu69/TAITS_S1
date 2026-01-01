@@ -22,7 +22,7 @@ doc_key：DOCUMENT_INDEX
 
 ### 3) HFI｜人類明確命令（可執行觸發）
 - 格式：`HFI: <scope> | <action> | <intent> | <acknowledgement>`
-- 有效 HFI 存在時：Freeze/Only-Add/Gate **不得**阻擋 scope 範圍內之更新/覆寫/重排版；並必須同步產生稽核承接（VERSION_AUDIT 落帳、CHANGELOG、HASH_MANIFEST）。
+- 有效 HFI 存在時：Freeze/更新規則/Gate **不得**阻擋 scope 範圍內之更新/覆寫/重排版；並必須同步產生稽核承接（VERSION_AUDIT 落帳、CHANGELOG、HASH_MANIFEST）。
 
 ---
 
@@ -50,8 +50,14 @@ A+ 文件（含本文件）為最高裁決來源；任何 A/B/C 文件不得改�
 覆蓋分桶僅有四級：**A+ > A > B > C**。  
 任何 B+/C+、S 等字樣僅屬**顯示標籤**，不構成新的治理等級。
 
-### 1.4 Only-Add（只增不減）
-在未有有效 HFI 前提下，ACTIVE 文件的演進以 Only-Add 為常態；禁止偷換語義、弱化邊界、刪除否決鏈或縮減欄位。
+### 1.4 最大完備（Max-Completeness）與累積式更新（Cumulative Update）
+- 本專案治理文件之目標是**最大完備（最大可用、最大細節、可長期累積）**，允許為達成單一正確正文而進行**融合更新／覆寫／重排版／修正錯誤敘述**。
+- **禁止「只保留重點／摘要化」**：任何會造成有效資訊被省略、縮水或失去可操作性與可追溯性的改寫，均視為不合格更新。
+- **舊內容保留原則**：凡屬有效資訊且未被新版本內容明確更新者，必須**一律保留並持續累積**（可重排、可整併重複表述，但不得使資訊消失）。
+- **可省略條件（僅限已被更新之舊資訊）**：若某段舊資訊已被新版本的「單一正確正文」所**明確取代/更新**，則舊資訊可自正文移除，但必須：
+  - 在 VERSION_AUDIT 留存可追溯的變更承接（包含被取代段落之定位與原因）
+  - 於本文件之稽核留痕（Audit Section）列入 CHANGELOG 與 HASH_MANIFEST
+- **任何省略必須可被稽核回放**：正文只保留「當前單一正確版本」；歷史內容以稽核鏈（VERSION_AUDIT / L11）承接，不得造成新舊混讀。
 
 ### 1.5 無稽核＝未發生（Audit Supremacy）
 任何影響治理有效性的更新（新增/改狀態/改覆蓋/改裁決程序）必須可追溯：  
@@ -245,20 +251,21 @@ A+ 文件（含本文件）為最高裁決來源；任何 A/B/C 文件不得改�
 2) Authoritative Index（§5）歸一：以 2026-01-01 之現行檔名重建清單；治理分桶一致化為 A+/A/B/C，並明確定義 B+ 僅為顯示標籤。
 3) doc_key／引用合法性機器化：補齊最小引用格式（§7）與衝突裁決程序（§6），以支援 Gate 自動檢核與 L11 回放。
 4) 將「工程支援文件」明確降權：集中於 §10（Non-Authoritative），禁止越權引用造成新舊混讀。
+5) 更新治理演進原則：以「最大完備＋累積式更新」取代「只增不減」的限制，允許融合更新與覆寫修正，但禁止摘要化縮水；未被更新之有效資訊必須保留並持續累積。
 
 ## C. Hash Manifest（指紋清單）
 - hash_algo: SHA-256
 - hash_target: 正文區段（§0–§11，不含本章「稽核留痕」）
-- hash_value_sha256: 2659bdbc4c7b17ad6cfdd406260f115f64ba47728371660861dd56e3be6f401d
+- hash_value_sha256: 8de56ad2d94dc553884c22bfff59eda6296cf1ee4227b7633dac4ae25f1a78e3
 
 ## D. Audit Hand-off（裁決承接）
 請將以下條目以「單一交易」落入 `VERSION_AUDIT`（doc_key=VERSION_AUDIT）：
 
-- change_id: DI-FUSION-260101-0001
+- change_id: DI-FUSION-260101-0002
 - change_type: FUSION_UPDATE_REWRITE
 - target_doc_key: DOCUMENT_INDEX
 - effective_date: 2026-01-01
-- rationale: 依 HFI 授權進行融合更新，產出單一正確正文，消除新舊混讀風險，並完成索引分桶一致化與引用合法性強化。
+- rationale: 依 HFI 授權進行融合更新，採「最大完備＋累積式更新」原則產出單一正確正文；允許覆寫修正但禁止摘要化縮水；並完成索引分桶一致化與引用合法性強化。
 - artifacts:
   - changelog_ref: 本文件「稽核留痕」§B
   - hash_manifest_ref: 本文件「稽核留痕」§C
