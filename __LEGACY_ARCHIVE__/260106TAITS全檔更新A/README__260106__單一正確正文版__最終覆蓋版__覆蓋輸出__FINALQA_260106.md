@@ -1,0 +1,1386 @@
+# README__260106（單一正確正文版｜最終覆蓋版｜覆蓋輸出｜FINALQA_260106）
+
+doc_key：README  
+治理等級：C（操作／啟動級）  
+版本基線：2026-01-06（Asia/Taipei）  
+文件狀態：單一正確正文版（本檔可直接覆蓋使用）  
+治理有效文件集合：以 doc_key=DOCUMENT_INDEX 之 Authoritative Index 為準（ACTIVE=21）  
+最終裁決序位（不得自創）：DOCUMENT_INDEX → MASTER_ARCH → AI_GOV  
+
+---
+
+## 0. 本 README 的唯一職責（Scope Lock）
+
+本 README 僅作為 **TAITS 專案入口導覽**，提供：
+- 新對話啟動與最小閱讀順序提示（僅提示，不裁決清單）
+- 核心語義定錨（S1）之入口版提醒（完整裁決以 MASTER_ARCH / AI_GOV 為準）
+- 文件索引導覽（doc_key 對照與閱讀順序）
+- 操作安全邊界提醒（避免越權、跳層、混讀）
+
+**本 README 不構成治理裁決來源**；所有裁決與治理有效文件集合，一律以 DOCUMENT_INDEX 為準。
+
+---
+
+## 1. 全局定錨｜單一口徑（S1）
+
+### 1.1 人類最高決策者主權（SOVEREIGNTY）
+- 人類（產品負責人／架構裁決者）為 TAITS 的最高決策者（L10 唯一授權入口）。  
+- AI / Agent 僅為輔助，**不得成為決策主體**。  
+- Risk / Compliance 具最高否決權（依 RISK_COMPLIANCE）。
+
+### 1.2 L9–L11 最終語義（跨文件一致｜禁止混讀）
+- **L9＝投資報告層（Investment Report）**：含數據/圖形/條件式進出場建議（非指令）/風險敘述/可追蹤更新欄位。  
+- **L10＝人類裁決與交易決策層（Human Decision & Trade Authorization）**：唯一交易授權入口。  
+- **L11＝全層工程稽核回放層（Audit Replay, L1–L11 全留痕）**：L11 非下單層。
+
+補充（避免誤讀）：
+- Governance Gate（治理閘門）為 **non-layer 檢核機制**，主要作用是 **L9→L10** 的檢核/阻擋/退回（依 GOV_GATE_SPEC）。  
+- Execution Control（交易執行與控制）為 **模組/制度**，僅能在 **L10 人類授權後** 被啟動；不得將其等同為 L11。
+
+### 1.3 HFI｜人類明確命令（可執行觸發）
+所有會導致「裁決」「版本狀態切換」「落地執行」的行為，必須由人類以明確命令（Human-First Instruction, HFI）觸發，且需可被稽核回放（依 AI_GOV／VERSION_AUDIT）。
+
+---
+
+## 2. 新對話啟動（必讀）
+
+### 2.1 啟動確認語（新對話第一句）
+你必須先回覆且只能回覆以下一句作為啟動確認：  
+「TAITS 架構已完整載入，我已準備好在此基礎上繼續開發。」
+
+### 2.2 新對話載入最小規格（Minimum Load Set）
+- README 僅提示「載入方式」，不裁決「載入清單」；**載入清單以 DOCUMENT_INDEX 為準**。  
+- 任何「文件數量／清單」一律視為 Snapshot（歷史快照，不具裁決力）。
+
+---
+
+## 3. 正確閱讀順序（入口提示）
+
+### 3.1 最小必讀（不得跳過）
+1) DOCUMENT_INDEX（Authoritative Index）  
+2) MASTER_ARCH（母體總憲法與核心鐵律）  
+3) AI_GOV（AI 行為與決策治理最終規則）  
+4) GOVERNANCE_STATE（治理狀態：Freeze/Unfreeze/版本基線）  
+5) MASTER_CANON（完整總架構×總流程×全資訊體系）
+
+### 3.2 視需求擴展（在治理框架下）
+- RISK_COMPLIANCE（風險與合規最高否決權）  
+- GOV_GATE_SPEC / EXECUTION_CONTROL / VERSION_AUDIT  
+- FULL_ARCH / ARCH_FLOW  
+- DATA_SOURCES / TWSE_RULES  
+- STRATEGY_UNIVERSE / STRATEGY_FEATURE_INDEX  
+- UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+- BEGINNER_GUIDE（操作引導）
+
+---
+
+## 4. 角色分工（強制遵守）
+- 使用者（人類）：產品負責人／架構裁決者（不寫程式）。  
+- AI（本助手）：核心系統工程師＋系統架構設計師＋量化研究員；僅在治理框架內提供可直接貼用之文件輸出與工程化內容。  
+- Risk / Compliance：可否決一切（依 RISK_COMPLIANCE）。  
+
+---
+
+## 5. 使用本專案文件的基本規則（入口版）
+- doc_key 為唯一識別：引用文件時以 doc_key 為準。  
+- 不得跳層：策略 ≠ 下單；AI ≠ 決策主體；Regime 高於策略。  
+- 去混讀：正文不得混入補丁式語句；留痕必須獨立於稽核區塊（或獨立稽核檔）。  
+
+---
+
+## 6. 引用合法性最小格式（Minimum Legal Citation Format）
+為避免「有提到就算引用」的誤用，任何引用行為，最少必須包含：
+- 文件名（完整檔名或 canonical_filename）  
+- doc_key  
+- 版本日期（version_date）  
+- 章節定位（section / heading path）
+
+缺任一欄位 → 一律視為「未引用」→ 不得裁決性輸出。
+
+建議固定引用標頭（可直接貼用）：
+```text
+〔TAITS 引用標頭〕
+ref_file = <完整檔名或 canonical_filename>
+ref_doc_key = <DOC_KEY>
+ref_version_date = <YYYY-MM-DD / __yymmdd>
+ref_section = <章節/段落路徑>
+ref_notes = <可選：本次用途>
+〔/TAITS 引用標頭〕
+```
+
+---
+
+## 7. 最終聲明（入口版，不可刪）
+TAITS 的核心價值不在於「多聰明」，而在於：
+- 不亂來
+- 不越權
+- 可回放
+- 可追責
+- 可長期演進
+
+只要存在不可接受風險，就算錯過機會，也必須選擇不交易（裁決依 RISK_COMPLIANCE）。
+# 稽核區塊（Audit Section｜非正文）
+
+## A. Scope（適用範圍）
+- doc_key: README
+- governance_level: C
+- version_date: 2026-01-06（Asia/Taipei）
+- change_id: README-FINALQA-FIX-20260106-0004
+- scope_files_source:
+  - README__260106__單一正確正文版__最終覆蓋版__覆蓋輸出__FINALQA_260106 (2).md
+- scope_files_output:
+  - README__260106__單一正確正文版__最終覆蓋版__覆蓋輸出__FINALQA_260106.md
+- scope_note: 本次修正以「去混讀」為最高要求；合併重複段落、移除正文內歷史快照/舊標記，並由稽核留痕承接。
+
+## B. Changelog（變更清單）
+- [FIX] 合併重複之「S1 全局定錨」「啟動確認語」「多重 metadata/自述段落」，避免入口文件混讀與章節重複。
+- [FIX] 將前版 README 內之歷史快照/舊完成標記與重複治理補強段落，自正文移出，改由 §E Archive 留存承接（禁止混讀）。
+- [FIX] 引用模板 code block 結構修正為可直接貼用（封閉完整）。
+- [AUDIT] 重新計算 BODY_ONLY SHA-256，並於 Hash Manifest 回填。
+
+## C. Hash Manifest（指紋清單）
+- hash_alg: sha256
+- hash_scope: BODY_ONLY（不含本稽核區塊）
+- body_only_sha256: d83b77f44802c6549083cdd708939b3a64e42a854c10d7c307bb0379a99903d4
+- full_file_sha256: 27a77b1e233418bfc92cbd6af3adf7c7d308e3789cd576e1247ae3a04b0f4a00
+
+## D. Audit Hand-off（裁決承接）
+- arbitration_chain: DOCUMENT_INDEX → MASTER_ARCH → AI_GOV
+- downstream_expected_review:
+  - EXECUTION_CONTROL（措辭收斂：避免 B 級越權張力）
+  - Unified Process Anchor（範例段落結構健全性）
+  - DEPLOY_OPS（格式瑕疵清理）
+- notes: README 為入口導覽文件；不得作為治理裁決來源；任何 ACTIVE/清單裁決回歸 DOCUMENT_INDEX。
+
+## E. Archive（被取代正文段落留存｜不可混讀）
+> 以下內容為前一版 README 正文中被本次覆蓋版取代之段落（含重複 S1、重複導覽章節、歷史完成標記與延伸治理補強段）。  
+> 保留目的：提供可追溯性與稽核回放；**不得作為現行正文裁決依據**。
+
+````md
+# README__260106（單一正確正文版｜最終覆蓋版｜覆蓋輸出｜FINALQA_260106）
+
+doc_key：README  
+治理等級：C（操作／啟動級）  
+版本基線：2026-01-06（Asia/Taipei）  
+文件狀態：單一正確正文版（本檔可直接覆蓋使用）  
+治理有效集合：以 doc_key=DOCUMENT_INDEX 之 Authoritative Index 為準  
+最終裁決序位（不得自創）：DOCUMENT_INDEX → MASTER_ARCH → AI_GOV  
+
+---
+
+## 0. 本 README 的唯一職責（Scope Lock）
+
+本 README 僅作為 **TAITS 專案入口導覽**，提供：
+- 新對話啟動與最小閱讀順序提示（僅提示，不裁決清單）
+- 核心語義定錨（S1）之入口版提醒（完整裁決以 MASTER_ARCH / AI_GOV 為準）
+- 文件索引導覽（doc_key 對照與閱讀順序）
+- 操作安全邊界提醒（避免越權、跳層、混讀）
+
+**本 README 不構成治理裁決來源**；所有裁決與治理有效文件集合，一律以 DOCUMENT_INDEX 為準。
+
+---
+
+## 1. 全局定錨｜單一口徑（S1）
+
+### 1.1 人類最高決策者主權（SOVEREIGNTY）
+
+- 人類（產品負責人／架構裁決者）為 TAITS 的最高決策者。  
+- AI/Agent 僅為輔助，**不得成為決策主體**。  
+- Risk / Compliance 具最高否決權（依 RISK_COMPLIANCE）。
+
+### 1.2 L9–L11 最終語義（跨文件一致｜禁止混讀）
+
+- **L9＝投資報告層（Investment Report）**：含數據/圖形/條件式進出場建議（非指令）/風險敘述/可追蹤更新欄位。  
+- **L10＝人類裁決與交易決策層（Human Decision & Trade Authorization）**：唯一交易授權入口。  
+- **L11＝全層工程稽核回放層（Audit Replay, L1–L11 全留痕）**：L11 非下單層。
+
+補充定義（避免誤讀）：
+- Governance Gate（治理閘門）為 **non-layer 檢核機制**，其主要作用是 **L9→L10** 之檢核/阻擋/退回。  
+- Execution Control（交易執行與控制）為 **模組/制度**，僅能在 **L10 人類授權後** 被啟動；不得把其等同為 L11。
+
+### 1.3 HFI｜人類明確命令（可執行觸發）
+
+所有會導致「裁決」「版本狀態切換」「落地執行」的行為，必須由人類以明確命令（Human-First Instruction, HFI）觸發，且需可被稽核回放。
+
+---
+
+## 2. 新對話啟動（必讀）
+
+### 2.1 啟動確認語（新對話第一句）
+
+你必須先回覆且只能回覆以下一句作為啟動確認：  
+「TAITS 架構已完整載入，我已準備好在此基礎上繼續開發。」
+
+### 2.2 新對話載入最小規格（Minimum Load Set）
+
+- README 僅提示「載入方式」，不裁決「載入清單」；**載入清單以 DOCUMENT_INDEX 為準**。  
+- 任何「文件數量／清單」一律視為 Snapshot（歷史快照，不具裁決力）。
+
+---
+
+## 3. 正確閱讀順序（入口提示）
+
+### 3.1 最小必讀（不得跳過）
+
+1) DOCUMENT_INDEX（Authoritative Index）  
+2) MASTER_ARCH（母體總憲法與核心鐵律）  
+3) AI_GOV（AI 行為與決策治理最終規則）  
+4) GOVERNANCE_STATE（治理狀態：Freeze/Unfreeze/版本基線）  
+5) MASTER_CANON（完整總架構×總流程×全資訊體系）
+
+### 3.2 視需求擴展（在治理框架下）
+
+- RISK_COMPLIANCE（風險與合規最高否決權）  
+- GOV_GATE_SPEC / EXECUTION_CONTROL / VERSION_AUDIT  
+- FULL_ARCH / ARCH_FLOW  
+- DATA_SOURCES / TWSE_RULES  
+- STRATEGY_UNIVERSE / STRATEGY_FEATURE_INDEX  
+- UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+- BEGINNER_GUIDE（操作引導）
+
+---
+
+## 4. 角色分工（強制遵守）
+
+- 使用者（人類）：產品負責人／架構裁決者（不寫程式）。  
+- AI（本助手）：核心系統工程師＋系統架構設計師＋量化研究員；僅在治理框架內提供可直接貼用之文件輸出與工程化內容。  
+- Risk / Compliance：可否決一切（依 RISK_COMPLIANCE）。  
+
+---
+
+## 5. 使用本專案文件的基本規則（入口版）
+
+- doc_key 為唯一識別：引用文件時以 doc_key 為準。  
+- 不得跳層：策略 ≠ 下單；AI ≠ 決策主體；Regime 高於策略。  
+- 去混讀：正文不得混入補丁式語句；留痕必須獨立於稽核區塊（或獨立稽核檔）。
+
+---
+
+---
+
+## 全局定錨｜單一口徑（S1）
+
+- 本文件為單一正確正文版；任何歷史狀態標記不構成正文裁決依據（以 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV／README 為準）。  
+- 若本文件與 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV 衝突，以 DOCUMENT_INDEX → MASTER_ARCH → AI_GOV 為最終裁決序位。  
+- L9＝投資報告層；L10＝人類裁決與交易決策層；L11＝全層稽核回放層（非下單層）。  
+
+---
+
+## 必讀｜啟動確認語（新對話必貼）
+
+開啟任何新對話前，請先貼上並要求 AI 僅回覆以下一句作為啟動確認：  
+「TAITS 架構已完整載入，我已準備好在此基礎上繼續開發。」
+
+---
+
+doc_key：README  
+治理等級：C（Project Overview & Usage Charter｜入口導覽文件，不具上位裁決權）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（最大完備／累積式更新：允許融合更新、覆寫修正、重排版；禁止摘要縮水；未被新內容明確取代者必保留；被取代者可移除但須留痕承接）
+版本日期：2026-01-06（Asia/Taipei）
+變更原則：最大完備＋累積式更新（允許融合更新／覆寫修正／重排版；不得只保留重點；舊內容未被新內容明確取代者一律保留累積；僅被新內容明確取代之舊資訊可省略但須於稽核留痕承接）
+
+
+## 全局定錨｜單一口徑（S1）
+
+### 1. 人類最高決策者主權（SOVEREIGNTY）
+- TAITS 之唯一最高主權屬於人類最高決策者（產品負責人／架構裁決者）。
+- 任何治理閘門、程序規則、Agent、文件等級不得凌駕人類主權；不得以程序性理由阻止人類明確命令之生效。
+- 風險與合規（Risk/Compliance）在無人類明確命令時可否決；在有人類明確命令時必須輸出完整風險揭露與替代方案，並以「強制揭露＋確認＋全紀錄」承接，不得卡死更新。
+
+### 2. L9–L11 最終語義（跨文件一致）
+- L9（投資報告層）：可追蹤、可更新、可標的化投資報告；必含數據、圖形、條件式進出場建議（非指令）、風險敘述、追蹤欄位（狀態/更新時間/依據來源），並支援事件驅動滾動更新。
+- L10（人類裁決層）：由人類最高決策者裁決不動作/回測/模擬/半自動/全自動等；任何交易型態皆以 L10 明確裁決為準。
+- L11（工程稽核回放層）：對 L1–L11 全層輸入/處理/輸出/裁決/執行鏈路留痕，供人類與工程端可讀、可查、可回放；L11 非下單決策層。
+
+### 3. HFI｜人類明確命令（可執行觸發）
+- 格式：`HFI: <scope> | <action> | <intent> | <acknowledgement>`
+- 有效 HFI 存在時：治理狀態/最大完備＋累積式更新（原 累積式更新 口徑已淘汰）/Gate 不得阻擋 scope 範圍內之更新/覆寫/重排版；並必須同步產生稽核承接（VERSION_AUDIT 留痕、HASH_MANIFEST、CHANGELOG）。
+
+---
+---
+
+## 治理補強（已整合為正文）
+
+上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_ARCH（A）＋MASTER_CANON（A）  
+目的：修補 README 中「文件數量/清單」的歷史快照性描述，避免被誤用為治理裁決依據；將本 README 之導覽用途明確限縮為「入口導覽」，並固定：ACTIVE/doc_key/治理等級一律以 DOCUMENT_INDEX 表格裁決為準；提供新對話載入的最小規格，使使用者不會因 README 的快照資訊而載入錯誤文件宇宙。
+
+---
+
+## R0. 本 README 的法律地位（Scope Lock）
+
+### R0.1 統一裁決：README 為「入口導覽」，非治理裁決來源
+本 README 的唯一合法用途為：
+- 讓使用者快速理解 TAITS 專案定位、文件群組、啟動方式與基本操作路徑  
+- 引導使用者進入「嚴格對齊模式」並載入上位治理文件完成啟動確認
+
+本 README **不得**：
+- 裁決 ACTIVE 文件集合  
+- 裁決 doc_key 合法性、治理等級、版本有效性  
+- 以 README 內部的數量/清單覆蓋 DOCUMENT_INDEX 的 Authoritative Index 表格
+
+---
+
+## R1. 「文件數量/清單」一律視為 Snapshot（歷史快照，不具裁決力）
+
+### R1.1 快照定義（Snapshot）
+凡本 README 內出現之：
+- 「目前共有 X 份文件」  
+- 「ACTIVE 文件數 = X」  
+- 任何列舉文件清單之段落
+
+- **Snapshot（歷史快照）**：用於閱讀導覽與理解分類  
+- **不具治理裁決效力**：不得作為「ACTIVE 判定」「覆蓋裁決」「引用合法性」的依據
+
+### R1.2 唯一裁決來源（Index Gate First）
+凡涉及：
+- ACTIVE 文件集合  
+- doc_key 合法性  
+- 治理等級 bucket（A+/A/B/C；B+/C+ 為標籤之 bucket 化）  
+- 版本日期與是否有效
+
+**一律以 DOCUMENT_INDEX 的 Authoritative Index 表格裁決為準**。
+
+---
+
+## R2. 新對話載入最小規格（Minimum Load Set｜以 GOVERNANCE_STATE 現況為準）
+
+註：本文件為單一正確正文版；任何歷史狀態標記不構成正文裁決依據（以 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV 為準）。
+
+任何「新對話」在進入工作前，至少必須能指向（以版本日期與章節可稽核為準）：
+
+1) AI_GOV（A+）  
+2) DOCUMENT_INDEX（A+｜Authoritative Index）  
+3) MASTER_ARCH（A）  
+4) MASTER_CANON（A）  
+5) GOVERNANCE_STATE（治理狀態 v1.0 狀態宣告；若列入 Index）
+
+注意：README 只能提示「載入方式」，不裁決「載入清單」。載入清單以 DOCUMENT_INDEX 為準。
+
+---
+
+## R3. 引用合法性最小格式（Minimum Legal Citation Format）
+
+為避免「有提到就算引用」的誤用，任何 README 所引導的引用行為，最少必須包含：
+
+- 文件名（完整檔名）  
+- doc_key  
+- 版本日期（version_date）  
+- 章節定位（section / heading path）
+
+缺任一欄位 → 一律視為「未引用」→ 不得裁決性輸出。
+
+建議固定引用標頭（可直接貼用）：
+```text
+〔TAITS 引用標頭｜以 GOVERNANCE_STATE 現況為準（本文件為單一正確正文版；任何歷史狀態標記不構成正文裁決依據（以 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV 為準）。
+ref_file = <完整檔名>
+ref_doc_key = <DOC_KEY>
+ref_version_date = <YYYY-MM-DD / __yymmdd>
+ref_section = <章節/段落路徑>
+ref_notes = <可選：本次用途>
+audit_anchor = VERSION_AUDIT:VA-METADATA_FIX-20251227-0010
+〔/TAITS 引用標頭〕
+```
+
+---
+
+## R4. 最終宣告（治理狀態 v1.0）
+
+- README 中任何文件數量/清單一律視為 Snapshot；治理裁決一律回到 DOCUMENT_INDEX。  
+- 若 README 與上位治理文件出現張力：依 DOCUMENT_INDEX §6 保守處置，並以 VERSION_AUDIT 留痕。
+
+## 0. 文件定位（README 的「唯一職責」）
+
+本 README 是 **TAITS 專案的入口憲章與導覽地圖**，只負責三件事：
+
+1) **讓新對話 / 新 AI / 新 Agent 在不誤解的前提下快速進入治理正軌**  
+2) **定義 TAITS 是什麼／不是什麼（避免越權與誤用）**  
+3) **提供「正確閱讀順序」與「文件導航」以保證一致性與可追溯**
+
+📌 本 README **不具裁決權**：  
+- 不裁決文件衝突（由 `DOCUMENT_INDEX` 裁決）  
+- 不定義鐵律（由 `MASTER_ARCH` 裁決）  
+- 不定義 Canonical Flow（由 `MASTER_CANON / ARCH_FLOW` 裁決）  
+- 不定義風控否決條文（由 `RISK_COMPLIANCE` 裁決）  
+- 不定義下單細節（由 `EXECUTION_CONTROL` 裁決）
+
+---
+
+## 1. TAITS 是什麼？（不可被誤解的定義）
+
+**TAITS（Taiwan Alpha Intelligence Trading System）** 是一套：
+
+- 以 **台灣市場（TWSE / TAIFEX）** 為核心對象
+- 以 **治理（Governance）與風險/合規（Risk/Compliance）** 為最高優先序
+- 以 **Canonical Flow（L1–L11，不可跳步）** 為全系統骨架
+- 允許 **多 Agent** 與 **多策略宇宙** 長期演進（最大完備＋累積式更新（原 累積式更新 口徑已淘汰））
+- 強制 **審計（Audit）/回放（Replay）/可追溯（Traceability）**
+- 明確規定 **AI 只能輔助、不能取代人類裁決（Human-in-the-Loop）**
+
+的 **完整系統母體**（非 Demo、非教學專案、非單一策略）。
+
+---
+
+## 2. TAITS 不是什麼？（禁止錯誤期待）
+
+TAITS **不是**：
+
+- ❌ 單一策略或選股法  
+- ❌ 以績效展示為核心的投資工具  
+- ❌ 「AI 自動下單」黑箱  
+- ❌ 無人值守、自動批准、自動執行的交易機器  
+- ❌ 需要使用者自行 Debug / 自行補完的工程專案  
+
+📌 在 TAITS：  
+- **策略 ≠ 下單**  
+- **Agent ≠ 策略**  
+- **AI ≠ 唯一真理**  
+- **Regime（市場狀態）高於單一訊號**  
+- **Risk / Compliance 可否決一切**
+
+---
+
+## 3. TAITS 的最高鐵律摘要（僅作入口提醒；裁決以 MASTER_ARCH / AI_GOV 為準）
+
+以下屬於入口級「不可破壞理解」：
+
+1) **最大完備＋累積式更新（原 累積式更新 口徑已淘汰）**：內容可融合更新/覆寫修正（原「只可新增」口徑已淘汰），不可刪減/覆寫/弱化  
+2) **L1–L11 不可跳步**：任何捷徑都屬治理違規  
+3) **Evidence First**：無證據不得進入判斷/執行  
+4) **Binary Compliance（PASS / VETO）**：合規與否決不容模糊  
+5) **Human-in-the-Loop**：人類裁決不可被取代（L10 必須存在）  
+6) **No Audit = Not Happened**：無審計視為未發生  
+7) **Risk PASS Token Required**：未通過風控放行憑證不得進入執行層  
+8) **Kill Switch Always Available**：任何執行狀態必須可立即中止  
+
+---
+
+## 4. 正確閱讀順序（新對話 / 新 AI / 新 Agent 必須遵守）
+
+### 4.1 最小必讀（不得跳過）
+1) `TAITS_AI_行為與決策治理最終規則全集__251217`（A+）  
+2) `DOCUMENT_INDEX`（A+ / A+裁決性）  
+3) `MASTER_ARCH`（A）  
+4) `MASTER_CANON`（A）  
+5) `FULL_ARCH`（B）  
+6) `ARCH_FLOW`（B+）  
+7) `RISK_COMPLIANCE`（A）  
+8) `EXECUTION_CONTROL`（A）  
+9) `VERSION_AUDIT`（B）  
+
+### 4.2 視需求擴展（在治理框架下）
+- `DATA_SOURCES`（B）  
+- `STRATEGY_UNIVERSE`（B）  
+- `STRATEGY_FEATURE_INDEX`（B）  
+- `UI_SPEC`（B）  
+- `DEPLOY_OPS`（B）  
+- `LOCAL_ENV`（C/B，依專案定義）  
+- `TWSE_RULES`（B/C：參考彙編，但合規裁決需回到官方來源入口）  
+- `BEGINNER_GUIDE`（C：新手操作引導，不能作治理裁決依據）  
+- `GOVERNANCE_GATE_SPEC`（B：治理閘門與裁決規範）
+
+📌 任何「先談策略再補治理」的工作方式，在 TAITS 一律視為高風險且不可接受。
+
+---
+
+## 5. 專案文件一覽（以 doc_key 為唯一識別）
+
+若你看到文件名不同，但 doc_key 相同，以 `DOCUMENT_INDEX` 的 ACTIVE 裁決為準。
+
+### 5.1 A+（最高母法）
+- `AI_GOV`：TAITS_AI_行為與決策治理最終規則全集__251217（A+）
+
+### 5.2 A（憲法級）
+- `MASTER_ARCH`：母體總憲法與核心鐵律  
+- `MASTER_CANON`：完整總架構×總流程×全資訊體系
+
+### 5.3 B / B+（架構、流程、風控、執行、營運、資料）
+- `DOCUMENT_INDEX`：文件索引與治理對照表（裁決性極高；以專案定義為準）  
+- `FULL_ARCH`：全系統架構總覽（模組地圖與邊界）  
+- `ARCH_FLOW`：系統架構與流程細化說明（Canonical Flow：L1–L11）  
+- `RISK_COMPLIANCE`：風險與合規最高否決權（Supreme Veto）  
+- `EXECUTION_CONTROL`：交易執行與控制規範（Execution & Control）  
+- `VERSION_AUDIT`：版本控管、稽核與可追溯治理規範  
+- `DATA_SOURCES`：資料來源全集（官方優先、多層 fallback、可追溯）  
+- `STRATEGY_UNIVERSE`：策略宇宙全集（白名單、生命週期、不可直連下單）  
+- `STRATEGY_FEATURE_INDEX`：策略特徵與因子索引（特徵≠方向）  
+- `UI_SPEC`：使用者介面與人機決策規範（否決可視化、決策追溯）  
+- `DEPLOY_OPS`：部署、營運與日常運作規範（回滾、停機、Runbook）  
+- `TWSE_RULES`：TWSE 交易規則參考彙編（觸發映射；裁決回到官方入口）  
+- `GOVERNANCE_GATE_SPEC`：治理閘門與裁決規範（Gate 定義與一致性）
+
+### 5.4 C（操作/引導）
+- `BEGINNER_GUIDE`：新手教學與操作引導總則  
+- `README`：本文件
+
+---
+
+## 6. TAITS 的「運作模式」一致性宣告（不可降級）
+
+TAITS 支援（概念上）：
+- Research（研究）
+- Backtest（回測）
+- Simulation（模擬）
+- Paper（紙上/模擬下單）
+- Live（實盤）
+
+但**所有模式必須共用同一套治理語義**：
+- **L1–L11 不得因模式不同而跳層**
+- **Risk / Compliance 不得因模式不同而降級**
+- **Audit / Replay 不得因模式不同而缺失**
+
+📌 「回測可跑但實盤不行」在 TAITS 視為制度設計失敗。
+
+---
+
+## 7. 角色分工（強制遵守）
+
+### 7.1 人類（使用者）
+- 身分：產品經理 / 架構決策者 / 最終裁決者（L10）  
+- 不負責：寫程式、Debug、補完缺失  
+- 擁有：最終裁決權（但**不擁有文件解釋權**；裁決依文件）
+
+### 7.2 AI（系統工程師 + 架構設計師 + 量化研究員）
+- 必須交付：可直接貼上的完整內容（不可片段、不可要求使用者補齊）  
+- 禁止：  
+  - 自行簡化（No-Slimming）  
+  - 文件沒寫就自行合理化（No Fabrication of Authority）  
+  - 用「推測」取代「文件依據」
+
+---
+
+## 8. 合規與官方入口（規則裁決必回到官方）
+
+TAITS 允許彙編與對照，但**制度裁決以官方來源為準**。
+
+- TWSE 規章/法規查詢：https://twse-regulation.twse.com.tw/  
+- TWSE 交易制度/交易機制：https://www.twse.com.tw/en/products/system/trading.html  
+- TAIFEX 規章與規則：https://www.taifex.com.tw/enl/eng6/ruleRegulation  
+- FSC 金管會法規資訊：https://www.fsc.gov.tw/en/home.jsp?id=3&parentpath=0  
+- SFB 證期局入口：https://www.sfb.gov.tw/en/  
+- TDCC 集保結算（結算交割相關）：https://www.tdcc.com.tw/portal/en/equity/settlement  
+
+📌 若彙編內容與官方更新衝突：以官方為準，並依 `VERSION_AUDIT` 啟動變更流程。
+
+---
+
+## 9. 專案「嚴格對齊模式」工作規範（README 層級宣告）
+
+在 TAITS 專案內協作（含新對話）必遵守：
+
+1) **以 doc_key 為引用主鍵**（文件名可能變、doc_key 不可變）  
+2) **任何新增內容必標記：來源文件、章節、版本**  
+3) **最大完備＋累積式更新（原 累積式更新 口徑已淘汰）**：不允許刪減或覆寫既有制度語義  
+4) **遇到缺口：先停、先請示、先補文件**（禁止自行補完）  
+5) **凡涉及交易執行：必須可審計、可回放、可追責**  
+
+---
+
+## 10. 快速啟動（不是操作手冊；是「不踩雷」入口）
+
+如果你要開始一個新議題（新增模組、策略、Agent、資料源、UI、部署）：
+
+請先決定它屬於哪一層：
+
+- **治理母法 / 鐵律** → `MASTER_ARCH`  
+- **流程順序 / Canon** → `MASTER_CANON / ARCH_FLOW`  
+- **風險與合規否決** → `RISK_COMPLIANCE`  
+- **執行與控制** → `EXECUTION_CONTROL`  
+- **版本追溯與審計** → `VERSION_AUDIT`  
+- **資料來源與可追溯** → `DATA_SOURCES`  
+- **策略白名單與生命週期** → `STRATEGY_UNIVERSE`  
+- **特徵與因子管理** → `STRATEGY_FEATURE_INDEX`  
+- **介面、人機裁決、否決可視化** → `UI_SPEC`  
+- **營運、部署、回滾、停機** → `DEPLOY_OPS`  
+- **交易所規則彙編/觸發映射** → `TWSE_RULES`  
+- **新手操作引導** → `BEGINNER_GUIDE`  
+- **治理閘門一致性** → `GOVERNANCE_GATE_SPEC`
+
+📌 若你不知道該歸哪一份：請以 `DOCUMENT_INDEX` 的裁決規則處理。
+
+---
+
+## 11. 最終聲明（不可刪）
+
+TAITS 的核心價值不在於「多聰明」，而在於：
+
+- **不亂來**
+- **不越權**
+- **可回放**
+- **可追責**
+- **可長期演進**
+
+只要存在不可接受風險，  
+就算錯過機會，也必須選擇不交易。  
+（裁決依 `RISK_COMPLIANCE`）
+
+---
+
+（README｜最大完備治理版 · 2025-12-20 完）
+---
+
+## 治理補強（已整合為正文）
+
+上位裁決：DOCUMENT_INDEX（A+｜Authoritative Index）→ MASTER_ARCH（A）→ MASTER_CANON（A）＋AI_GOV（A+）  
+
+### A1. 本文件之唯一治理身份（Canonical Identity）
+- canonical_filename（Index 裁決檔名）：`README.md`
+- canonical_doc_key（Index 裁決識別碼）：`README`
+- 版本狀態：ACTIVE（治理狀態 v1.0；最大完備＋累積式更新（原 累積式更新 口徑已淘汰））
+
+### A2. 本專案目錄中的實體檔案（Physical Artifact）
+- 法律定位：實體檔名僅為「存放/分發/下載」之載體；治理裁決與引用身份一律以 **A1** 為準。
+
+### A3. 引用合法性最小規則（不新增制度，只固定寫法）
+- 任何跨文件引用本文件時，必須使用：`doc_key=README` + `canonical_filename=README.md`。  
+- 若需指向本專案內實體檔案（physical_filename），必須同時保留 **A1** 之 canonical identity，以避免「引用找得到檔案但身份不合法」的 Gate 風險。  
+- ACTIVE 集合、文件數量、或任何快照清單，均不得覆蓋 DOCUMENT_INDEX 的 Authoritative Index 裁決。
+
+---
+
+## 治理補強（已整合為正文）
+
+上位裁決序列：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（AI 行為規範仍受 AI_GOV 最高約束；衝突裁決流程依 DOCUMENT_INDEX §6）  
+目的：以 MASTER_CANON 為主導，對齊「引用合法性、doc_key 身份、子級標籤（Label）解讀、資料治理別名（alias）封口、最小可稽核引用格式」之全域一致口徑；不改寫任何既有正文條款。
+
+---
+
+## G0. 適用範圍（Hard Boundary）
+
+1) **引用端身份**：doc_key / 治理等級 bucket / ACTIVE 狀態之裁決來源固定回歸 DOCUMENT_INDEX。  
+2) **子級標籤**：S / B+ / C+ 等字樣一律視為顯示標籤（Label），不構成新的治理等級 bucket。  
+3) **資料治理別名封口**：凡出現「DATA_UNIVERSE」字樣，一律視為 alias（概念名詞），治理引用 doc_key 必須回歸 DATA_SOURCES。  
+4) **最小可稽核引用格式**：補上統一模板，避免 Gate 因引用缺口而 BLOCK/RETURN。  
+
+- 不變更 Canonical Flow（L1–L11）任何順序/語義（MASTER_CANON 為準）  
+- 不新增任何新 doc_key、不新增新治理位階、不調整覆蓋規則  
+- 不新增策略內容、不新增下單規範、不改寫風控/合規否決條款  
+- 不為任何缺失資訊進行「模型推測補完」
+
+---
+
+## G1. Index Gate 身份裁決（doc_key / 等級 / ACTIVE 的唯一裁決來源）
+
+並統一裁決：
+- 任何文件「是否可引用」＝以 DOCUMENT_INDEX 之 Authoritative Index（ACTIVE 表格）為準  
+- 任何文件「治理等級 bucket」＝以 DOCUMENT_INDEX 之 A+ / A / B / C 分桶為準  
+- 文件內自述之等級/狀態若與 Index 有張力：依 DOCUMENT_INDEX §6 採「保守處置」（STOP/RETURN/BLOCK；以既有 Gate/風控規範語義為準）
+
+---
+
+## G2. 子級標籤（Label）之唯一合法解讀（S / B+ / C+）
+
+凡本文件或引用鏈中出現：
+- `S`：視為「Supreme Canon 的顯示標籤」或「完備度標籤」，**不構成**新的治理等級 bucket。  
+- `B+` / `C+`：視為「嚴格度/完備度子級標籤」，**不構成**新的治理等級 bucket。  
+
+治理覆蓋規則仍固定為：**A+ > A > B > C**（以 DOCUMENT_INDEX 為準）。  
+
+---
+
+## G3. DATA_UNIVERSE（alias）封口（資料治理引用回歸 DATA_SOURCES）
+
+統一裁決：
+- 任何出現之 `DATA_UNIVERSE` 一律視為「資料宇宙（Data Universe）」概念別名（alias），**不得**作為 doc_key。  
+- 任何需要引用資料來源治理時，唯一合法 doc_key：`DATA_SOURCES`。  
+- 若 Evidence/Audit/UI Trace/Gate 引用欄位出現 `doc_key=DATA_UNIVERSE`：  
+  - 一律視為「引用非法」→ 依 GOVERNANCE_GATE_SPEC 進行 BLOCK/RETURN（依其既有語義；不得補救）。
+
+---
+
+## G4. 最小可稽核引用格式（Minimum Legal Citation Format｜可直接貼用）
+
+凡聲稱「依據治理文件」之輸出（含：Evidence、Risk/Compliance、Governance Gate、UI Decision、Execution Control、Audit）一律必須同時提供：
+
+```text
+ref_doc_key = <DOC_KEY>
+ref_file = <完整檔名>
+ref_version = <版本日期或檔名日期碼>
+ref_section = <章節定位（§ / Heading Path）>
+ref_purpose = <用途：例如 gate_check / risk_veto / ui_decision / execution_policy / audit_replay>
+ref_notes = <可選：alias/Label 解讀備註>
+```
+
+缺任一欄位：
+- 依 DOCUMENT_INDEX §6 採保守處置：不得形成裁決性輸出（PASS/APPROVE/EXECUTE 等）；必要時 RETURN/BLOCK。
+
+---
+
+## G5. 最終宣告（治理狀態 v1.0）
+
+# 稽核區塊（Audit Section｜非正文）
+
+> 本區塊為「本次更新」之留痕（Changelog／Hash Manifest／Scope／Audit Hand-off）。  
+> 為避免新舊混讀：本區塊不參與正文裁決；正文以本檔案開頭至本區塊前之內容為準。
+
+## A. Scope（適用範圍）
+- scope_doc_key: README
+- scope_files_output: README__260106__單一正確正文版__最終覆蓋版__覆蓋輸出__FINALQA_260106.md
+- scope_files_source: README__260104__單一正確正文版__覆蓋輸出.md
+- scope_mode: FILE UPDATE MODE（融合更新／整合重排版／語義定錨一致化／Final QA）
+- version_date: 2026-01-06（Asia/Taipei）
+
+## B. Changelog（變更清單）
+1) **去混讀修正**：移除/中性化可能造成新舊混讀的補丁式字樣（Addendum/Appendix/Only-Add/Freeze 等），改為不干擾裁決的敘述；不刪減既有入口說明。  
+2) **版本/檔名一致化**：將正文內殘留的 `__260102` 與舊日期引用統一為 `__260104`／2026-01-06（Asia/Taipei）。  
+3) **啟動確認語補齊**：若原文缺少專案要求之啟動確認語，於檔頭後新增「必讀｜啟動確認語」章節。  
+4) **稽核段落單一化**：以本檔末端單一稽核區塊承接（留痕與正文分離）。
+
+# 稽核區塊（Audit Section｜非正文）
+
+> 本區塊為本次覆蓋輸出之留痕承接（Scope／Changelog／Hash Manifest／Audit Hand-off）。  
+> 為避免新舊混讀：本區塊不參與正文裁決；正文以本檔開頭至本區塊前之內容為準。
+
+## A. Scope（適用範圍）
+- scope_doc_key: README
+- scope_version_date: 2026-01-06（Asia/Taipei）
+- scope_mode: FINAL QA MODE（去混讀／語義定錨一致化／必要融合更新收斂）
+- scope_files_output:
+  - README__260106__單一正確正文版__最終覆蓋版__覆蓋輸出__FINALQA_260106.md
+- scope_files_source:
+  - README__260104__單一正確正文版__覆蓋輸出.md
+
+## B. Changelog（變更清單）
+- 2026-01-06｜README Final QA（必要融合更新收斂）：
+  - 修復「稽核區塊前置＋Archive 造成正文中斷/混讀」：正文與稽核留痕改為「正文在前、單一稽核區塊在檔尾」。
+  - 修復 Hash Manifest 占位符（回填實值），並統一 effective_date / scope_version_date 為 2026-01-06。
+  - 修復 README 內部裁決序位誤植（README 不納入治理裁決序位鏈；裁決序位以 DOCUMENT_INDEX → MASTER_ARCH → AI_GOV 為準）。
+  - 修復章節標題污染（R2 標題）與結構性混讀風險（保留既有語義，不摘要縮水）。
+
+## C. Hash Manifest（指紋清單）
+- hash_algo: SHA-256
+- body_only_sha256: 377fee697aabe9e0436840fca5a65e0d8f191f79f1c1762271a71cfc6e297d55
+- full_excluding_hash_value_line_sha256: 338b27cb686176228f88b38c4de019054c1f88bff69b833747111b0871ef2829
+
+## D. Audit Hand-off（裁決承接）
+- governance_order_applied: DOCUMENT_INDEX → MASTER_ARCH → AI_GOV
+- effective_date: 2026-01-06（Asia/Taipei）
+- notes:
+  - README 為入口導覽文件；不得被用作治理裁決來源。
+  - 若 DOCUMENT_INDEX 與本 README 有任何衝突，以 DOCUMENT_INDEX 為準。
+
+## E. Archive（歷史快照｜不具裁決力｜避免混讀）
+以下為覆蓋前 README 之完整快照（verbatim），僅供稽核追溯與回放參考：
+
+~~~text
+# README__260104（單一正確正文版｜覆蓋輸出）
+
+doc_key：README  
+治理等級：C（操作／啟動級）  
+版本基線：2026-01-04（Asia/Taipei）  
+文件狀態：單一正確正文版（本檔可直接覆蓋使用）  
+治理有效集合：以 doc_key=DOCUMENT_INDEX 之 Authoritative Index 為準  
+最終裁決序位（不得自創）：DOCUMENT_INDEX → MASTER_ARCH → AI_GOV  
+
+---
+
+## 0. 本 README 的唯一職責（Scope Lock）
+
+本 README 僅作為 **TAITS 專案入口導覽**，提供：
+- 新對話啟動與最小閱讀順序提示（僅提示，不裁決清單）
+- 核心語義定錨（S1）之入口版提醒（完整裁決以 MASTER_ARCH / AI_GOV 為準）
+- 文件索引導覽（doc_key 對照與閱讀順序）
+- 操作安全邊界提醒（避免越權、跳層、混讀）
+
+**本 README 不構成治理裁決來源**；所有裁決與治理有效文件集合，一律以 DOCUMENT_INDEX 為準。
+
+---
+
+## 1. 全局定錨｜單一口徑（S1）
+
+### 1.1 人類最高決策者主權（SOVEREIGNTY）
+
+- 人類（產品負責人／架構裁決者）為 TAITS 的最高決策者。  
+- AI/Agent 僅為輔助，**不得成為決策主體**。  
+- Risk / Compliance 具最高否決權（依 RISK_COMPLIANCE）。
+
+### 1.2 L9–L11 最終語義（跨文件一致｜禁止混讀）
+
+- **L9＝投資報告層（Investment Report）**：含數據/圖形/條件式進出場建議（非指令）/風險敘述/可追蹤更新欄位。  
+- **L10＝人類裁決與交易決策層（Human Decision & Trade Authorization）**：唯一交易授權入口。  
+- **L11＝全層工程稽核回放層（Audit Replay, L1–L11 全留痕）**：L11 非下單層。
+
+補充定義（避免誤讀）：
+- Governance Gate（治理閘門）為 **non-layer 檢核機制**，其主要作用是 **L9→L10** 之檢核/阻擋/退回。  
+- Execution Control（交易執行與控制）為 **模組/制度**，僅能在 **L10 人類授權後** 被啟動；不得把其等同為 L11。
+
+### 1.3 HFI｜人類明確命令（可執行觸發）
+
+所有會導致「裁決」「版本狀態切換」「落地執行」的行為，必須由人類以明確命令（Human-First Instruction, HFI）觸發，且需可被稽核回放。
+
+---
+
+## 2. 新對話啟動（必讀）
+
+### 2.1 啟動確認語（新對話第一句）
+
+你必須先回覆且只能回覆以下一句作為啟動確認：  
+「TAITS 架構已完整載入，我已準備好在此基礎上繼續開發。」
+
+### 2.2 新對話載入最小規格（Minimum Load Set）
+
+- README 僅提示「載入方式」，不裁決「載入清單」；**載入清單以 DOCUMENT_INDEX 為準**。  
+- 任何「文件數量／清單」一律視為 Snapshot（歷史快照，不具裁決力）。
+
+---
+
+## 3. 正確閱讀順序（入口提示）
+
+### 3.1 最小必讀（不得跳過）
+
+1) DOCUMENT_INDEX（Authoritative Index）  
+2) MASTER_ARCH（母體總憲法與核心鐵律）  
+3) AI_GOV（AI 行為與決策治理最終規則）  
+4) GOVERNANCE_STATE（治理狀態：Freeze/Unfreeze/版本基線）  
+5) MASTER_CANON（完整總架構×總流程×全資訊體系）
+
+### 3.2 視需求擴展（在治理框架下）
+
+- RISK_COMPLIANCE（風險與合規最高否決權）  
+- GOV_GATE_SPEC / EXECUTION_CONTROL / VERSION_AUDIT  
+- FULL_ARCH / ARCH_FLOW  
+- DATA_SOURCES / TWSE_RULES  
+- STRATEGY_UNIVERSE / STRATEGY_FEATURE_INDEX  
+- UI_SPEC / DEPLOY_OPS / LOCAL_ENV  
+- BEGINNER_GUIDE（操作引導）
+
+---
+
+## 4. 角色分工（強制遵守）
+
+- 使用者（人類）：產品負責人／架構裁決者（不寫程式）。  
+- AI（本助手）：核心系統工程師＋系統架構設計師＋量化研究員；僅在治理框架內提供可直接貼用之文件輸出與工程化內容。  
+- Risk / Compliance：可否決一切（依 RISK_COMPLIANCE）。  
+
+---
+
+## 5. 使用本專案文件的基本規則（入口版）
+
+- doc_key 為唯一識別：引用文件時以 doc_key 為準。  
+- 不得跳層：策略 ≠ 下單；AI ≠ 決策主體；Regime 高於策略。  
+- 去混讀：正文不得混入補丁式語句；留痕必須獨立於稽核區塊（或獨立稽核檔）。
+
+---
+
+# 稽核區塊（Audit Section｜非正文）
+
+## A. Scope（適用範圍）
+- 本次輸出：README（doc_key=README）之 Final QA／必要融合更新收斂，產出可直接覆蓋版本。
+- 覆蓋目標：README__260104__單一正確正文版.md（專案同名檔）
+
+## B. Changelog（變更清單）
+- 收斂最終裁決序位字串為：DOCUMENT_INDEX → MASTER_ARCH → AI_GOV（避免 README 被誤讀為裁決來源）。
+- 補強 L9/L10/L11 定錨與非層級（non-layer）之 Governance Gate/Execution Control 邊界描述。
+- 建立「正文」與「稽核留痕」之硬分離：將歷史內容以 Archive 形式置於稽核區塊，避免正文混讀。
+- 新增 Hash Manifest 與 Audit Hand-off（符合 Final QA MODE 交付規格）。
+
+## C. Hash Manifest（指紋清單）
+- hash_algo: SHA-256
+- body_only_sha256: 377fee697aabe9e0436840fca5a65e0d8f191f79f1c1762271a71cfc6e297d55
+- full_excluding_hash_value_line_sha256: 338b27cb686176228f88b38c4de019054c1f88bff69b833747111b0871ef2829
+
+## D. Audit Hand-off（裁決承接）
+- governance_order_applied: DOCUMENT_INDEX → MASTER_ARCH → AI_GOV
+- effective_date: 2026-01-04 (Asia/Taipei)
+- notes:
+  - README 為入口導覽文件；不得被用作治理裁決來源。
+  - 若 DOCUMENT_INDEX 與本 README 有任何衝突，以 DOCUMENT_INDEX 為準。
+
+## E. Archive（歷史快照｜不具裁決力｜避免混讀）
+以下為覆蓋前 README 之完整快照（verbatim），僅供稽核追溯與回放參考：
+
+```text
+# README__260104（單一正確正文版）
+
+doc_key：README  
+治理等級：C（操作／啟動級｜專案入口說明）  
+適用範圍：TAITS 專案入口（如何啟動對話、如何選檔、如何更新、如何依治理裁決序位工作）  
+版本狀態：ACTIVE（單一正確正文版｜最大完備＋累積式更新）  
+版本日期：2026-01-04（Asia/Taipei）  
+裁決序位：DOCUMENT_INDEX → MASTER_ARCH → AI_GOV → README（本檔）  
+平行參照：TAITS_PROJECT_PROMPT／BEGINNER_GUIDE／Unified Process Anchor／DOCUMENT_INDEX  
+變更原則：最大完備＋累積式更新（允許融合更新／覆寫修正／重排版以形成單一正確正文；禁止摘要化縮水；未被新版本明確取代之有效內容一律保留並持續累積；已被新版本明確取代者可自正文移除但必須由稽核留痕承接）
+
+---
+
+## 全局定錨｜單一口徑（S1）
+
+- 本文件為單一正確正文版；任何歷史狀態標記不構成正文裁決依據（以 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV／README 為準）。  
+- 若本文件與 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV 衝突，以 DOCUMENT_INDEX → MASTER_ARCH → AI_GOV 為最終裁決序位。  
+- L9＝投資報告層；L10＝人類裁決與交易決策層；L11＝全層稽核回放層（非下單層）。  
+
+---
+
+## 必讀｜啟動確認語（新對話必貼）
+
+開啟任何新對話前，請先貼上並要求 AI 僅回覆以下一句作為啟動確認：  
+「TAITS 架構已完整載入，我已準備好在此基礎上繼續開發。」
+
+---
+
+doc_key：README  
+治理等級：C（Project Overview & Usage Charter｜入口導覽文件，不具上位裁決權）  
+適用範圍：TAITS 全系統（Research / Backtest / Simulation / Paper / Live）  
+版本狀態：ACTIVE（最大完備／累積式更新：允許融合更新、覆寫修正、重排版；禁止摘要縮水；未被新內容明確取代者必保留；被取代者可移除但須留痕承接）
+版本日期：2026-01-04（Asia/Taipei）
+變更原則：最大完備＋累積式更新（允許融合更新／覆寫修正／重排版；不得只保留重點；舊內容未被新內容明確取代者一律保留累積；僅被新內容明確取代之舊資訊可省略但須於稽核留痕承接）
+
+
+## 全局定錨｜單一口徑（S1）
+
+### 1. 人類最高決策者主權（SOVEREIGNTY）
+- TAITS 之唯一最高主權屬於人類最高決策者（產品負責人／架構裁決者）。
+- 任何治理閘門、程序規則、Agent、文件等級不得凌駕人類主權；不得以程序性理由阻止人類明確命令之生效。
+- 風險與合規（Risk/Compliance）在無人類明確命令時可否決；在有人類明確命令時必須輸出完整風險揭露與替代方案，並以「強制揭露＋確認＋全紀錄」承接，不得卡死更新。
+
+### 2. L9–L11 最終語義（跨文件一致）
+- L9（投資報告層）：可追蹤、可更新、可標的化投資報告；必含數據、圖形、條件式進出場建議（非指令）、風險敘述、追蹤欄位（狀態/更新時間/依據來源），並支援事件驅動滾動更新。
+- L10（人類裁決層）：由人類最高決策者裁決不動作/回測/模擬/半自動/全自動等；任何交易型態皆以 L10 明確裁決為準。
+- L11（工程稽核回放層）：對 L1–L11 全層輸入/處理/輸出/裁決/執行鏈路留痕，供人類與工程端可讀、可查、可回放；L11 非下單決策層。
+
+### 3. HFI｜人類明確命令（可執行觸發）
+- 格式：`HFI: <scope> | <action> | <intent> | <acknowledgement>`
+- 有效 HFI 存在時：治理狀態/最大完備＋累積式更新（原 累積式更新 口徑已淘汰）/Gate 不得阻擋 scope 範圍內之更新/覆寫/重排版；並必須同步產生稽核承接（VERSION_AUDIT 留痕、HASH_MANIFEST、CHANGELOG）。
+
+---
+---
+
+## 治理補強（已整合為正文）
+
+上位裁決：AI_GOV（A+）＋DOCUMENT_INDEX（A+｜Authoritative Index）＋MASTER_ARCH（A）＋MASTER_CANON（A）  
+目的：修補 README 中「文件數量/清單」的歷史快照性描述，避免被誤用為治理裁決依據；將本 README 之導覽用途明確限縮為「入口導覽」，並固定：ACTIVE/doc_key/治理等級一律以 DOCUMENT_INDEX 表格裁決為準；提供新對話載入的最小規格，使使用者不會因 README 的快照資訊而載入錯誤文件宇宙。
+
+---
+
+## R0. 本 README 的法律地位（Scope Lock）
+
+### R0.1 統一裁決：README 為「入口導覽」，非治理裁決來源
+本 README 的唯一合法用途為：
+- 讓使用者快速理解 TAITS 專案定位、文件群組、啟動方式與基本操作路徑  
+- 引導使用者進入「嚴格對齊模式」並載入上位治理文件完成啟動確認
+
+本 README **不得**：
+- 裁決 ACTIVE 文件集合  
+- 裁決 doc_key 合法性、治理等級、版本有效性  
+- 以 README 內部的數量/清單覆蓋 DOCUMENT_INDEX 的 Authoritative Index 表格
+
+---
+
+## R1. 「文件數量/清單」一律視為 Snapshot（歷史快照，不具裁決力）
+
+### R1.1 快照定義（Snapshot）
+凡本 README 內出現之：
+- 「目前共有 X 份文件」  
+- 「ACTIVE 文件數 = X」  
+- 任何列舉文件清單之段落
+
+- **Snapshot（歷史快照）**：用於閱讀導覽與理解分類  
+- **不具治理裁決效力**：不得作為「ACTIVE 判定」「覆蓋裁決」「引用合法性」的依據
+
+### R1.2 唯一裁決來源（Index Gate First）
+凡涉及：
+- ACTIVE 文件集合  
+- doc_key 合法性  
+- 治理等級 bucket（A+/A/B/C；B+/C+ 為標籤之 bucket 化）  
+- 版本日期與是否有效
+
+**一律以 DOCUMENT_INDEX 的 Authoritative Index 表格裁決為準**。
+
+---
+
+## R2. 新對話載入最小規格（Minimum Load Set｜以 GOVERNANCE_STATE 現況為準（本文件為單一正確正文版；任何歷史狀態標記不構成正文裁決依據（以 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV 為準）。
+
+任何「新對話」在進入工作前，至少必須能指向（以版本日期與章節可稽核為準）：
+
+1) AI_GOV（A+）  
+2) DOCUMENT_INDEX（A+｜Authoritative Index）  
+3) MASTER_ARCH（A）  
+4) MASTER_CANON（A）  
+5) GOVERNANCE_STATE（治理狀態 v1.0 狀態宣告；若列入 Index）
+
+注意：README 只能提示「載入方式」，不裁決「載入清單」。載入清單以 DOCUMENT_INDEX 為準。
+
+---
+
+## R3. 引用合法性最小格式（Minimum Legal Citation Format）
+
+為避免「有提到就算引用」的誤用，任何 README 所引導的引用行為，最少必須包含：
+
+- 文件名（完整檔名）  
+- doc_key  
+- 版本日期（version_date）  
+- 章節定位（section / heading path）
+
+缺任一欄位 → 一律視為「未引用」→ 不得裁決性輸出。
+
+建議固定引用標頭（可直接貼用）：
+```text
+〔TAITS 引用標頭｜以 GOVERNANCE_STATE 現況為準（本文件為單一正確正文版；任何歷史狀態標記不構成正文裁決依據（以 DOCUMENT_INDEX／MASTER_ARCH／AI_GOV 為準）。
+ref_file = <完整檔名>
+ref_doc_key = <DOC_KEY>
+ref_version_date = <YYYY-MM-DD / __yymmdd>
+ref_section = <章節/段落路徑>
+ref_notes = <可選：本次用途>
+audit_anchor = VERSION_AUDIT:VA-METADATA_FIX-20251227-0010
+〔/TAITS 引用標頭〕
+```
+
+---
+
+## R4. 最終宣告（治理狀態 v1.0）
+
+- README 中任何文件數量/清單一律視為 Snapshot；治理裁決一律回到 DOCUMENT_INDEX。  
+- 若 README 與上位治理文件出現張力：依 DOCUMENT_INDEX §6 保守處置，並以 VERSION_AUDIT 留痕。
+
+## 0. 文件定位（README 的「唯一職責」）
+
+本 README 是 **TAITS 專案的入口憲章與導覽地圖**，只負責三件事：
+
+1) **讓新對話 / 新 AI / 新 Agent 在不誤解的前提下快速進入治理正軌**  
+2) **定義 TAITS 是什麼／不是什麼（避免越權與誤用）**  
+3) **提供「正確閱讀順序」與「文件導航」以保證一致性與可追溯**
+
+📌 本 README **不具裁決權**：  
+- 不裁決文件衝突（由 `DOCUMENT_INDEX` 裁決）  
+- 不定義鐵律（由 `MASTER_ARCH` 裁決）  
+- 不定義 Canonical Flow（由 `MASTER_CANON / ARCH_FLOW` 裁決）  
+- 不定義風控否決條文（由 `RISK_COMPLIANCE` 裁決）  
+- 不定義下單細節（由 `EXECUTION_CONTROL` 裁決）
+
+---
+
+## 1. TAITS 是什麼？（不可被誤解的定義）
+
+**TAITS（Taiwan Alpha Intelligence Trading System）** 是一套：
+
+- 以 **台灣市場（TWSE / TAIFEX）** 為核心對象
+- 以 **治理（Governance）與風險/合規（Risk/Compliance）** 為最高優先序
+- 以 **Canonical Flow（L1–L11，不可跳步）** 為全系統骨架
+- 允許 **多 Agent** 與 **多策略宇宙** 長期演進（最大完備＋累積式更新（原 累積式更新 口徑已淘汰））
+- 強制 **審計（Audit）/回放（Replay）/可追溯（Traceability）**
+- 明確規定 **AI 只能輔助、不能取代人類裁決（Human-in-the-Loop）**
+
+的 **完整系統母體**（非 Demo、非教學專案、非單一策略）。
+
+---
+
+## 2. TAITS 不是什麼？（禁止錯誤期待）
+
+TAITS **不是**：
+
+- ❌ 單一策略或選股法  
+- ❌ 以績效展示為核心的投資工具  
+- ❌ 「AI 自動下單」黑箱  
+- ❌ 無人值守、自動批准、自動執行的交易機器  
+- ❌ 需要使用者自行 Debug / 自行補完的工程專案  
+
+📌 在 TAITS：  
+- **策略 ≠ 下單**  
+- **Agent ≠ 策略**  
+- **AI ≠ 唯一真理**  
+- **Regime（市場狀態）高於單一訊號**  
+- **Risk / Compliance 可否決一切**
+
+---
+
+## 3. TAITS 的最高鐵律摘要（僅作入口提醒；裁決以 MASTER_ARCH / AI_GOV 為準）
+
+以下屬於入口級「不可破壞理解」：
+
+1) **最大完備＋累積式更新（原 累積式更新 口徑已淘汰）**：內容可融合更新/覆寫修正（原「只可新增」口徑已淘汰），不可刪減/覆寫/弱化  
+2) **L1–L11 不可跳步**：任何捷徑都屬治理違規  
+3) **Evidence First**：無證據不得進入判斷/執行  
+4) **Binary Compliance（PASS / VETO）**：合規與否決不容模糊  
+5) **Human-in-the-Loop**：人類裁決不可被取代（L10 必須存在）  
+6) **No Audit = Not Happened**：無審計視為未發生  
+7) **Risk PASS Token Required**：未通過風控放行憑證不得進入執行層  
+8) **Kill Switch Always Available**：任何執行狀態必須可立即中止  
+
+---
+
+## 4. 正確閱讀順序（新對話 / 新 AI / 新 Agent 必須遵守）
+
+### 4.1 最小必讀（不得跳過）
+1) `TAITS_AI_行為與決策治理最終規則全集__251217`（A+）  
+2) `DOCUMENT_INDEX`（A+ / A+裁決性）  
+3) `MASTER_ARCH`（A）  
+4) `MASTER_CANON`（A）  
+5) `FULL_ARCH`（B）  
+6) `ARCH_FLOW`（B+）  
+7) `RISK_COMPLIANCE`（A）  
+8) `EXECUTION_CONTROL`（A）  
+9) `VERSION_AUDIT`（B）  
+
+### 4.2 視需求擴展（在治理框架下）
+- `DATA_SOURCES`（B）  
+- `STRATEGY_UNIVERSE`（B）  
+- `STRATEGY_FEATURE_INDEX`（B）  
+- `UI_SPEC`（B）  
+- `DEPLOY_OPS`（B）  
+- `LOCAL_ENV`（C/B，依專案定義）  
+- `TWSE_RULES`（B/C：參考彙編，但合規裁決需回到官方來源入口）  
+- `BEGINNER_GUIDE`（C：新手操作引導，不能作治理裁決依據）  
+- `GOVERNANCE_GATE_SPEC`（B：治理閘門與裁決規範）
+
+📌 任何「先談策略再補治理」的工作方式，在 TAITS 一律視為高風險且不可接受。
+
+---
+
+## 5. 專案文件一覽（以 doc_key 為唯一識別）
+
+若你看到文件名不同，但 doc_key 相同，以 `DOCUMENT_INDEX` 的 ACTIVE 裁決為準。
+
+### 5.1 A+（最高母法）
+- `AI_GOV`：TAITS_AI_行為與決策治理最終規則全集__251217（A+）
+
+### 5.2 A（憲法級）
+- `MASTER_ARCH`：母體總憲法與核心鐵律  
+- `MASTER_CANON`：完整總架構×總流程×全資訊體系
+
+### 5.3 B / B+（架構、流程、風控、執行、營運、資料）
+- `DOCUMENT_INDEX`：文件索引與治理對照表（裁決性極高；以專案定義為準）  
+- `FULL_ARCH`：全系統架構總覽（模組地圖與邊界）  
+- `ARCH_FLOW`：系統架構與流程細化說明（Canonical Flow：L1–L11）  
+- `RISK_COMPLIANCE`：風險與合規最高否決權（Supreme Veto）  
+- `EXECUTION_CONTROL`：交易執行與控制規範（Execution & Control）  
+- `VERSION_AUDIT`：版本控管、稽核與可追溯治理規範  
+- `DATA_SOURCES`：資料來源全集（官方優先、多層 fallback、可追溯）  
+- `STRATEGY_UNIVERSE`：策略宇宙全集（白名單、生命週期、不可直連下單）  
+- `STRATEGY_FEATURE_INDEX`：策略特徵與因子索引（特徵≠方向）  
+- `UI_SPEC`：使用者介面與人機決策規範（否決可視化、決策追溯）  
+- `DEPLOY_OPS`：部署、營運與日常運作規範（回滾、停機、Runbook）  
+- `TWSE_RULES`：TWSE 交易規則參考彙編（觸發映射；裁決回到官方入口）  
+- `GOVERNANCE_GATE_SPEC`：治理閘門與裁決規範（Gate 定義與一致性）
+
+### 5.4 C（操作/引導）
+- `BEGINNER_GUIDE`：新手教學與操作引導總則  
+- `README`：本文件
+
+---
+
+## 6. TAITS 的「運作模式」一致性宣告（不可降級）
+
+TAITS 支援（概念上）：
+- Research（研究）
+- Backtest（回測）
+- Simulation（模擬）
+- Paper（紙上/模擬下單）
+- Live（實盤）
+
+但**所有模式必須共用同一套治理語義**：
+- **L1–L11 不得因模式不同而跳層**
+- **Risk / Compliance 不得因模式不同而降級**
+- **Audit / Replay 不得因模式不同而缺失**
+
+📌 「回測可跑但實盤不行」在 TAITS 視為制度設計失敗。
+
+---
+
+## 7. 角色分工（強制遵守）
+
+### 7.1 人類（使用者）
+- 身分：產品經理 / 架構決策者 / 最終裁決者（L10）  
+- 不負責：寫程式、Debug、補完缺失  
+- 擁有：最終裁決權（但**不擁有文件解釋權**；裁決依文件）
+
+### 7.2 AI（系統工程師 + 架構設計師 + 量化研究員）
+- 必須交付：可直接貼上的完整內容（不可片段、不可要求使用者補齊）  
+- 禁止：  
+  - 自行簡化（No-Slimming）  
+  - 文件沒寫就自行合理化（No Fabrication of Authority）  
+  - 用「推測」取代「文件依據」
+
+---
+
+## 8. 合規與官方入口（規則裁決必回到官方）
+
+TAITS 允許彙編與對照，但**制度裁決以官方來源為準**。
+
+- TWSE 規章/法規查詢：https://twse-regulation.twse.com.tw/  
+- TWSE 交易制度/交易機制：https://www.twse.com.tw/en/products/system/trading.html  
+- TAIFEX 規章與規則：https://www.taifex.com.tw/enl/eng6/ruleRegulation  
+- FSC 金管會法規資訊：https://www.fsc.gov.tw/en/home.jsp?id=3&parentpath=0  
+- SFB 證期局入口：https://www.sfb.gov.tw/en/  
+- TDCC 集保結算（結算交割相關）：https://www.tdcc.com.tw/portal/en/equity/settlement  
+
+📌 若彙編內容與官方更新衝突：以官方為準，並依 `VERSION_AUDIT` 啟動變更流程。
+
+---
+
+## 9. 專案「嚴格對齊模式」工作規範（README 層級宣告）
+
+在 TAITS 專案內協作（含新對話）必遵守：
+
+1) **以 doc_key 為引用主鍵**（文件名可能變、doc_key 不可變）  
+2) **任何新增內容必標記：來源文件、章節、版本**  
+3) **最大完備＋累積式更新（原 累積式更新 口徑已淘汰）**：不允許刪減或覆寫既有制度語義  
+4) **遇到缺口：先停、先請示、先補文件**（禁止自行補完）  
+5) **凡涉及交易執行：必須可審計、可回放、可追責**  
+
+---
+
+## 10. 快速啟動（不是操作手冊；是「不踩雷」入口）
+
+如果你要開始一個新議題（新增模組、策略、Agent、資料源、UI、部署）：
+
+請先決定它屬於哪一層：
+
+- **治理母法 / 鐵律** → `MASTER_ARCH`  
+- **流程順序 / Canon** → `MASTER_CANON / ARCH_FLOW`  
+- **風險與合規否決** → `RISK_COMPLIANCE`  
+- **執行與控制** → `EXECUTION_CONTROL`  
+- **版本追溯與審計** → `VERSION_AUDIT`  
+- **資料來源與可追溯** → `DATA_SOURCES`  
+- **策略白名單與生命週期** → `STRATEGY_UNIVERSE`  
+- **特徵與因子管理** → `STRATEGY_FEATURE_INDEX`  
+- **介面、人機裁決、否決可視化** → `UI_SPEC`  
+- **營運、部署、回滾、停機** → `DEPLOY_OPS`  
+- **交易所規則彙編/觸發映射** → `TWSE_RULES`  
+- **新手操作引導** → `BEGINNER_GUIDE`  
+- **治理閘門一致性** → `GOVERNANCE_GATE_SPEC`
+
+📌 若你不知道該歸哪一份：請以 `DOCUMENT_INDEX` 的裁決規則處理。
+
+---
+
+## 11. 最終聲明（不可刪）
+
+TAITS 的核心價值不在於「多聰明」，而在於：
+
+- **不亂來**
+- **不越權**
+- **可回放**
+- **可追責**
+- **可長期演進**
+
+只要存在不可接受風險，  
+就算錯過機會，也必須選擇不交易。  
+（裁決依 `RISK_COMPLIANCE`）
+
+---
+
+（README｜最大完備治理版 · 2025-12-20 完）
+---
+
+## 治理補強（已整合為正文）
+
+上位裁決：DOCUMENT_INDEX（A+｜Authoritative Index）→ MASTER_ARCH（A）→ MASTER_CANON（A）＋AI_GOV（A+）  
+
+### A1. 本文件之唯一治理身份（Canonical Identity）
+- canonical_filename（Index 裁決檔名）：`README.md`
+- canonical_doc_key（Index 裁決識別碼）：`README`
+- 版本狀態：ACTIVE（治理狀態 v1.0；最大完備＋累積式更新（原 累積式更新 口徑已淘汰））
+
+### A2. 本專案目錄中的實體檔案（Physical Artifact）
+- 法律定位：實體檔名僅為「存放/分發/下載」之載體；治理裁決與引用身份一律以 **A1** 為準。
+
+### A3. 引用合法性最小規則（不新增制度，只固定寫法）
+- 任何跨文件引用本文件時，必須使用：`doc_key=README` + `canonical_filename=README.md`。  
+- 若需指向本專案內實體檔案（physical_filename），必須同時保留 **A1** 之 canonical identity，以避免「引用找得到檔案但身份不合法」的 Gate 風險。  
+- ACTIVE 集合、文件數量、或任何快照清單，均不得覆蓋 DOCUMENT_INDEX 的 Authoritative Index 裁決。
+
+---
+
+## 治理補強（已整合為正文）
+
+上位裁決序列：DOCUMENT_INDEX → MASTER_ARCH → MASTER_CANON（AI 行為規範仍受 AI_GOV 最高約束；衝突裁決流程依 DOCUMENT_INDEX §6）  
+目的：以 MASTER_CANON 為主導，對齊「引用合法性、doc_key 身份、子級標籤（Label）解讀、資料治理別名（alias）封口、最小可稽核引用格式」之全域一致口徑；不改寫任何既有正文條款。
+
+---
+
+## G0. 適用範圍（Hard Boundary）
+
+1) **引用端身份**：doc_key / 治理等級 bucket / ACTIVE 狀態之裁決來源固定回歸 DOCUMENT_INDEX。  
+2) **子級標籤**：S / B+ / C+ 等字樣一律視為顯示標籤（Label），不構成新的治理等級 bucket。  
+3) **資料治理別名封口**：凡出現「DATA_UNIVERSE」字樣，一律視為 alias（概念名詞），治理引用 doc_key 必須回歸 DATA_SOURCES。  
+4) **最小可稽核引用格式**：補上統一模板，避免 Gate 因引用缺口而 BLOCK/RETURN。  
+
+- 不變更 Canonical Flow（L1–L11）任何順序/語義（MASTER_CANON 為準）  
+- 不新增任何新 doc_key、不新增新治理位階、不調整覆蓋規則  
+- 不新增策略內容、不新增下單規範、不改寫風控/合規否決條款  
+- 不為任何缺失資訊進行「模型推測補完」
+
+---
+
+## G1. Index Gate 身份裁決（doc_key / 等級 / ACTIVE 的唯一裁決來源）
+
+並統一裁決：
+- 任何文件「是否可引用」＝以 DOCUMENT_INDEX 之 Authoritative Index（ACTIVE 表格）為準  
+- 任何文件「治理等級 bucket」＝以 DOCUMENT_INDEX 之 A+ / A / B / C 分桶為準  
+- 文件內自述之等級/狀態若與 Index 有張力：依 DOCUMENT_INDEX §6 採「保守處置」（STOP/RETURN/BLOCK；以既有 Gate/風控規範語義為準）
+
+---
+
+## G2. 子級標籤（Label）之唯一合法解讀（S / B+ / C+）
+
+凡本文件或引用鏈中出現：
+- `S`：視為「Supreme Canon 的顯示標籤」或「完備度標籤」，**不構成**新的治理等級 bucket。  
+- `B+` / `C+`：視為「嚴格度/完備度子級標籤」，**不構成**新的治理等級 bucket。  
+
+治理覆蓋規則仍固定為：**A+ > A > B > C**（以 DOCUMENT_INDEX 為準）。  
+
+---
+
+## G3. DATA_UNIVERSE（alias）封口（資料治理引用回歸 DATA_SOURCES）
+
+統一裁決：
+- 任何出現之 `DATA_UNIVERSE` 一律視為「資料宇宙（Data Universe）」概念別名（alias），**不得**作為 doc_key。  
+- 任何需要引用資料來源治理時，唯一合法 doc_key：`DATA_SOURCES`。  
+- 若 Evidence/Audit/UI Trace/Gate 引用欄位出現 `doc_key=DATA_UNIVERSE`：  
+  - 一律視為「引用非法」→ 依 GOVERNANCE_GATE_SPEC 進行 BLOCK/RETURN（依其既有語義；不得補救）。
+
+---
+
+## G4. 最小可稽核引用格式（Minimum Legal Citation Format｜可直接貼用）
+
+凡聲稱「依據治理文件」之輸出（含：Evidence、Risk/Compliance、Governance Gate、UI Decision、Execution Control、Audit）一律必須同時提供：
+
+```text
+ref_doc_key = <DOC_KEY>
+ref_file = <完整檔名>
+ref_version = <版本日期或檔名日期碼>
+ref_section = <章節定位（§ / Heading Path）>
+ref_purpose = <用途：例如 gate_check / risk_veto / ui_decision / execution_policy / audit_replay>
+ref_notes = <可選：alias/Label 解讀備註>
+```
+
+缺任一欄位：
+- 依 DOCUMENT_INDEX §6 採保守處置：不得形成裁決性輸出（PASS/APPROVE/EXECUTE 等）；必要時 RETURN/BLOCK。
+
+---
+
+## G5. 最終宣告（治理狀態 v1.0）
+
+# 稽核區塊（Audit Section｜非正文）
+
+> 本區塊為「本次更新」之留痕（Changelog／Hash Manifest／Scope／Audit Hand-off）。  
+> 為避免新舊混讀：本區塊不參與正文裁決；正文以本檔案開頭至本區塊前之內容為準。
+
+## A. Scope（適用範圍）
+- scope_doc_key: README
+- scope_files_output: README__260104__單一正確正文版.md
+- scope_files_source: README__260104.md
+- scope_mode: FILE UPDATE MODE（融合更新／整合重排版／語義定錨一致化／Final QA）
+- version_date: 2026-01-04（Asia/Taipei）
+
+## B. Changelog（變更清單）
+1) **去混讀修正**：移除/中性化可能造成新舊混讀的補丁式字樣（Addendum/Appendix/Only-Add/Freeze 等），改為不干擾裁決的敘述；不刪減既有入口說明。  
+2) **版本/檔名一致化**：將正文內殘留的 `__260102` 與舊日期引用統一為 `__260104`／2026-01-04（Asia/Taipei）。  
+3) **啟動確認語補齊**：若原文缺少專案要求之啟動確認語，於檔頭後新增「必讀｜啟動確認語」章節。  
+4) **稽核段落單一化**：以本檔末端單一稽核區塊承接（留痕與正文分離）。
+
+## C. Hash Manifest（指紋清單）
+- hash_alg: sha256
+- scope: BODY_ONLY（不含本稽核區塊）
+- hash_value_sha256: f22f072a0a6d0aa72bfc905d5502ef81d7db133829b8dd77cb6b7cd51d2ddd21
+
+## D. Audit Hand-off（裁決承接）
+- change_id: RD-FIX-260104-0049
+- authority_basis: HFI（人類最高決策者明確命令｜scope=README｜Final QA 去混讀/一致化/啟動語補齊）
+- governance_order_applied: DOCUMENT_INDEX → MASTER_ARCH → AI_GOV
+- downstream_notes:
+  - README 建議僅保留本檔為 ACTIVE；舊 README__260104.md 應封存，避免載入集合混讀。
+```
+~~~
+
+````
