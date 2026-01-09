@@ -264,6 +264,7 @@ flowchart TB
   L10 --> L7[L7 Risk/Compliance Veto]
   L7 -->|PASS Token| L11[L11 Execution Control]
   L7 -->|VETO| V[VETO + reason_codes + audit]
+
 10. 策略宇宙「分層清單」交付方式（Only-Add 擴充規則）
 你要求「最大完備」且策略數量龐大（285+），本文件採用「治理母表 + 分冊追加」方式，避免一次貼滿造成不可維護。
 但治理母表（本 Part 1）先把所有硬規則寫滿，後續每一批只會「新增策略條目」，不會改動本治理基礎。
